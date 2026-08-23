@@ -20,22 +20,27 @@
 
   <div class="app-container">
     
-    <!-- 頂部導航列 -->
+    <!-- 頂部導航列 (大器獨立標題 + 快捷工具) -->
     <header class="navbar glass-panel">
-      <a href="#" class="brand-logo">
-        <div class="logo-icon-wrap">💎</div>
-        <div>
-          <span class="brand-name">Financial-literacy 智富記帳</span>
-          <span class="brand-badge">財商 50/30/20</span>
+      <div class="navbar-top-row">
+        <a href="#" class="brand-logo">
+          <div class="logo-icon-wrap">💎</div>
+          <div class="brand-text-wrap">
+            <span class="brand-name">Financial-literacy 智富記帳</span>
+            <span class="brand-badge">財商 50/30/20</span>
+          </div>
+        </a>
+        <div class="nav-actions">
+          <button id="btn-open-reports-modal" class="btn btn-secondary" title="查閱月報表、季報表與年報表">
+            📊 財務報表
+          </button>
+          <button id="btn-toggle-mobile-view" class="btn btn-secondary" title="在電腦上一鍵切換為手機模擬視圖">
+            📱 手機視圖
+          </button>
+          <button id="btn-open-backup-modal" class="btn btn-secondary" title="資料備份與匯出入">
+            💾 資料備份
+          </button>
         </div>
-      </a>
-      <div class="nav-actions">
-        <button id="btn-open-backup-modal" class="btn btn-secondary" title="資料備份與匯出入">
-          💾 資料備份
-        </button>
-        <button id="btn-quick-add-header" class="btn btn-primary">
-          ➕ 記一筆
-        </button>
       </div>
     </header>
 
@@ -199,14 +204,49 @@
         <button type="button" class="type-toggle-btn transfer" data-tx-type="transfer">🔄 帳戶轉帳</button>
       </div>
 
-      <!-- 金額輸入框 -->
+      <!-- 大金額輸入框（Flexbox 佈局，無黏字） -->
       <div class="amount-input-box">
         <span class="currency-symbol">NT$</span>
-        <input type="number" id="input-amount" class="input-large-amount" placeholder="0" autofocus>
+        <input type="number" id="input-amount" class="input-large-amount" placeholder="0" autofocus inputmode="numeric">
       </div>
 
-      <!-- 分類選擇網格 -->
-      <div class="form-field-group">
+      <!-- 即時金額大字千分位預覽條（解決數字辨識困擾） -->
+      <div id="amount-preview-hint" class="amount-preview-hint">
+        <span>金額確認：</span>
+        <strong id="amount-preview-display" style="font-size: 0.95rem; color: #FFF;">NT$ 0</strong>
+      </div>
+
+      <!-- 轉帳專用設定區塊 (從哪裡轉到哪裡) -->
+      <div id="group-transfer-fields" style="display: none; margin-bottom: 16px;">
+        <div class="field-label">
+          <span>轉帳快捷情境（點擊一鍵套用）</span>
+        </div>
+        <div class="transfer-scene-chips">
+          <button type="button" class="scene-chip-btn" data-transfer-preset="emergency">🛡️ 存入緊急預備金</button>
+          <button type="button" class="scene-chip-btn" data-transfer-preset="invest">📈 存入證券投資戶</button>
+          <button type="button" class="scene-chip-btn" data-transfer-preset="esun">💳 繳納玉山卡費</button>
+          <button type="button" class="scene-chip-btn" data-transfer-preset="fubon">💳 繳納富邦卡費</button>
+        </div>
+
+        <div class="transfer-accounts-grid">
+          <div class="transfer-box">
+            <label style="font-size: 0.75rem; color: #94A3B8; font-weight: 600;">📤 轉出帳戶 (扣款)</label>
+            <select id="select-transfer-from" class="transfer-select"></select>
+          </div>
+          <div class="transfer-box">
+            <label style="font-size: 0.75rem; color: #6EE7B7; font-weight: 600;">📥 轉入帳戶 (存入)</label>
+            <select id="select-transfer-to" class="transfer-select"></select>
+          </div>
+        </div>
+
+        <div class="diagnostic-item caution" style="padding: 8px 12px; font-size: 0.75rem;">
+          <span>💡</span>
+          <div><strong>轉帳心法</strong>：屬於內部資產調度（左口袋移到右口袋），<strong>不計入生活支出</strong>，確保 50/30/20 比例精確！</div>
+        </div>
+      </div>
+
+      <!-- 分類選擇網格 (支出/收入時顯示) -->
+      <div id="group-category-select" class="form-field-group">
         <label class="field-label">
           <span>選擇消費類別</span>
           <span id="selected-category-hint" style="font-size: 0.75rem; color: #A5B4FC;">自動關聯財商標籤</span>
@@ -384,6 +424,35 @@
     </div>
   </div>
 
+  <!-- =========================================================================
+       彈窗 5：財務報表分析中心 (月報表 / 季報表 / 年報表)
+       ========================================================================= -->
+  <div id="modal-reports" class="modal-overlay">
+    <div class="modal-card" style="max-width: 600px;">
+      <div class="modal-header">
+        <h3 class="modal-title">📊 財務報表與資產分析中心</h3>
+        <button class="btn-close-modal" data-close-modal>&times;</button>
+      </div>
+
+      <!-- 週期切換列 (月報表 / 季報表 / 年報表) -->
+      <div class="report-period-nav">
+        <div class="report-period-tabs">
+          <button type="button" class="report-tab-btn active" data-report-type="month">📅 月報表</button>
+          <button type="button" class="report-tab-btn" data-report-type="quarter">📊 季報表</button>
+          <button type="button" class="report-tab-btn" data-report-type="year">🏆 年報表</button>
+        </div>
+        <select id="select-report-period" class="report-picker-select">
+          <!-- 由 JS 動態填充 -->
+        </select>
+      </div>
+
+      <!-- 報表內容動態渲染區 -->
+      <div id="report-content-container">
+        <!-- JS 動態渲染 -->
+      </div>
+    </div>
+  </div>
+
   <!-- Toast 提示容器 -->
   <div id="toast-container" class="toast-container"></div>
 
@@ -434,8 +503,8 @@
         { quote: "將 50% 投入生活必需、30% 犒賞適度慾望、20% 投資未來，能讓你在享受當下的同時持續邁向財務自由。", author: "50/30/20 黃金資產配置法" }
       ];
 
-      // 2. 本地儲存與預設數據
-      const STORAGE_KEY = 'finflow_app_data_v1';
+      // 2. 本地儲存與預設數據 (升級為 v2 歸零版本)
+      const STORAGE_KEY = 'finflow_app_data_v2';
 
       function getThisMonthDate(dayNumber) {
         const now = new Date();
@@ -458,7 +527,7 @@
           name: '台幣主要活存 (薪轉/日常)',
           type: 'liquid',
           bankName: '主要銀行活存',
-          balance: 68500,
+          balance: 0,
           icon: '🏦',
           color: '#3B82F6'
         },
@@ -469,7 +538,7 @@
           bankName: '玉山銀行',
           creditLimit: 60000,
           safeLimit: 18000, // 30% 信用安全線
-          balance: 4200,    // 當前待繳帳款
+          balance: 0,       // 當前待繳帳款歸零
           icon: '💳',
           color: '#059669'
         },
@@ -480,7 +549,7 @@
           bankName: '富邦銀行',
           creditLimit: 60000,
           safeLimit: 18000, // 30% 信用安全線
-          balance: 7800,    // 當前待繳帳款
+          balance: 0,       // 當前待繳帳款歸零
           icon: '💳',
           color: '#0284C7'
         },
@@ -489,7 +558,7 @@
           name: '🛡️ 緊急預備金專戶',
           type: 'emergency',
           bankName: '高利活存避風港',
-          balance: 120000,
+          balance: 0,
           icon: '🛡️',
           color: '#6366F1'
         },
@@ -498,33 +567,25 @@
           name: '📈 指數化投資專戶 (ETF)',
           type: 'investment',
           bankName: '證券交割戶',
-          balance: 210000,
+          balance: 0,
           icon: '📈',
           color: '#8B5CF6'
         }
       ];
 
-      const DEFAULT_TRANSACTIONS = [
-        { id: 'tx_demo_01', type: 'income', date: getThisMonthDate(5), amount: 55000, categoryId: 'salary', categoryName: '本業薪資', categoryIcon: '💼', tag: 'income', accountId: 'acc_bank_main', accountName: '台幣主要活存 (薪轉/日常)', note: '本月薪資入帳' },
-        { id: 'tx_demo_02', type: 'expense', date: getThisMonthDate(6), amount: 15000, categoryId: 'housing_rent', categoryName: '房租/房貸', categoryIcon: '🏠', tag: 'need', accountId: 'acc_bank_main', accountName: '台幣主要活存 (薪轉/日常)', note: '本月房租轉帳' },
-        { id: 'tx_demo_03', type: 'expense', date: getThisMonthDate(8), amount: 11000, categoryId: 'education_self', categoryName: '進修課程/書籍購置', categoryIcon: '📚', tag: 'invest', accountId: 'acc_bank_main', accountName: '台幣主要活存 (薪轉/日常)', note: '定期定額 ETF 與進修' },
-        { id: 'tx_demo_04', type: 'expense', date: getThisMonthDate(10), amount: 4200, categoryId: 'food_dining', categoryName: '外食大餐/聚會', categoryIcon: '🥩', tag: 'want', accountId: 'card_esun', accountName: '玉山銀行信用卡', note: '好友慶生聚餐（刷玉山卡）' },
-        { id: 'tx_demo_05', type: 'expense', date: getThisMonthDate(12), amount: 3500, categoryId: 'shopping_clothing', categoryName: '服飾鞋包/精品', categoryIcon: '🛍️', tag: 'want', accountId: 'card_fubon', accountName: '富邦銀行信用卡', note: '換季添購衣物（刷富邦卡）' },
-        { id: 'tx_demo_06', type: 'expense', date: getThisMonthDate(15), amount: 4300, categoryId: 'utilities', categoryName: '水電瓦斯/網路', categoryIcon: '⚡', tag: 'need', accountId: 'card_fubon', accountName: '富邦銀行信用卡', note: '水電瓦斯扣繳（刷富邦卡）' },
-        { id: 'tx_demo_07', type: 'expense', date: getThisMonthDate(18), amount: 3200, categoryId: 'traffic_commute', categoryName: '通勤交通/加油', categoryIcon: '🚇', tag: 'need', accountId: 'acc_bank_main', accountName: '台幣主要活存 (薪轉/日常)', note: '定期票與日常通勤' }
-      ];
+      const DEFAULT_TRANSACTIONS = [];
 
       function loadAppData() {
         try {
           const raw = localStorage.getItem(STORAGE_KEY);
           if (!raw) {
-            const initial = { version: '1.0', accounts: DEFAULT_ACCOUNTS, transactions: DEFAULT_TRANSACTIONS };
+            const initial = { version: '2.0', accounts: DEFAULT_ACCOUNTS, transactions: DEFAULT_TRANSACTIONS };
             saveAppData(initial);
             return initial;
           }
           return JSON.parse(raw);
         } catch (e) {
-          return { version: '1.0', accounts: DEFAULT_ACCOUNTS, transactions: DEFAULT_TRANSACTIONS };
+          return { version: '2.0', accounts: DEFAULT_ACCOUNTS, transactions: DEFAULT_TRANSACTIONS };
         }
       }
 
@@ -595,6 +656,94 @@
           want: { amount: wantExpense, percent: wantPercent },
           invest: { amount: investExpense, percent: investPercent },
           diagnostics
+        };
+      }
+
+      // 週期財務報表演算法 (月報表 / 季報表 / 年報表)
+      function generatePeriodReport(transactions = [], periodType = 'month', periodKey = '') {
+        let periodTitle = '';
+        let filteredTx = [];
+        const now = new Date();
+        const currentYear = now.getFullYear();
+
+        if (periodType === 'month') {
+          const key = periodKey || getCurrentMonthKey();
+          const [y, m] = key.split('-');
+          periodTitle = `${y} 年 ${m} 月財務報表`;
+          filteredTx = transactions.filter(t => t.date.startsWith(key));
+        } else if (periodType === 'quarter') {
+          const qKey = periodKey || `${currentYear}-Q${Math.floor(now.getMonth() / 3) + 1}`;
+          const [y, qStr] = qKey.split('-');
+          const qNum = parseInt(qStr.replace('Q', ''), 10);
+          periodTitle = `${y} 年 第 ${qNum} 季報表`;
+          const startMonth = (qNum - 1) * 3 + 1;
+          const qMonths = [
+            `${y}-${String(startMonth).padStart(2, '0')}`,
+            `${y}-${String(startMonth + 1).padStart(2, '0')}`,
+            `${y}-${String(startMonth + 2).padStart(2, '0')}`
+          ];
+          filteredTx = transactions.filter(t => qMonths.some(m => t.date.startsWith(m)));
+        } else if (periodType === 'year') {
+          const yKey = periodKey || String(currentYear);
+          periodTitle = `${yKey} 年度財務總報表`;
+          filteredTx = transactions.filter(t => t.date.startsWith(yKey));
+        }
+
+        let totalIncome = 0, totalExpense = 0, needExpense = 0, wantExpense = 0, investExpense = 0;
+        let esunSpent = 0, fubonSpent = 0;
+        const categoryMap = {};
+
+        filteredTx.forEach(tx => {
+          const amt = Number(tx.amount || 0);
+          if (tx.type === 'income') {
+            totalIncome += amt;
+          } else if (tx.type === 'expense') {
+            totalExpense += amt;
+            if (tx.tag === 'need') needExpense += amt;
+            else if (tx.tag === 'want') wantExpense += amt;
+            else if (tx.tag === 'invest') investExpense += amt;
+
+            if (tx.accountId === 'card_esun') esunSpent += amt;
+            if (tx.accountId === 'card_fubon') fubonSpent += amt;
+
+            const catName = tx.categoryName || '其他';
+            const catIcon = tx.categoryIcon || '💸';
+            if (!categoryMap[catName]) categoryMap[catName] = { name: catName, icon: catIcon, amount: 0, tag: tx.tag };
+            categoryMap[catName].amount += amt;
+          }
+        });
+
+        const netSavings = totalIncome - totalExpense;
+        const savingsRate = totalIncome > 0 ? Math.max(0, (netSavings / totalIncome) * 100) : 0;
+        const needPercent = totalExpense > 0 ? (needExpense / totalExpense) * 100 : 0;
+        const wantPercent = totalExpense > 0 ? (wantExpense / totalExpense) * 100 : 0;
+        const investPercent = totalExpense > 0 ? (investExpense / totalExpense) * 100 : 0;
+
+        const topCategories = Object.values(categoryMap)
+          .sort((a, b) => b.amount - a.amount)
+          .slice(0, 5)
+          .map(c => ({
+            ...c,
+            percent: totalExpense > 0 ? (c.amount / totalExpense) * 100 : 0
+          }));
+
+        return {
+          periodType,
+          periodTitle,
+          totalIncome,
+          totalExpense,
+          netSavings,
+          savingsRate,
+          needExpense,
+          needPercent,
+          wantExpense,
+          wantPercent,
+          investExpense,
+          investPercent,
+          esunSpent,
+          fubonSpent,
+          topCategories,
+          transactionCount: filteredTx.length
         };
       }
 
@@ -1032,6 +1181,17 @@
         document.getElementById('daily-wisdom-quote').textContent = `“${randQuote.quote}”`;
         document.getElementById('daily-wisdom-author').textContent = `—— ${randQuote.author}`;
 
+        // 手機模擬視圖切換按鈕
+        const btnToggleMobile = document.getElementById('btn-toggle-mobile-view');
+        if (btnToggleMobile) {
+          btnToggleMobile.addEventListener('click', () => {
+            document.body.classList.toggle('preview-mobile-mode');
+            const isMobile = document.body.classList.contains('preview-mobile-mode');
+            btnToggleMobile.innerHTML = isMobile ? '🖥️ 電腦視圖' : '📱 手機視圖';
+            showToast(isMobile ? '已切換為手機模擬畫面 (414px)' : '已切換為全螢幕電腦視圖', 'success');
+          });
+        }
+
         // 記帳 Modal 開關
         document.getElementById('btn-quick-record-trigger').addEventListener('click', () => openEntryModal());
         document.getElementById('btn-quick-add-header').addEventListener('click', () => openEntryModal());
@@ -1048,7 +1208,7 @@
           });
         });
 
-        // 類型切換
+        // 類型切換 (支出 / 收入 / 轉帳)
         document.querySelectorAll('.type-toggle-btn').forEach(btn => {
           btn.addEventListener('click', () => {
             document.querySelectorAll('.type-toggle-btn').forEach(b => b.classList.remove('active'));
@@ -1057,7 +1217,49 @@
             currentEntryState.type = type;
 
             const tagGroup = document.getElementById('group-tag-select');
+            const accountGroup = document.getElementById('group-account-select');
+            const categoryGroup = document.getElementById('group-category-select');
+            const transferGroup = document.getElementById('group-transfer-fields');
             const categoryHint = document.getElementById('selected-category-hint');
+
+            if (type === 'transfer') {
+              if (tagGroup) tagGroup.style.display = 'none';
+              if (accountGroup) accountGroup.style.display = 'none';
+              if (categoryGroup) categoryGroup.style.display = 'none';
+              if (transferGroup) transferGroup.style.display = 'block';
+
+              currentEntryState.tag = 'transfer';
+              currentEntryState.categoryId = 'transfer';
+              currentEntryState.categoryName = '帳戶內部轉帳';
+              currentEntryState.categoryIcon = '🔄';
+
+              const fromSelect = document.getElementById('select-transfer-from');
+              const toSelect = document.getElementById('select-transfer-to');
+              if (fromSelect && toSelect) {
+                fromSelect.innerHTML = appState.accounts.map(a => `<option value="${a.id}">${a.name} (${formatCurrency(a.balance)})</option>`).join('');
+                toSelect.innerHTML = appState.accounts.map(a => `<option value="${a.id}">${a.name} (${formatCurrency(a.balance)})</option>`).join('');
+                fromSelect.value = 'acc_bank_main';
+                toSelect.value = 'acc_emergency';
+              }
+
+              document.querySelectorAll('[data-transfer-preset]').forEach(pBtn => {
+                pBtn.onclick = () => {
+                  const preset = pBtn.dataset.transferPreset;
+                  fromSelect.value = 'acc_bank_main';
+                  if (preset === 'emergency') toSelect.value = 'acc_emergency';
+                  if (preset === 'invest') toSelect.value = 'acc_invest';
+                  if (preset === 'esun') toSelect.value = 'card_esun';
+                  if (preset === 'fubon') toSelect.value = 'card_fubon';
+                  showToast(`已套用：${pBtn.textContent}`, 'success');
+                };
+              });
+              return;
+            }
+
+            if (transferGroup) transferGroup.style.display = 'none';
+            if (categoryGroup) categoryGroup.style.display = 'block';
+            if (accountGroup) accountGroup.style.display = 'block';
+
             if (type === 'income') {
               currentEntryState.tag = 'income';
               if (tagGroup) tagGroup.style.display = 'none';
@@ -1082,10 +1284,18 @@
           });
         });
 
-        // 輸入金額檢查
-        document.getElementById('input-amount').addEventListener('input', checkCreditRiskOnInput);
+        // 輸入金額檢查與千分位即時大字預覽
+        const inputAmount = document.getElementById('input-amount');
+        const previewDisplay = document.getElementById('amount-preview-display');
+        inputAmount.addEventListener('input', () => {
+          const val = Number(inputAmount.value) || 0;
+          if (previewDisplay) {
+            previewDisplay.textContent = formatCurrency(val);
+          }
+          checkCreditRiskOnInput();
+        });
 
-        // 提交記帳
+        // 提交記帳 (含轉帳與收支)
         document.getElementById('btn-submit-entry').addEventListener('click', () => {
           const amtInput = document.getElementById('input-amount');
           const amount = Number(amtInput.value);
@@ -1098,6 +1308,49 @@
           const dateInput = document.getElementById('input-date').value || new Date().toISOString().split('T')[0];
           const noteInput = document.getElementById('input-note').value.trim();
 
+          // 處理轉帳
+          if (currentEntryState.type === 'transfer') {
+            const fromId = document.getElementById('select-transfer-from').value;
+            const toId = document.getElementById('select-transfer-to').value;
+            if (fromId === toId) {
+              showToast('轉出與轉入帳戶不能相同！', 'error');
+              return;
+            }
+
+            const fromAcc = appState.accounts.find(a => a.id === fromId);
+            const toAcc = appState.accounts.find(a => a.id === toId);
+
+            if (fromAcc && toAcc) {
+              if (fromAcc.type === 'credit') fromAcc.balance = Number(fromAcc.balance || 0) + amount;
+              else fromAcc.balance = Number(fromAcc.balance || 0) - amount;
+
+              if (toAcc.type === 'credit') toAcc.balance = Math.max(0, Number(toAcc.balance || 0) - amount);
+              else toAcc.balance = Number(toAcc.balance || 0) + amount;
+
+              const newTx = {
+                id: `tx_transfer_${Date.now()}`,
+                type: 'transfer',
+                amount: amount,
+                categoryId: 'transfer',
+                categoryName: `轉帳：${fromAcc.name} ➔ ${toAcc.name}`,
+                categoryIcon: '🔄',
+                tag: 'transfer',
+                accountId: fromAcc.id,
+                accountName: fromAcc.name,
+                date: dateInput,
+                note: noteInput ? noteInput : `內部資金調配`
+              };
+
+              appState.transactions.unshift(newTx);
+              saveAppData(appState);
+              document.getElementById('modal-entry').classList.remove('active');
+              renderDashboard();
+              showToast(`🎉 成功完成轉帳 ${formatCurrency(amount)}！`, 'success');
+              return;
+            }
+          }
+
+          // 常規收支
           const newTx = {
             id: `tx_${Date.now()}`,
             type: currentEntryState.type,
@@ -1232,6 +1485,198 @@
           pendingPayCard = null;
         });
 
+        // =========================================================================
+        // 財務報表分析中心 (月報表 / 季報表 / 年報表)
+        // =========================================================================
+        let currentReportType = 'month';
+        let currentReportKey = getCurrentMonthKey();
+
+        function populateReportPeriodSelect(type) {
+          const select = document.getElementById('select-report-period');
+          const now = new Date();
+          const curY = now.getFullYear();
+          select.innerHTML = '';
+
+          if (type === 'month') {
+            // 最近 12 個月
+            for (let i = 0; i < 12; i++) {
+              const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+              const y = d.getFullYear();
+              const m = String(d.getMonth() + 1).padStart(2, '0');
+              const key = `${y}-${m}`;
+              const opt = document.createElement('option');
+              opt.value = key;
+              opt.textContent = `${y} 年 ${m} 月`;
+              select.appendChild(opt);
+            }
+          } else if (type === 'quarter') {
+            // 最近 6 季
+            const curQ = Math.floor(now.getMonth() / 3) + 1;
+            for (let i = 0; i < 6; i++) {
+              let q = curQ - i;
+              let y = curY;
+              while (q <= 0) {
+                q += 4;
+                y -= 1;
+              }
+              const key = `${y}-Q${q}`;
+              const opt = document.createElement('option');
+              opt.value = key;
+              opt.textContent = `${y} 年 第 ${q} 季`;
+              select.appendChild(opt);
+            }
+          } else if (type === 'year') {
+            // 最近 3 年
+            for (let i = 0; i < 3; i++) {
+              const y = curY - i;
+              const key = String(y);
+              const opt = document.createElement('option');
+              opt.value = key;
+              opt.textContent = `${y} 年度`;
+              select.appendChild(opt);
+            }
+          }
+          currentReportKey = select.value;
+        }
+
+        function renderReportsCenter(type = currentReportType, key = currentReportKey) {
+          currentReportType = type;
+          currentReportKey = key;
+          const container = document.getElementById('report-content-container');
+          const report = generatePeriodReport(appState.transactions, type, key);
+
+          const hasData = report.transactionCount > 0;
+
+          container.innerHTML = `
+            <!-- 報表頂部概要標題 -->
+            <div style="margin-bottom: 14px; text-align: center;">
+              <h4 style="font-size: 1.1rem; color: #FFFFFF; font-weight: 800;">${report.periodTitle}</h4>
+              <span style="font-size: 0.75rem; color: var(--text-muted);">共統計 ${report.transactionCount} 筆財務明細</span>
+            </div>
+
+            <!-- 4 大關鍵數據指標卡片 -->
+            <div class="report-summary-grid">
+              <div class="report-stat-box">
+                <div class="report-stat-label">💰 期間總收入</div>
+                <div class="report-stat-val text-positive">${formatCurrency(report.totalIncome)}</div>
+              </div>
+              <div class="report-stat-box">
+                <div class="report-stat-label">💸 期間總支出</div>
+                <div class="report-stat-val text-negative">${formatCurrency(report.totalExpense)}</div>
+              </div>
+              <div class="report-stat-box">
+                <div class="report-stat-label">🛡️ 淨儲蓄累積</div>
+                <div class="report-stat-val ${report.netSavings >= 0 ? 'text-positive' : 'text-negative'}">
+                  ${formatCurrency(report.netSavings)}
+                </div>
+              </div>
+              <div class="report-stat-box">
+                <div class="report-stat-label">🚀 期間儲蓄率</div>
+                <div class="report-stat-val text-invest">${report.savingsRate.toFixed(1)}%</div>
+              </div>
+            </div>
+
+            <!-- 50/30/20 資產配置診斷條 -->
+            <div class="glass-panel" style="padding: 14px; margin-bottom: 14px; background: rgba(255,255,255,0.02);">
+              <div style="font-size: 0.85rem; font-weight: 700; color: #FFF; margin-bottom: 8px;">
+                📊 50/30/20 配置實際達成情況
+              </div>
+              <div style="display: flex; flex-direction: column; gap: 8px; font-size: 0.78rem;">
+                <div>
+                  <div style="display: flex; justify-content: space-between; margin-bottom: 2px;">
+                    <span style="color: #A5B4FC;">🏠 50% 必要需求開銷</span>
+                    <strong>${formatCurrency(report.needExpense)} (${report.needPercent.toFixed(1)}%)</strong>
+                  </div>
+                  <div class="progress-track"><div class="progress-fill" style="width: ${Math.min(100, report.needPercent)}%; background: #6366F1;"></div></div>
+                </div>
+
+                <div>
+                  <div style="display: flex; justify-content: space-between; margin-bottom: 2px;">
+                    <span style="color: #FDA4AF;">🛍️ 30% 彈性慾望享樂</span>
+                    <strong>${formatCurrency(report.wantExpense)} (${report.wantPercent.toFixed(1)}%)</strong>
+                  </div>
+                  <div class="progress-track"><div class="progress-fill" style="width: ${Math.min(100, report.wantPercent)}%; background: #F43F5E;"></div></div>
+                </div>
+
+                <div>
+                  <div style="display: flex; justify-content: space-between; margin-bottom: 2px;">
+                    <span style="color: #DDD6FE;">📈 20% 投資與資產儲備</span>
+                    <strong>${formatCurrency(report.investExpense)} (${report.investPercent.toFixed(1)}%)</strong>
+                  </div>
+                  <div class="progress-track"><div class="progress-fill" style="width: ${Math.min(100, report.investPercent)}%; background: #8B5CF6;"></div></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 雙信用卡刷卡風控統計 -->
+            <div class="glass-panel" style="padding: 14px; margin-bottom: 14px; background: rgba(255,255,255,0.02);">
+              <div style="font-size: 0.85rem; font-weight: 700; color: #FFF; margin-bottom: 8px;">
+                💳 雙信用卡期間刷卡統計
+              </div>
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                <div style="background: rgba(5,150,105,0.1); border: 1px solid rgba(5,150,105,0.3); border-radius: var(--radius-sm); padding: 10px;">
+                  <div style="font-size: 0.72rem; color: #6EE7B7;">玉山銀行信用卡</div>
+                  <div style="font-size: 1rem; font-weight: 800; color: #FFF; margin-top: 2px;">${formatCurrency(report.esunSpent)}</div>
+                </div>
+                <div style="background: rgba(2,132,199,0.1); border: 1px solid rgba(2,132,199,0.3); border-radius: var(--radius-sm); padding: 10px;">
+                  <div style="font-size: 0.72rem; color: #7DD3FC;">富邦銀行信用卡</div>
+                  <div style="font-size: 1rem; font-weight: 800; color: #FFF; margin-top: 2px;">${formatCurrency(report.fubonSpent)}</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 開銷排行榜 Top 5 -->
+            <div class="glass-panel" style="padding: 14px; background: rgba(255,255,255,0.02);">
+              <div style="font-size: 0.85rem; font-weight: 700; color: #FFF; margin-bottom: 4px;">
+                🏆 支出分類排行榜 (Top 5)
+              </div>
+              ${report.topCategories.length > 0 ? `
+                <div class="ranking-list">
+                  ${report.topCategories.map((c, idx) => `
+                    <div class="ranking-item">
+                      <div class="ranking-left">
+                        <span class="rank-badge top-${idx + 1}">${idx + 1}</span>
+                        <span>${c.icon} ${c.name}</span>
+                      </div>
+                      <div style="font-weight: 700; font-size: 0.85rem; color: #FFF;">
+                        ${formatCurrency(c.amount)} <span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 400;">(${c.percent.toFixed(1)}%)</span>
+                      </div>
+                    </div>
+                  `).join('')}
+                </div>
+              ` : `
+                <div style="text-align: center; color: var(--text-muted); font-size: 0.78rem; padding: 16px;">
+                  此期間尚無支出紀錄
+                </div>
+              `}
+            </div>
+          `;
+        }
+
+        // 開啟財務報表 Modal
+        const modalReports = document.getElementById('modal-reports');
+        document.getElementById('btn-open-reports-modal').addEventListener('click', () => {
+          populateReportPeriodSelect(currentReportType);
+          renderReportsCenter(currentReportType, currentReportKey);
+          modalReports.classList.add('active');
+        });
+
+        // 報表週期 Tab 切換 (月/季/年)
+        document.querySelectorAll('.report-tab-btn').forEach(btn => {
+          btn.addEventListener('click', () => {
+            document.querySelectorAll('.report-tab-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            const type = btn.dataset.reportType;
+            populateReportPeriodSelect(type);
+            renderReportsCenter(type, currentReportKey);
+          });
+        });
+
+        // 報表週期下拉選單變更
+        document.getElementById('select-report-period').addEventListener('change', (e) => {
+          renderReportsCenter(currentReportType, e.target.value);
+        });
+
         // 備份功能
         const modalBackup = document.getElementById('modal-backup');
         document.getElementById('btn-open-backup-modal').addEventListener('click', () => modalBackup.classList.add('active'));
@@ -1268,11 +1713,11 @@
         });
 
         document.getElementById('btn-reset-demo').addEventListener('click', () => {
-          if (confirm('確定要重設為初始狀態嗎？')) {
+          if (confirm('確定要清空並重設為空白初始狀態嗎？')) {
             localStorage.removeItem(STORAGE_KEY);
             appState = loadAppData();
             renderDashboard();
-            showToast('已重設為初始資料！', 'success');
+            showToast('已重設為全部歸零的乾淨狀態！', 'success');
             modalBackup.classList.remove('active');
           }
         });

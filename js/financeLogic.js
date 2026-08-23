@@ -224,18 +224,109 @@ export function calculateEmergencyFundHealth(emergencyBalance, monthlyNeedExpens
 }
 
 /**
- * 收入入帳時智能分流試算 (50/30/20 先支付給未來的自己)
+ * 產生指定週期（月報表 / 季報表 / 年報表）的完整財務分析數據
+ * 
+ * @param {Array} transactions 交易記錄陣列
+ * @param {string} periodType 'month' | 'quarter' | 'year'
+ * @param {string} periodKey 例如 '2026-08'、'2026-Q3'、'2026'
  */
-export function calculateIncomeSplit(incomeAmount) {
-  const amount = Number(incomeAmount) || 0;
-  return {
-    total: amount,
-    need: Math.round(amount * 0.50),     // 50% 生活必備
-    want: Math.round(amount * 0.30),     // 30% 彈性享樂
-    invest: Math.round(amount * 0.20),   // 20% 投資與安全儲備
-    investDetails: {
-      emergencyPortion: Math.round(amount * 0.10), // 10% 充實預備金 (若未滿6個月)
-      futureInvestPortion: Math.round(amount * 0.10) // 10% ETF/長期投資
+export function generatePeriodReport(transactions = [], periodType = 'month', periodKey = '') {
+  let periodTitle = '';
+  let filteredTx = [];
+
+  const now = new Date();
+  const currentYear = now.getFullYear();
+
+  if (periodType === 'month') {
+    const key = periodKey || getCurrentMonthKey();
+    const [y, m] = key.split('-');
+    periodTitle = `${y} 年 ${m} 月報表`;
+    filteredTx = transactions.filter(t => t.date.startsWith(key));
+  } else if (periodType === 'quarter') {
+    // 例如 '2026-Q3'
+    const qKey = periodKey || `${currentYear}-Q${Math.floor(now.getMonth() / 3) + 1}`;
+    const [y, qStr] = qKey.split('-');
+    const qNum = parseInt(qStr.replace('Q', ''), 10);
+    periodTitle = `${y} 年 第 ${qNum} 季報表`;
+
+    const startMonth = (qNum - 1) * 3 + 1; // 1, 4, 7, 10
+    const quarterMonths = [
+      `${y}-${String(startMonth).padStart(2, '0')}`,
+      `${y}-${String(startMonth + 1).padStart(2, '0')}`,
+      `${y}-${String(startMonth + 2).padStart(2, '0')}`
+    ];
+    filteredTx = transactions.filter(t => quarterMonths.some(m => t.date.startsWith(m)));
+  } else if (periodType === 'year') {
+    const yKey = periodKey || String(currentYear);
+    periodTitle = `${yKey} 年度財務總報表`;
+    filteredTx = transactions.filter(t => t.date.startsWith(yKey));
+  }
+
+  let totalIncome = 0;
+  let totalExpense = 0;
+  let needExpense = 0;
+  let wantExpense = 0;
+  let investExpense = 0;
+  let esunSpent = 0;
+  let fubonSpent = 0;
+
+  const categoryMap = {};
+
+  filteredTx.forEach(tx => {
+    const amt = Number(tx.amount || 0);
+    if (tx.type === 'income') {
+      totalIncome += amt;
+    } else if (tx.type === 'expense') {
+      totalExpense += amt;
+      if (tx.tag === 'need') needExpense += amt;
+      else if (tx.tag === 'want') wantExpense += amt;
+      else if (tx.tag === 'invest') investExpense += amt;
+
+      // 統計信用卡刷卡
+      if (tx.accountId === 'card_esun') esunSpent += amt;
+      if (tx.accountId === 'card_fubon') fubonSpent += amt;
+
+      // 統計分類排行榜
+      const catName = tx.categoryName || '其他';
+      const catIcon = tx.categoryIcon || '💸';
+      if (!categoryMap[catName]) {
+        categoryMap[catName] = { name: catName, icon: catIcon, amount: 0, tag: tx.tag };
+      }
+      categoryMap[catName].amount += amt;
     }
+  });
+
+  const netSavings = totalIncome - totalExpense;
+  const savingsRate = totalIncome > 0 ? Math.max(0, (netSavings / totalIncome) * 100) : 0;
+  const needPercent = totalExpense > 0 ? (needExpense / totalExpense) * 100 : 0;
+  const wantPercent = totalExpense > 0 ? (wantExpense / totalExpense) * 100 : 0;
+  const investPercent = totalExpense > 0 ? (investExpense / totalExpense) * 100 : 0;
+
+  // 排序前 5 大開銷分類
+  const topCategories = Object.values(categoryMap)
+    .sort((a, b) => b.amount - a.amount)
+    .slice(0, 5)
+    .map(c => ({
+      ...c,
+      percent: totalExpense > 0 ? (c.amount / totalExpense) * 100 : 0
+    }));
+
+  return {
+    periodType,
+    periodTitle,
+    totalIncome,
+    totalExpense,
+    netSavings,
+    savingsRate,
+    needExpense,
+    needPercent,
+    wantExpense,
+    wantPercent,
+    investExpense,
+    investPercent,
+    esunSpent,
+    fubonSpent,
+    topCategories,
+    transactionCount: filteredTx.length
   };
 }

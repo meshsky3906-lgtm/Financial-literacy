@@ -123,92 +123,94 @@ body {
   border-color: var(--surface-border-bright);
 }
 
-/* 頂部導航列 */
+/* 頂部導航列（獨立大器標題佈局） */
 .navbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 12px 16px;
-  margin-bottom: 16px;
+  padding: 14px 16px;
+  margin-bottom: 18px;
   border-radius: var(--radius-lg);
 }
 
 @media (min-width: 768px) {
   .navbar {
-    padding: 16px 24px;
+    padding: 18px 24px;
     margin-bottom: 24px;
     border-radius: var(--radius-xl);
   }
 }
 
+.navbar-top-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
 .brand-logo {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   text-decoration: none;
   color: var(--text-primary);
-  min-width: 0;
 }
 
 .logo-icon-wrap {
-  width: 38px;
-  height: 38px;
+  width: 42px;
+  height: 42px;
   border-radius: var(--radius-md);
   background: linear-gradient(135deg, #6366F1, #8B5CF6, #10B981);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 18px;
+  font-size: 20px;
   box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
   flex-shrink: 0;
 }
 
+.brand-text-wrap {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
 .brand-name {
-  font-size: 1.1rem;
+  font-size: 1.2rem;
   font-weight: 800;
   letter-spacing: -0.5px;
   background: linear-gradient(90deg, #FFFFFF, #CBD5E1);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  line-height: 1.2;
 }
 
 @media (min-width: 768px) {
   .logo-icon-wrap {
-    width: 44px;
-    height: 44px;
-    font-size: 22px;
+    width: 48px;
+    height: 48px;
+    font-size: 24px;
   }
   .brand-name {
-    font-size: 1.35rem;
+    font-size: 1.45rem;
   }
 }
 
 .brand-badge {
-  font-size: 0.68rem;
+  font-size: 0.7rem;
   font-weight: 700;
-  padding: 2px 7px;
+  padding: 2px 8px;
   border-radius: var(--radius-full);
   background: rgba(99, 102, 241, 0.2);
   color: #A5B4FC;
   border: 1px solid rgba(99, 102, 241, 0.4);
-  margin-left: 4px;
-  display: none;
-}
-
-@media (min-width: 480px) {
-  .brand-badge {
-    display: inline-block;
-  }
+  white-space: nowrap;
 }
 
 .nav-actions {
   display: flex;
   align-items: center;
   gap: 8px;
-  flex-shrink: 0;
+  margin-left: auto;
 }
 
 /* 按鈕系統 */
@@ -369,4 +371,39 @@ body {
 ::-webkit-scrollbar-thumb {
   background: rgba(255, 255, 255, 0.15);
   border-radius: 4px;
+}
+
+/* ==========================================================================
+   8. 電腦端一鍵切換「手機模擬視圖」(Desktop Mobile Simulator Frame)
+   ========================================================================== */
+body.preview-mobile-mode {
+  background: #020617;
+  padding-bottom: 20px;
+}
+
+body.preview-mobile-mode .app-container {
+  max-width: 414px;
+  margin: 20px auto;
+  border-radius: 40px;
+  border: 4px solid #334155;
+  box-shadow: 0 0 50px rgba(0, 0, 0, 0.9), 0 0 0 10px #0F172A;
+  background: var(--bg-gradient);
+  min-height: 840px;
+  padding: 16px 12px 100px 12px;
+  position: relative;
+}
+
+body.preview-mobile-mode .bottom-dock {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 370px;
+  max-width: 90%;
+  justify-content: center;
+}
+
+body.preview-mobile-mode .btn-quick-record {
+  width: 100%;
+  justify-content: center;
 }

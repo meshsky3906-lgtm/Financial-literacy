@@ -8,10 +8,11 @@ import {
   renderTransactionLedger, 
   renderCategorySelectGrid, 
   renderAccountSelectOptions, 
+  renderReportsModal,
   showToast, 
   formatCurrency 
 } from './uiRenderer.js';
-import { calculateIncomeSplit, getCurrentMonthKey } from './financeLogic.js';
+import { calculateIncomeSplit, getCurrentMonthKey, generatePeriodReport } from './financeLogic.js';
 import { DEFAULT_EXPENSE_CATEGORIES, DEFAULT_INCOME_CATEGORIES } from './categories.js';
 
 // 全域應用程式狀態
@@ -106,10 +107,26 @@ function setupEventListeners() {
     });
   });
 
-  // --- 金額輸入即時檢查（信用風控警戒） ---
+  // --- 手機模擬視圖切換 ---
+  const btnToggleMobile = document.getElementById('btn-toggle-mobile-view');
+  if (btnToggleMobile) {
+    btnToggleMobile.addEventListener('click', () => {
+      document.body.classList.toggle('preview-mobile-mode');
+      const isMobile = document.body.classList.contains('preview-mobile-mode');
+      btnToggleMobile.innerHTML = isMobile ? '🖥️ 電腦視圖' : '📱 手機視圖';
+      showToast(isMobile ? '已切換為手機模擬畫面 (414px)' : '已切換為全螢幕電腦視圖', 'success');
+    });
+  }
+
+  // --- 金額輸入即時檢查（信用風控警戒 + 千分位動態預覽） ---
   const inputAmount = document.getElementById('input-amount');
+  const previewDisplay = document.getElementById('amount-preview-display');
   if (inputAmount) {
     inputAmount.addEventListener('input', () => {
+      const val = Number(inputAmount.value) || 0;
+      if (previewDisplay) {
+        previewDisplay.textContent = formatCurrency(val);
+      }
       checkCreditRiskOnInput();
     });
   }
@@ -160,6 +177,90 @@ function setupEventListeners() {
     });
   }
 
+  // --- 財務報表分析中心 Modal ---
+  let currentReportType = 'month';
+  let currentReportKey = getCurrentMonthKey();
+
+  function populateReportPeriodSelect(type) {
+    const select = document.getElementById('select-report-period');
+    if (!select) return;
+    const now = new Date();
+    const curY = now.getFullYear();
+    select.innerHTML = '';
+
+    if (type === 'month') {
+      for (let i = 0; i < 12; i++) {
+        const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+        const y = d.getFullYear();
+        const m = String(d.getMonth() + 1).padStart(2, '0');
+        const key = `${y}-${m}`;
+        const opt = document.createElement('option');
+        opt.value = key;
+        opt.textContent = `${y} 年 ${m} 月`;
+        select.appendChild(opt);
+      }
+    } else if (type === 'quarter') {
+      const curQ = Math.floor(now.getMonth() / 3) + 1;
+      for (let i = 0; i < 6; i++) {
+        let q = curQ - i;
+        let y = curY;
+        while (q <= 0) {
+          q += 4;
+          y -= 1;
+        }
+        const key = `${y}-Q${q}`;
+        const opt = document.createElement('option');
+        opt.value = key;
+        opt.textContent = `${y} 年 第 ${q} 季`;
+        select.appendChild(opt);
+      }
+    } else if (type === 'year') {
+      for (let i = 0; i < 3; i++) {
+        const y = curY - i;
+        const key = String(y);
+        const opt = document.createElement('option');
+        opt.value = key;
+        opt.textContent = `${y} 年度`;
+        select.appendChild(opt);
+      }
+    }
+    currentReportKey = select.value;
+  }
+
+  function updateReportsView(type = currentReportType, key = currentReportKey) {
+    currentReportType = type;
+    currentReportKey = key;
+    const reportData = generatePeriodReport(appState.transactions, type, key);
+    renderReportsModal(reportData);
+  }
+
+  const btnOpenReports = document.getElementById('btn-open-reports-modal');
+  const modalReports = document.getElementById('modal-reports');
+  if (btnOpenReports && modalReports) {
+    btnOpenReports.addEventListener('click', () => {
+      populateReportPeriodSelect(currentReportType);
+      updateReportsView(currentReportType, currentReportKey);
+      modalReports.classList.add('active');
+    });
+  }
+
+  document.querySelectorAll('.report-tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.report-tab-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const type = btn.dataset.reportType;
+      populateReportPeriodSelect(type);
+      updateReportsView(type, currentReportKey);
+    });
+  });
+
+  const selectReportPeriod = document.getElementById('select-report-period');
+  if (selectReportPeriod) {
+    selectReportPeriod.addEventListener('change', (e) => {
+      updateReportsView(currentReportType, e.target.value);
+    });
+  }
+
   // --- 備份管理 Modal ---
   const btnOpenBackup = document.getElementById('btn-open-backup-modal');
   const modalBackup = document.getElementById('modal-backup');
@@ -200,14 +301,14 @@ function setupEventListeners() {
     });
   }
 
-  // 重設為初始示範資料
+  // 重設為乾淨空白初始狀態
   const btnReset = document.getElementById('btn-reset-demo');
   if (btnReset) {
     btnReset.addEventListener('click', () => {
-      if (confirm('確定要重設為初始示範資料嗎？所有手動變更將被恢復為預設設定。')) {
+      if (confirm('確定要清空並重設為全部歸零的空白狀態嗎？')) {
         appState = resetToDefaultData();
         renderDashboard(appState);
-        showToast('已重設為包含玉山、富邦與 50/30/20 的初始狀態！', 'success');
+        showToast('已重設為全部歸零的乾淨狀態！', 'success');
         modalBackup.classList.remove('active');
       }
     });
@@ -249,7 +350,31 @@ function handleEntryTypeChange(type) {
   currentEntryState.type = type;
   const tagGroup = document.getElementById('group-tag-select');
   const accountGroup = document.getElementById('group-account-select');
+  const categoryGroup = document.getElementById('group-category-select');
+  const transferGroup = document.getElementById('group-transfer-fields');
   const categoryHint = document.getElementById('selected-category-hint');
+
+  if (type === 'transfer') {
+    // 轉帳模式：隱藏消費類別與標籤，顯示雙帳戶轉移區塊
+    if (tagGroup) tagGroup.style.display = 'none';
+    if (accountGroup) accountGroup.style.display = 'none';
+    if (categoryGroup) categoryGroup.style.display = 'none';
+    if (transferGroup) transferGroup.style.display = 'block';
+
+    currentEntryState.tag = 'transfer';
+    currentEntryState.categoryId = 'transfer';
+    currentEntryState.categoryName = '帳戶內部轉帳';
+    currentEntryState.categoryIcon = '🔄';
+
+    // 填充轉出與轉入下拉選單
+    setupTransferSelects();
+    return;
+  }
+
+  // 支出或收入模式：顯示常規選擇區塊
+  if (transferGroup) transferGroup.style.display = 'none';
+  if (categoryGroup) categoryGroup.style.display = 'block';
+  if (accountGroup) accountGroup.style.display = 'block';
 
   if (type === 'income') {
     currentEntryState.tag = 'income';
@@ -268,7 +393,6 @@ function handleEntryTypeChange(type) {
 
     if (type === 'expense' && selectedCat.defaultTag) {
       currentEntryState.tag = selectedCat.defaultTag;
-      // 同步 UI 標籤按鈕高亮
       document.querySelectorAll('.tag-select-btn').forEach(btn => {
         btn.classList.toggle('active', btn.dataset.tag === selectedCat.defaultTag);
       });
@@ -290,7 +414,6 @@ function handleEntryTypeChange(type) {
   }
 
   // 渲染帳戶選擇器
-  // 支出預設玉山卡或富邦卡，收入預設活存帳戶
   const defaultAccId = type === 'income' ? 'acc_bank_main' : 'card_esun';
   currentEntryState.accountId = defaultAccId;
   const targetAcc = appState.accounts.find(a => a.id === defaultAccId);
@@ -304,11 +427,51 @@ function handleEntryTypeChange(type) {
 }
 
 /**
+ * 初始化轉帳雙帳戶選擇與快捷情境按鈕
+ */
+function setupTransferSelects() {
+  const fromSelect = document.getElementById('select-transfer-from');
+  const toSelect = document.getElementById('select-transfer-to');
+  if (!fromSelect || !toSelect) return;
+
+  const accounts = appState.accounts;
+  fromSelect.innerHTML = accounts.map(a => `
+    <option value="${a.id}">${a.name} (${formatCurrency(a.balance)})</option>
+  `).join('');
+
+  toSelect.innerHTML = accounts.map(a => `
+    <option value="${a.id}">${a.name} (${formatCurrency(a.balance)})</option>
+  `).join('');
+
+  // 預設轉出為主要活存，轉入為緊急預備金
+  fromSelect.value = 'acc_bank_main';
+  toSelect.value = 'acc_emergency';
+
+  // 綁定快捷情境按鈕
+  document.querySelectorAll('[data-transfer-preset]').forEach(btn => {
+    btn.onclick = () => {
+      const preset = btn.dataset.transferPreset;
+      fromSelect.value = 'acc_bank_main';
+      if (preset === 'emergency') toSelect.value = 'acc_emergency';
+      if (preset === 'invest') toSelect.value = 'acc_invest';
+      if (preset === 'esun') toSelect.value = 'card_esun';
+      if (preset === 'fubon') toSelect.value = 'card_fubon';
+      showToast(`已套用快捷情境：${btn.textContent}`, 'success');
+    };
+  });
+}
+
+/**
  * 即時檢查刷卡金額是否接近或超過 $18,000 (30% 安全紅線)
  */
 function checkCreditRiskOnInput() {
   const badge = document.getElementById('credit-warning-badge');
   if (!badge) return;
+
+  if (currentEntryState.type === 'transfer') {
+    badge.style.display = 'none';
+    return;
+  }
 
   const currentAmt = Number(document.getElementById('input-amount').value) || 0;
   const currentMonth = getCurrentMonthKey();
@@ -341,7 +504,7 @@ function checkCreditRiskOnInput() {
 }
 
 /**
- * 儲存一筆新交易 (權責發生制 + 帳戶餘額同步)
+ * 儲存一筆新交易 (支援支出/收入/帳戶轉帳)
  */
 function handleSaveTransaction() {
   const amountInput = document.getElementById('input-amount');
@@ -356,6 +519,58 @@ function handleSaveTransaction() {
   const dateInput = document.getElementById('input-date').value || new Date().toISOString().split('T')[0];
   const noteInput = document.getElementById('input-note').value.trim();
 
+  // 若為內部轉帳
+  if (currentEntryState.type === 'transfer') {
+    const fromId = document.getElementById('select-transfer-from').value;
+    const toId = document.getElementById('select-transfer-to').value;
+
+    if (fromId === toId) {
+      showToast('轉出帳戶與轉入帳戶不能相同！', 'error');
+      return;
+    }
+
+    const fromAcc = appState.accounts.find(a => a.id === fromId);
+    const toAcc = appState.accounts.find(a => a.id === toId);
+
+    if (fromAcc && toAcc) {
+      // 轉出帳戶扣款
+      if (fromAcc.type === 'credit') {
+        fromAcc.balance = Number(fromAcc.balance || 0) + amount; // 信用卡預借現金或特殊扣款
+      } else {
+        fromAcc.balance = Number(fromAcc.balance || 0) - amount;
+      }
+
+      // 轉入帳戶加款 (若轉入信用卡代表繳款沖銷)
+      if (toAcc.type === 'credit') {
+        toAcc.balance = Math.max(0, Number(toAcc.balance || 0) - amount);
+      } else {
+        toAcc.balance = Number(toAcc.balance || 0) + amount;
+      }
+
+      const newTx = {
+        id: `tx_transfer_${Date.now()}`,
+        type: 'transfer',
+        amount: amount,
+        categoryId: 'transfer',
+        categoryName: `轉帳：${fromAcc.name} ➔ ${toAcc.name}`,
+        categoryIcon: '🔄',
+        tag: 'transfer',
+        accountId: fromAcc.id,
+        accountName: fromAcc.name,
+        date: dateInput,
+        note: noteInput ? noteInput : `內部資產調配 (${fromAcc.name} ➔ ${toAcc.name})`
+      };
+
+      appState.transactions.unshift(newTx);
+      saveAppData(appState);
+      document.getElementById('modal-entry').classList.remove('active');
+      renderDashboard(appState);
+      showToast(`🎉 成功完成轉帳 ${formatCurrency(amount)}！資產結構已同步。`, 'success');
+      return;
+    }
+  }
+
+  // 常規支出或收入
   const newTx = {
     id: `tx_${Date.now()}`,
     type: currentEntryState.type,
@@ -370,15 +585,12 @@ function handleSaveTransaction() {
     note: noteInput
   };
 
-  // 更新對應帳戶餘額 (信用卡增加待繳負債，活存減少現金；收入則增加活存)
   const targetAcc = appState.accounts.find(a => a.id === newTx.accountId);
   if (targetAcc) {
     if (newTx.type === 'expense') {
       if (targetAcc.type === 'credit') {
-        // 信用卡：增加待繳帳款
         targetAcc.balance = Number(targetAcc.balance || 0) + amount;
       } else {
-        // 活存/現金：減少可用餘額
         targetAcc.balance = Number(targetAcc.balance || 0) - amount;
       }
     } else if (newTx.type === 'income') {
@@ -386,18 +598,13 @@ function handleSaveTransaction() {
     }
   }
 
-  // 寫入交易陣列
   appState.transactions.unshift(newTx);
   saveAppData(appState);
 
-  // 關閉記帳 Modal
   document.getElementById('modal-entry').classList.remove('active');
-
-  // 重新渲染儀表板
   renderDashboard(appState);
   showToast(`已成功記錄【${newTx.categoryName}】${formatCurrency(amount)}！`, 'success');
 
-  // 若為較大金額之收入，彈出 50/30/20 黃金分流建議 Modal
   if (newTx.type === 'income' && amount >= 5000) {
     setTimeout(() => {
       openSplitAdvisorModal(amount);

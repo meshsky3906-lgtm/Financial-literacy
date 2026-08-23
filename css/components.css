@@ -873,45 +873,68 @@
 .type-toggle-btn.active.income { background: #10B981; color: #FFFFFF; }
 .type-toggle-btn.active.transfer { background: #6366F1; color: #FFFFFF; }
 
-/* 大金額輸入框 */
+/* 大金額輸入框（Flexbox 佈局，徹底解決數字與 $ 黏連問題） */
 .amount-input-box {
-  position: relative;
-  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.45);
+  border: 1px solid var(--surface-border);
+  border-radius: var(--radius-md);
+  padding: 10px 16px;
+  margin-bottom: 8px;
+  transition: all var(--transition-fast);
+}
+
+.amount-input-box:focus-within {
+  border-color: var(--surface-border-focus);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25);
+  background: rgba(0, 0, 0, 0.6);
 }
 
 .currency-symbol {
-  position: absolute;
-  left: 14px;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: var(--text-muted);
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: #94A3B8;
+  margin-right: 14px;
+  user-select: none;
+  flex-shrink: 0;
+  letter-spacing: 0.5px;
 }
 
 .input-large-amount {
+  flex: 1;
   width: 100%;
-  padding: 12px 14px 12px 46px;
-  background: rgba(0, 0, 0, 0.4);
-  border: 1px solid var(--surface-border);
-  border-radius: var(--radius-md);
-  font-size: 1.6rem;
+  border: none;
+  background: transparent;
+  padding: 0;
+  font-size: 1.8rem;
   font-weight: 800;
   color: #FFFFFF;
   font-family: 'Outfit', sans-serif;
   outline: none;
+  letter-spacing: 1.5px;
   -webkit-appearance: none;
+  margin: 0;
 }
 
 @media (min-width: 768px) {
   .input-large-amount {
-    font-size: 2rem;
-    padding: 14px 16px 14px 50px;
+    font-size: 2.2rem;
   }
 }
 
-.input-large-amount:focus {
-  border-color: var(--surface-border-focus);
+/* 動態金額千分位即時大字預覽條 */
+.amount-preview-hint {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.82rem;
+  color: #A5B4FC;
+  background: rgba(99, 102, 241, 0.1);
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  margin-bottom: 16px;
+  min-height: 32px;
 }
 
 /* 分類選擇網格 (手機版 4 列彈性) */
@@ -951,6 +974,60 @@
   font-weight: 500;
   color: var(--text-secondary);
   text-align: center;
+}
+
+/* 轉帳專用雙帳戶與快捷情境卡片 */
+.transfer-scene-chips {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 6px;
+  margin-bottom: 14px;
+}
+
+.scene-chip-btn {
+  padding: 6px 12px;
+  background: rgba(99, 102, 241, 0.15);
+  border: 1px solid rgba(99, 102, 241, 0.35);
+  color: #C7D2FE;
+  border-radius: var(--radius-full);
+  font-size: 0.76rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all var(--transition-fast);
+}
+
+.scene-chip-btn:hover, .scene-chip-btn:active {
+  background: rgba(99, 102, 241, 0.3);
+  border-color: #6366F1;
+  color: #FFFFFF;
+}
+
+.transfer-accounts-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.transfer-box {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--surface-border);
+  border-radius: var(--radius-md);
+  padding: 10px 12px;
+}
+
+.transfer-select {
+  width: 100%;
+  padding: 8px 10px;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--surface-border);
+  border-radius: var(--radius-sm);
+  color: #FFFFFF;
+  font-size: 0.85rem;
+  outline: none;
+  margin-top: 4px;
 }
 
 /* 支付帳戶選擇器 */
@@ -1116,3 +1193,126 @@
 .toast.success { border-color: #10B981; }
 .toast.warning { border-color: #F59E0B; }
 .toast.error { border-color: #EF4444; }
+
+/* ==========================================================================
+   8. 財務報表分析中心專用樣式 (Financial Reports Center)
+   ========================================================================== */
+.report-period-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  background: rgba(255, 255, 255, 0.04);
+  padding: 6px;
+  border-radius: var(--radius-md);
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.report-period-tabs {
+  display: flex;
+  gap: 4px;
+}
+
+.report-tab-btn {
+  padding: 6px 14px;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.report-tab-btn.active {
+  background: #6366F1;
+  color: #FFFFFF;
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.4);
+}
+
+.report-picker-select {
+  padding: 6px 12px;
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid var(--surface-border);
+  border-radius: var(--radius-sm);
+  color: #FFFFFF;
+  font-size: 0.85rem;
+  font-weight: 600;
+  outline: none;
+}
+
+.report-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+@media (min-width: 640px) {
+  .report-summary-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+  }
+}
+
+.report-stat-box {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--surface-border);
+  border-radius: var(--radius-md);
+  padding: 12px;
+  text-align: center;
+}
+
+.report-stat-label {
+  font-size: 0.72rem;
+  color: var(--text-secondary);
+  margin-bottom: 4px;
+}
+
+.report-stat-val {
+  font-size: 1.15rem;
+  font-weight: 800;
+}
+
+/* 報表前 5 大開銷分類排行榜 */
+.ranking-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.ranking-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--surface-border);
+  border-radius: var(--radius-sm);
+}
+
+.ranking-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.rank-badge {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  font-size: 0.7rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.rank-badge.top-1 { background: #F59E0B; color: #000; }
+.rank-badge.top-2 { background: #94A3B8; color: #000; }
+.rank-badge.top-3 { background: #B45309; color: #FFF; }
+

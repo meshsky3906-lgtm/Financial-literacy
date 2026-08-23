@@ -416,3 +416,116 @@ export function renderAccountSelectOptions(accounts, selectedAccountId = 'card_e
     container.appendChild(opt);
   });
 }
+
+/**
+ * 渲染財務報表分析中心內容
+ */
+export function renderReportsModal(report) {
+  const container = document.getElementById('report-content-container');
+  if (!container || !report) return;
+
+  container.innerHTML = `
+    <!-- 報表頂部概要標題 -->
+    <div style="margin-bottom: 14px; text-align: center;">
+      <h4 style="font-size: 1.1rem; color: #FFFFFF; font-weight: 800;">${report.periodTitle}</h4>
+      <span style="font-size: 0.75rem; color: var(--text-muted);">共統計 ${report.transactionCount} 筆財務明細</span>
+    </div>
+
+    <!-- 4 大關鍵數據指標卡片 -->
+    <div class="report-summary-grid">
+      <div class="report-stat-box">
+        <div class="report-stat-label">💰 期間總收入</div>
+        <div class="report-stat-val text-positive">${formatCurrency(report.totalIncome)}</div>
+      </div>
+      <div class="report-stat-box">
+        <div class="report-stat-label">💸 期間總支出</div>
+        <div class="report-stat-val text-negative">${formatCurrency(report.totalExpense)}</div>
+      </div>
+      <div class="report-stat-box">
+        <div class="report-stat-label">🛡️ 淨儲蓄累積</div>
+        <div class="report-stat-val ${report.netSavings >= 0 ? 'text-positive' : 'text-negative'}">
+          ${formatCurrency(report.netSavings)}
+        </div>
+      </div>
+      <div class="report-stat-box">
+        <div class="report-stat-label">🚀 期間儲蓄率</div>
+        <div class="report-stat-val text-invest">${report.savingsRate.toFixed(1)}%</div>
+      </div>
+    </div>
+
+    <!-- 50/30/20 資產配置診斷條 -->
+    <div class="glass-panel" style="padding: 14px; margin-bottom: 14px; background: rgba(255,255,255,0.02);">
+      <div style="font-size: 0.85rem; font-weight: 700; color: #FFF; margin-bottom: 8px;">
+        📊 50/30/20 配置實際達成情況
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 8px; font-size: 0.78rem;">
+        <div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 2px;">
+            <span style="color: #A5B4FC;">🏠 50% 必要需求開銷</span>
+            <strong>${formatCurrency(report.needExpense)} (${report.needPercent.toFixed(1)}%)</strong>
+          </div>
+          <div class="progress-track"><div class="progress-fill" style="width: ${Math.min(100, report.needPercent)}%; background: #6366F1;"></div></div>
+        </div>
+
+        <div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 2px;">
+            <span style="color: #FDA4AF;">🛍️ 30% 彈性慾望享樂</span>
+            <strong>${formatCurrency(report.wantExpense)} (${report.wantPercent.toFixed(1)}%)</strong>
+          </div>
+          <div class="progress-track"><div class="progress-fill" style="width: ${Math.min(100, report.wantPercent)}%; background: #F43F5E;"></div></div>
+        </div>
+
+        <div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 2px;">
+            <span style="color: #DDD6FE;">📈 20% 投資與資產儲備</span>
+            <strong>${formatCurrency(report.investExpense)} (${report.investPercent.toFixed(1)}%)</strong>
+          </div>
+          <div class="progress-track"><div class="progress-fill" style="width: ${Math.min(100, report.investPercent)}%; background: #8B5CF6;"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 雙信用卡刷卡風控統計 -->
+    <div class="glass-panel" style="padding: 14px; margin-bottom: 14px; background: rgba(255,255,255,0.02);">
+      <div style="font-size: 0.85rem; font-weight: 700; color: #FFF; margin-bottom: 8px;">
+        💳 雙信用卡期間刷卡統計
+      </div>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+        <div style="background: rgba(5,150,105,0.1); border: 1px solid rgba(5,150,105,0.3); border-radius: var(--radius-sm); padding: 10px;">
+          <div style="font-size: 0.72rem; color: #6EE7B7;">玉山銀行信用卡</div>
+          <div style="font-size: 1rem; font-weight: 800; color: #FFF; margin-top: 2px;">${formatCurrency(report.esunSpent)}</div>
+        </div>
+        <div style="background: rgba(2,132,199,0.1); border: 1px solid rgba(2,132,199,0.3); border-radius: var(--radius-sm); padding: 10px;">
+          <div style="font-size: 0.72rem; color: #7DD3FC;">富邦銀行信用卡</div>
+          <div style="font-size: 1rem; font-weight: 800; color: #FFF; margin-top: 2px;">${formatCurrency(report.fubonSpent)}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 開銷排行榜 Top 5 -->
+    <div class="glass-panel" style="padding: 14px; background: rgba(255,255,255,0.02);">
+      <div style="font-size: 0.85rem; font-weight: 700; color: #FFF; margin-bottom: 4px;">
+        🏆 支出分類排行榜 (Top 5)
+      </div>
+      ${report.topCategories.length > 0 ? `
+        <div class="ranking-list">
+          ${report.topCategories.map((c, idx) => `
+            <div class="ranking-item">
+              <div class="ranking-left">
+                <span class="rank-badge top-${idx + 1}">${idx + 1}</span>
+                <span>${c.icon} ${c.name}</span>
+              </div>
+              <div style="font-weight: 700; font-size: 0.85rem; color: #FFF;">
+                ${formatCurrency(c.amount)} <span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 400;">(${c.percent.toFixed(1)}%)</span>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      ` : `
+        <div style="text-align: center; color: var(--text-muted); font-size: 0.78rem; padding: 16px;">
+          此期間尚無支出紀錄
+        </div>
+      `}
+    </div>
+  `;
+}
