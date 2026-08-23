@@ -136,13 +136,19 @@ function renderCreditGuard(accounts, transactions, currentMonth) {
 
       <div class="utilization-gauge-wrap">
         <div class="gauge-header">
-          <span>本月已刷：<strong>${formatCurrency(health.monthlySpent)}</strong> (${health.utilizationRatio.toFixed(1)}%)</span>
+          <span>已刷：<strong>${formatCurrency(health.monthlySpent)}</strong> (${health.utilizationRatio.toFixed(1)}%)</span>
           <span>安全剩餘：<strong style="color: ${health.statusColor}">${formatCurrency(health.remainingSafeCredit)}</strong></span>
         </div>
         <div class="gauge-bar-track">
           <div class="gauge-bar-fill ${fillClass}" style="width: ${fillPercent}%"></div>
           <div class="safe-limit-marker" title="聯徵 30% 信用評分黃金上限線"></div>
         </div>
+        <div class="gauge-footer-labels">
+          <span>0%</span>
+          <span style="color: #FCD34D; font-weight: 600;">▲ 30% 安全線 $18,000</span>
+          <span>額度 $60,000</span>
+        </div>
+      </div>
       </div>
 
       <div class="card-footer-info">

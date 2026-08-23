@@ -2,7 +2,10 @@
 <html lang="zh-Hant-TW">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#0B0F17">
   <title>Financial-literacy 智富記帳 | 隨時極速記帳與 50/30/20 財商風控系統</title>
   <meta name="description" content="融入 50/30/20 黃金資產配置、雙信用卡 30% 信用額度使用率風控與緊急預備金守護之現代隨時記帳 Web App。">
   
@@ -237,7 +240,7 @@
       </div>
 
       <!-- 備註與日期 -->
-      <div class="form-row-2col">
+      <div style="display: grid; grid-template-columns: 1.4fr 1fr; gap: 12px; margin-bottom: 20px;">
         <div>
           <label class="field-label">交易備註 (選填)</label>
           <input type="text" id="input-note" class="input-large-amount" style="font-size: 0.95rem; font-weight: normal; padding: 10px 14px;" placeholder="例如：好市多採買、聚餐">
@@ -756,12 +759,17 @@
             <div class="credit-card-number">•••• •••• •••• ${isEsun ? '8899' : '6688'}</div>
             <div class="utilization-gauge-wrap">
               <div class="gauge-header">
-                <span>本月已刷：<strong>${formatCurrency(health.monthlySpent)}</strong> (${health.utilizationRatio.toFixed(1)}%)</span>
+                <span>已刷：<strong>${formatCurrency(health.monthlySpent)}</strong> (${health.utilizationRatio.toFixed(1)}%)</span>
                 <span>安全剩餘：<strong style="color: ${health.statusColor}">${formatCurrency(health.remainingSafeCredit)}</strong></span>
               </div>
               <div class="gauge-bar-track">
                 <div class="gauge-bar-fill ${fillClass}" style="width: ${fillPercent}%"></div>
                 <div class="safe-limit-marker" title="聯徵 30% 信用評分黃金上限線"></div>
+              </div>
+              <div class="gauge-footer-labels">
+                <span>0%</span>
+                <span style="color: #FCD34D; font-weight: 600;">▲ 30% 安全線 $18,000</span>
+                <span>額度 $60,000</span>
               </div>
             </div>
             <div class="card-footer-info">
