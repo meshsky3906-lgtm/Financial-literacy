@@ -727,43 +727,6 @@
 }
 
 /* --------------------------------------------------------------------------
-   6. 底部固定隨時記帳捷徑欄 (Bottom Floating Action Bar - iOS Safe Area)
-   -------------------------------------------------------------------------- */
-.bottom-dock {
-  position: fixed;
-  bottom: calc(14px + env(safe-area-inset-bottom, 0px));
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  align-items: center;
-  background: rgba(15, 23, 42, 0.88);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  padding: 6px;
-  border-radius: var(--radius-full);
-  border: 1px solid var(--surface-border-bright);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
-  z-index: 100;
-}
-
-.btn-quick-record {
-  background: linear-gradient(135deg, #6366F1, #8B5CF6);
-  color: #FFFFFF;
-  padding: 12px 24px;
-  font-size: 0.95rem;
-  font-weight: 700;
-  border-radius: var(--radius-full);
-  box-shadow: 0 4px 20px rgba(99, 102, 241, 0.5);
-  border: none;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  min-height: 46px;
-  touch-action: manipulation;
-}
-
-/* --------------------------------------------------------------------------
    7. 記帳彈窗 / iOS 底部抽屜 (Entry Modal & Bottom Sheet)
    -------------------------------------------------------------------------- */
 .modal-overlay {

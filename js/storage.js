@@ -2,7 +2,7 @@
  * FinFlow 智富記帳 - 本地持久化與資料管理模組
  */
 
-const STORAGE_KEY = 'finflow_app_data_v1';
+const STORAGE_KEY = 'finflow_app_data_v3';
 
 /**
  * 預設帳戶資料庫（依據使用者指示設置玉山與富邦信用卡，額度6萬，安全上限1.8萬，初始餘額歸零）

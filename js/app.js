@@ -107,17 +107,6 @@ function setupEventListeners() {
     });
   });
 
-  // --- 手機模擬視圖切換 ---
-  const btnToggleMobile = document.getElementById('btn-toggle-mobile-view');
-  if (btnToggleMobile) {
-    btnToggleMobile.addEventListener('click', () => {
-      document.body.classList.toggle('preview-mobile-mode');
-      const isMobile = document.body.classList.contains('preview-mobile-mode');
-      btnToggleMobile.innerHTML = isMobile ? '🖥️ 電腦視圖' : '📱 手機視圖';
-      showToast(isMobile ? '已切換為手機模擬畫面 (414px)' : '已切換為全螢幕電腦視圖', 'success');
-    });
-  }
-
   // --- 金額輸入即時檢查（信用風控警戒 + 千分位動態預覽） ---
   const inputAmount = document.getElementById('input-amount');
   const previewDisplay = document.getElementById('amount-preview-display');

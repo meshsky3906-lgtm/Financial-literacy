@@ -92,19 +92,19 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
-  padding-bottom: calc(100px + env(safe-area-inset-bottom, 0px)); /* 為底部極速記帳欄預留空間 */
+  padding-bottom: calc(30px + env(safe-area-inset-bottom, 0px));
 }
 
-/* 主容器 */
+/* 主容器（專為手機操作優先設計，電腦端自然居中） */
 .app-container {
-  max-width: 1280px;
+  max-width: 680px;
   margin: 0 auto;
-  padding: 16px 12px;
+  padding: 14px 12px 30px 12px;
 }
 
 @media (min-width: 768px) {
   .app-container {
-    padding: 24px 20px;
+    padding: 20px 16px 40px 16px;
   }
 }
 
@@ -371,39 +371,4 @@ body {
 ::-webkit-scrollbar-thumb {
   background: rgba(255, 255, 255, 0.15);
   border-radius: 4px;
-}
-
-/* ==========================================================================
-   8. 電腦端一鍵切換「手機模擬視圖」(Desktop Mobile Simulator Frame)
-   ========================================================================== */
-body.preview-mobile-mode {
-  background: #020617;
-  padding-bottom: 20px;
-}
-
-body.preview-mobile-mode .app-container {
-  max-width: 414px;
-  margin: 20px auto;
-  border-radius: 40px;
-  border: 4px solid #334155;
-  box-shadow: 0 0 50px rgba(0, 0, 0, 0.9), 0 0 0 10px #0F172A;
-  background: var(--bg-gradient);
-  min-height: 840px;
-  padding: 16px 12px 100px 12px;
-  position: relative;
-}
-
-body.preview-mobile-mode .bottom-dock {
-  position: fixed;
-  bottom: 30px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 370px;
-  max-width: 90%;
-  justify-content: center;
-}
-
-body.preview-mobile-mode .btn-quick-record {
-  width: 100%;
-  justify-content: center;
 }
