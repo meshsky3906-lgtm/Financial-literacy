@@ -1,0 +1,1275 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Financial-literacy 智富記帳 | 隨時極速記帳與 50/30/20 財商風控系統</title>
+  <meta name="description" content="融入 50/30/20 黃金資產配置、雙信用卡 30% 信用額度使用率風控與緊急預備金守護之現代隨時記帳 Web App。">
+  
+  <!-- CSS 核心樣式 -->
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/components.css">
+  
+  <!-- 網站圖示 -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💎</text></svg>">
+</head>
+<body>
+
+  <div class="app-container">
+    
+    <!-- 頂部導航列 -->
+    <header class="navbar glass-panel">
+      <a href="#" class="brand-logo">
+        <div class="logo-icon-wrap">💎</div>
+        <div>
+          <span class="brand-name">Financial-literacy 智富記帳</span>
+          <span class="brand-badge">財商 50/30/20</span>
+        </div>
+      </a>
+      <div class="nav-actions">
+        <button id="btn-open-backup-modal" class="btn btn-secondary" title="資料備份與匯出入">
+          💾 資料備份
+        </button>
+        <button id="btn-quick-add-header" class="btn btn-primary">
+          ➕ 記一筆
+        </button>
+      </div>
+    </header>
+
+    <!-- 每日財商金句小卡 -->
+    <div class="wisdom-card glass-panel">
+      <div class="wisdom-icon">💡</div>
+      <div>
+        <div id="daily-wisdom-quote" class="wisdom-quote">“不要把花剩的錢存起來，而是先把該存的錢存下，再花剩下的錢。”</div>
+        <div id="daily-wisdom-author" class="wisdom-author">—— 華倫·巴菲特 (Warren Buffett)</div>
+      </div>
+    </div>
+
+    <!-- 頂部總覽 4 卡片 (真實可用餘額 / 總收入 / 總支出 / 儲蓄率) -->
+    <section class="overview-section">
+      <!-- 1. 真實可用現金 (已扣除信用卡待繳) -->
+      <div class="stat-card glass-panel card-real-available">
+        <div class="stat-header">
+          <span class="stat-title">🛡️ 真實可用現金 (Real Balance)</span>
+          <span class="stat-icon">💵</span>
+        </div>
+        <div id="val-real-available" class="stat-value money-amount">NT$ 0</div>
+        <div id="sub-real-available" class="stat-subtext">已扣除待繳卡費（杜絕假性富裕）</div>
+      </div>
+
+      <!-- 2. 本月總收入 -->
+      <div class="stat-card glass-panel card-income">
+        <div class="stat-header">
+          <span class="stat-title">📈 本月總收入 (Income)</span>
+          <span class="stat-icon">💰</span>
+        </div>
+        <div id="val-total-income" class="stat-value money-amount text-positive">NT$ 0</div>
+        <div class="stat-subtext">主業薪資、獎金與投資配息</div>
+      </div>
+
+      <!-- 3. 本月總支出 -->
+      <div class="stat-card glass-panel card-expense">
+        <div class="stat-header">
+          <span class="stat-title">📉 本月總支出 (Expenses)</span>
+          <span class="stat-icon">💸</span>
+        </div>
+        <div id="val-total-expense" class="stat-value money-amount text-negative">NT$ 0</div>
+        <div class="stat-subtext">包含需求、慾望與日常刷卡</div>
+      </div>
+
+      <!-- 4. 淨儲蓄與投資率 -->
+      <div class="stat-card glass-panel card-savings-rate">
+        <div class="stat-header">
+          <span class="stat-title">🎯 本月儲蓄與投資率</span>
+          <span class="stat-icon">🚀</span>
+        </div>
+        <div id="val-savings-rate" class="stat-value money-amount text-invest">0.0%</div>
+        <div id="sub-savings-rate" class="stat-subtext">淨存下 NT$ 0</div>
+      </div>
+    </section>
+
+    <!-- 核心主要網格：雙信用卡風控 + 50/30/20 資產配置 -->
+    <div class="dashboard-grid">
+      
+      <!-- 左側：雙信用卡 30% 信用風控專區 (玉山 & 富邦) -->
+      <section class="credit-guard-section">
+        <div class="section-header">
+          <h2 class="section-title">
+            <span>💳 信用卡信用風控守衛</span>
+            <span style="font-size: 0.75rem; font-weight: 500; color: var(--text-secondary);">（嚴格控管 30% 安全紅線 $18,000 以內）</span>
+          </h2>
+        </div>
+        <div id="credit-cards-container" class="credit-cards-grid">
+          <!-- 玉山銀行與富邦銀行卡片動態渲染 -->
+        </div>
+      </section>
+
+      <!-- 右側：🛡️ 緊急預備金防護盾 -->
+      <section class="emergency-section">
+        <div class="section-header">
+          <h2 class="section-title">🛡️ 緊急預備金水位 (Emergency Shield)</h2>
+        </div>
+        <div class="emergency-shield-card glass-panel">
+          <div class="shield-info-left">
+            <div class="shield-big-icon">🛡️</div>
+            <div class="shield-title-wrap">
+              <h4>目前儲備：<span id="shield-balance" class="money-amount">NT$ 120,000</span></h4>
+              <p>黃金目標為 3~6 個月生活固定開銷，非緊急絕不動用</p>
+              <div class="progress-track" style="margin-top: 8px; width: 180px;">
+                <div id="shield-progress-fill" class="progress-fill" style="width: 66%; background: var(--color-need);"></div>
+              </div>
+            </div>
+          </div>
+          <div class="shield-status-right">
+            <div style="font-size: 0.8rem; color: var(--text-secondary);">可支撐生活</div>
+            <div id="shield-months" class="months-count">4.0 個月</div>
+            <div id="shield-badge" class="badge badge-safe" style="margin-top: 4px;">基礎防護達成</div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- 50/30/20 黃金資產配置分析儀表板 -->
+    <section class="health-dashboard-panel glass-panel" style="margin-bottom: 24px;">
+      <div class="section-header">
+        <h2 class="section-title">📊 50 / 30 / 20 財商配置即時診斷</h2>
+        <span style="font-size: 0.8rem; color: var(--text-muted);">Elizabeth Warren 哈佛黃金理財模型</span>
+      </div>
+
+      <div id="ratio-cards-container" class="ratio-cards-container">
+        <!-- 50% 需求、30% 慾望、20% 投資動態渲染 -->
+      </div>
+
+      <!-- 財商建議診斷泡泡 -->
+      <div id="diagnostics-container" class="diagnostics-container">
+        <!-- 診斷建議動態渲染 -->
+      </div>
+    </section>
+
+    <!-- 交易歷史明細流 (Ledger) -->
+    <section class="ledger-section glass-panel">
+      <div class="ledger-toolbar">
+        <h2 class="section-title">📜 收支與刷卡明細流水帳</h2>
+        
+        <!-- 篩選器標籤 -->
+        <div class="filter-tags-scroll">
+          <button class="filter-btn active" data-filter="all">全部明細</button>
+          <button class="filter-btn" data-filter="need">🏠 50% 必要</button>
+          <button class="filter-btn" data-filter="want">🛍️ 30% 慾望</button>
+          <button class="filter-btn" data-filter="invest">📈 20% 投資</button>
+          <button class="filter-btn" data-filter="income">💰 收入</button>
+          <button class="filter-btn" data-filter="card_esun">💳 玉山卡</button>
+          <button class="filter-btn" data-filter="card_fubon">💳 富邦卡</button>
+        </div>
+      </div>
+
+      <div id="transaction-list" class="transaction-list">
+        <!-- 明細項目動態渲染 -->
+      </div>
+    </section>
+
+  </div>
+
+  <!-- 底部固定隨時記帳懸浮欄 (Mobile & Desktop Friendly) -->
+  <div class="bottom-dock">
+    <button id="btn-quick-record-trigger" class="btn-quick-record">
+      <span>⚡</span>
+      <span>隨時極速記帳</span>
+    </button>
+  </div>
+
+  <!-- =========================================================================
+       彈窗 1：快速記帳 Modal (Entry Modal)
+       ========================================================================= -->
+  <div id="modal-entry" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title">⚡ 隨時極速記帳</h3>
+        <button class="btn-close-modal" data-close-modal>&times;</button>
+      </div>
+
+      <!-- 類型切換：支出 / 收入 / 內部轉帳 -->
+      <div class="type-toggle-group">
+        <button type="button" class="type-toggle-btn active expense" data-tx-type="expense">💸 記錄支出</button>
+        <button type="button" class="type-toggle-btn income" data-tx-type="income">💰 新增收入</button>
+        <button type="button" class="type-toggle-btn transfer" data-tx-type="transfer">🔄 帳戶轉帳</button>
+      </div>
+
+      <!-- 金額輸入框 -->
+      <div class="amount-input-box">
+        <span class="currency-symbol">NT$</span>
+        <input type="number" id="input-amount" class="input-large-amount" placeholder="0" autofocus>
+      </div>
+
+      <!-- 分類選擇網格 -->
+      <div class="form-field-group">
+        <label class="field-label">
+          <span>選擇消費類別</span>
+          <span id="selected-category-hint" style="font-size: 0.75rem; color: #A5B4FC;">自動關聯財商標籤</span>
+        </label>
+        <div id="category-grid-select" class="category-grid-select">
+          <!-- JS 渲染 -->
+        </div>
+      </div>
+
+      <!-- 支付帳戶選擇 (玉山、富邦、活存) -->
+      <div id="group-account-select" class="form-field-group">
+        <label class="field-label">
+          <span>支付帳戶 / 信用卡</span>
+          <span id="credit-warning-badge" class="badge badge-warning" style="display: none;">已刷近上限</span>
+        </label>
+        <div id="account-select-container" class="account-cards-select">
+          <!-- JS 渲染 -->
+        </div>
+      </div>
+
+      <!-- 財商屬性標籤 (50% 需求 / 30% 慾望 / 20% 投資) -->
+      <div id="group-tag-select" class="form-field-group">
+        <label class="field-label">
+          <span>財商屬性（系統已自動推測，可手動微調）</span>
+        </label>
+        <div class="finance-tags-select">
+          <button type="button" class="tag-select-btn active need" data-tag="need">🏠 50% 必要需求</button>
+          <button type="button" class="tag-select-btn want" data-tag="want">🛍️ 30% 彈性慾望</button>
+          <button type="button" class="tag-select-btn invest" data-tag="invest">📈 20% 投資儲蓄</button>
+        </div>
+      </div>
+
+      <!-- 備註與日期 -->
+      <div style="display: grid; grid-template-columns: 1.4fr 1fr; gap: 12px; margin-bottom: 20px;">
+        <div>
+          <label class="field-label">交易備註 (選填)</label>
+          <input type="text" id="input-note" class="input-large-amount" style="font-size: 0.95rem; font-weight: normal; padding: 10px 14px;" placeholder="例如：好市多採買、聚餐">
+        </div>
+        <div>
+          <label class="field-label">交易日期</label>
+          <input type="date" id="input-date" class="input-large-amount" style="font-size: 0.95rem; font-weight: normal; padding: 10px 14px;">
+        </div>
+      </div>
+
+      <button id="btn-submit-entry" class="btn btn-primary" style="width: 100%; padding: 14px; font-size: 1.05rem;">
+        確認並完成記帳 ✨
+      </button>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       彈窗 2：一鍵繳納信用卡費 Modal (Pay Bill Modal)
+       ========================================================================= -->
+  <div id="modal-pay-bill" class="modal-overlay">
+    <div class="modal-card" style="max-width: 460px;">
+      <div class="modal-header">
+        <h3 class="modal-title">💳 繳納信用卡費（內部轉帳沖銷）</h3>
+        <button class="btn-close-modal" data-close-modal>&times;</button>
+      </div>
+
+      <div class="diagnostic-item caution" style="margin-bottom: 18px;">
+        <span>💡</span>
+        <div><strong>財商重要心法</strong>：繳卡費屬於「活存 ➔ 信用卡」的內部轉帳沖銷，系統<strong>不會重複計算為支出</strong>，確保帳目百分之百精確！</div>
+      </div>
+
+      <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--surface-border); border-radius: var(--radius-md); padding: 16px; margin-bottom: 20px;">
+        <div style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 4px;">繳納對象</div>
+        <div id="pay-bill-card-name" style="font-size: 1.15rem; font-weight: 700; color: #FFF; margin-bottom: 12px;">玉山銀行信用卡</div>
+
+        <div style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 4px;">應繳總額</div>
+        <div id="pay-bill-amount-display" class="money-amount" style="font-size: 1.8rem; font-weight: 800; color: #F59E0B;">NT$ 0</div>
+      </div>
+
+      <div class="form-field-group">
+        <label class="field-label">扣款轉出帳戶</label>
+        <select id="select-pay-source-account" class="input-large-amount" style="font-size: 0.95rem; font-weight: normal; padding: 10px 14px;">
+          <!-- JS 動態填充 -->
+        </select>
+      </div>
+
+      <button id="btn-confirm-pay-bill" class="btn btn-emerald" style="width: 100%; padding: 14px; font-size: 1.05rem;">
+        確認繳清卡費並沖銷 🚀
+      </button>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       彈窗 3：收入入帳 50/30/20 智能分流建議 Modal (Income Split Advisor)
+       ========================================================================= -->
+  <div id="modal-split-advisor" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title">🎉 收入入帳！黃金分流建議</h3>
+        <button class="btn-close-modal" data-close-modal>&times;</button>
+      </div>
+
+      <div style="text-align: center; margin-bottom: 20px;">
+        <div style="font-size: 0.85rem; color: var(--text-secondary);">本次入帳總額</div>
+        <div id="split-total-amount" class="money-amount text-positive" style="font-size: 2.2rem; font-weight: 800;">NT$ 50,000</div>
+        <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 4px;">落實「先支付給未來的自己」法則，建議按以下比例規劃資金分配：</p>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 24px;">
+        <div class="ratio-box">
+          <div class="ratio-box-header">
+            <span class="ratio-tag-title text-need">🏠 50% 生活必需與固定開銷</span>
+            <span id="split-need-amt" class="money-amount" style="font-size: 1.1rem; font-weight: 700;">NT$ 25,000</span>
+          </div>
+          <div class="ratio-box-sub"><span>房租、伙食、水電交通，存入日常活存戶</span></div>
+        </div>
+
+        <div class="ratio-box">
+          <div class="ratio-box-header">
+            <span class="ratio-tag-title text-negative">🛍️ 30% 彈性生活與適度犒賞</span>
+            <span id="split-want-amt" class="money-amount" style="font-size: 1.1rem; font-weight: 700;">NT$ 15,000</span>
+          </div>
+          <div class="ratio-box-sub"><span>聚餐、購物、娛樂，允許無罪惡感消費</span></div>
+        </div>
+
+        <div class="ratio-box" style="background: rgba(139, 92, 246, 0.1); border-color: rgba(139, 92, 246, 0.4);">
+          <div class="ratio-box-header">
+            <span class="ratio-tag-title text-invest">📈 20% 投資成長與安全預備金</span>
+            <span id="split-invest-amt" class="money-amount text-invest" style="font-size: 1.2rem; font-weight: 800;">NT$ 10,000</span>
+          </div>
+          <div class="ratio-box-sub"><span>🔥 優先轉入 ETF 指數投資與緊急預備金專戶</span></div>
+        </div>
+      </div>
+
+      <button class="btn btn-primary" data-close-modal style="width: 100%; padding: 12px;">
+        我知道了，開始分流執行！ 💪
+      </button>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       彈窗 4：資料備份、匯入與重設 Modal
+       ========================================================================= -->
+  <div id="modal-backup" class="modal-overlay">
+    <div class="modal-card" style="max-width: 480px;">
+      <div class="modal-header">
+        <h3 class="modal-title">💾 資料備份與管理</h3>
+        <button class="btn-close-modal" data-close-modal>&times;</button>
+      </div>
+
+      <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 20px;">
+        本系統採用 Local-First 本機隱私優先架構，您的帳目數據安全保存在瀏覽器中。建議定期下載 JSON 備份檔保存。
+      </p>
+
+      <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 24px;">
+        <button id="btn-export-json" class="btn btn-secondary" style="justify-content: flex-start; padding: 14px;">
+          <span>📥</span>
+          <div style="text-align: left;">
+            <div style="font-weight: 700;">匯出 JSON 備份檔案</div>
+            <div style="font-size: 0.75rem; color: var(--text-muted);">將目前所有帳戶與交易記錄下載到本機</div>
+          </div>
+        </button>
+
+        <label class="btn btn-secondary" style="justify-content: flex-start; padding: 14px; cursor: pointer;">
+          <span>📤</span>
+          <div style="text-align: left;">
+            <div style="font-weight: 700;">匯入 JSON 備份檔案</div>
+            <div style="font-size: 0.75rem; color: var(--text-muted);">還原先前下載的 FinFlow 備份資料</div>
+          </div>
+          <input type="file" id="file-import-json" accept=".json" style="display: none;">
+        </label>
+
+        <button id="btn-reset-demo" class="btn btn-secondary" style="justify-content: flex-start; padding: 14px; color: #FDA4AF; border-color: rgba(244,63,94,0.3);">
+          <span>🔄</span>
+          <div style="text-align: left;">
+            <div style="font-weight: 700;">重設為初始示範資料</div>
+            <div style="font-size: 0.75rem; color: var(--text-muted);">恢復包含玉山($6萬)、富邦($6萬)及 50/30/20 初始狀態</div>
+          </div>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast 提示容器 -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <!-- 內嵌全相容自包含核心腳本（保證雙擊 file:/// 或本機伺服器均 100% 正常秒開運行） -->
+  <script>
+    (function() {
+      // 1. 分類與財商標籤庫
+      const FINANCE_TAGS = {
+        NEED: { id: 'need', label: '50% 必要需求', shortLabel: '必要', color: '#6366F1' },
+        WANT: { id: 'want', label: '30% 彈性慾望', shortLabel: '慾望', color: '#F43F5E' },
+        INVEST: { id: 'invest', label: '20% 投資儲蓄', shortLabel: '投資/儲蓄', color: '#8B5CF6' }
+      };
+
+      const DEFAULT_EXPENSE_CATEGORIES = [
+        { id: 'food_daily', name: '日常三餐', icon: '🍚', defaultTag: 'need' },
+        { id: 'food_dining', name: '外食大餐/聚會', icon: '🥩', defaultTag: 'want' },
+        { id: 'beverage', name: '手搖咖啡/甜點', icon: '☕', defaultTag: 'want' },
+        { id: 'housing_rent', name: '房租/房貸', icon: '🏠', defaultTag: 'need' },
+        { id: 'utilities', name: '水電瓦斯/網路', icon: '⚡', defaultTag: 'need' },
+        { id: 'traffic_commute', name: '通勤交通/加油', icon: '🚇', defaultTag: 'need' },
+        { id: 'shopping_daily', name: '生活日用耗品', icon: '🧻', defaultTag: 'need' },
+        { id: 'shopping_clothing', name: '服飾鞋包/精品', icon: '🛍️', defaultTag: 'want' },
+        { id: 'entertainment', name: '電影/遊戲/展覽', icon: '🎮', defaultTag: 'want' },
+        { id: 'subscription', name: '串流訂閱(Netflix/YT)', icon: '📱', defaultTag: 'want' },
+        { id: 'travel', name: '度假旅遊/住宿', icon: '✈️', defaultTag: 'want' },
+        { id: 'medical', name: '醫療看診/保健品', icon: '💊', defaultTag: 'need' },
+        { id: 'insurance', name: '人身/財產保險', icon: '🛡️', defaultTag: 'need' },
+        { id: 'education_self', name: '進修課程/書籍購置', icon: '📚', defaultTag: 'invest' },
+        { id: 'investment_fee', name: '投資手續費/工具', icon: '📈', defaultTag: 'invest' },
+        { id: 'social_gift', name: '人際禮金/孝親費', icon: '🎁', defaultTag: 'want' }
+      ];
+
+      const DEFAULT_INCOME_CATEGORIES = [
+        { id: 'salary', name: '本業薪資', icon: '💼' },
+        { id: 'bonus', name: '工作獎金/年終', icon: '🏆' },
+        { id: 'side_hustle', name: '副業/接案收入', icon: '💻' },
+        { id: 'dividend', name: '股票股利/配息', icon: '📊' },
+        { id: 'interest', name: '銀行利息/回饋', icon: '🪙' },
+        { id: 'other_income', name: '其他收入/紅包', icon: '🧧' }
+      ];
+
+      const WEALTH_QUOTES = [
+        { quote: "不要把花剩的錢存起來，而是先把該存的錢存下，再花剩下的錢。", author: "華倫·巴菲特 (Warren Buffett)" },
+        { quote: "維持每張信用卡月刷卡額在總額度的 30% 以下，是保護個人銀行信用評分的黃金護城河。", author: "金融信用風控準則" },
+        { quote: "緊急預備金不是用來賺取高回報的，而是讓你在風暴來臨時不用被迫賣出優質資產。", author: "《致富心態》摩根·豪瑟" },
+        { quote: "富人買入資產，窮人只有支出，中產階級買入他們以為是資產的負債。", author: "《富爸爸·窮爸爸》羅伯特·清崎" },
+        { quote: "刷卡是先享受後付款，記帳時務必刷卡當下記入支出，避免假性富裕的心理盲點。", author: "現代行為經濟學" },
+        { quote: "將 50% 投入生活必需、30% 犒賞適度慾望、20% 投資未來，能讓你在享受當下的同時持續邁向財務自由。", author: "50/30/20 黃金資產配置法" }
+      ];
+
+      // 2. 本地儲存與預設數據
+      const STORAGE_KEY = 'finflow_app_data_v1';
+
+      function getThisMonthDate(dayNumber) {
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const day = String(dayNumber).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+      }
+
+      function getCurrentMonthKey(date = new Date()) {
+        const d = new Date(date);
+        const year = d.getFullYear();
+        const month = String(d.getMonth() + 1).padStart(2, '0');
+        return `${year}-${month}`;
+      }
+
+      const DEFAULT_ACCOUNTS = [
+        {
+          id: 'acc_bank_main',
+          name: '台幣主要活存 (薪轉/日常)',
+          type: 'liquid',
+          bankName: '主要銀行活存',
+          balance: 68500,
+          icon: '🏦',
+          color: '#3B82F6'
+        },
+        {
+          id: 'card_esun',
+          name: '玉山銀行信用卡',
+          type: 'credit',
+          bankName: '玉山銀行',
+          creditLimit: 60000,
+          safeLimit: 18000, // 30% 信用安全線
+          balance: 4200,    // 當前待繳帳款
+          icon: '💳',
+          color: '#059669'
+        },
+        {
+          id: 'card_fubon',
+          name: '富邦銀行信用卡',
+          type: 'credit',
+          bankName: '富邦銀行',
+          creditLimit: 60000,
+          safeLimit: 18000, // 30% 信用安全線
+          balance: 7800,    // 當前待繳帳款
+          icon: '💳',
+          color: '#0284C7'
+        },
+        {
+          id: 'acc_emergency',
+          name: '🛡️ 緊急預備金專戶',
+          type: 'emergency',
+          bankName: '高利活存避風港',
+          balance: 120000,
+          icon: '🛡️',
+          color: '#6366F1'
+        },
+        {
+          id: 'acc_invest',
+          name: '📈 指數化投資專戶 (ETF)',
+          type: 'investment',
+          bankName: '證券交割戶',
+          balance: 210000,
+          icon: '📈',
+          color: '#8B5CF6'
+        }
+      ];
+
+      const DEFAULT_TRANSACTIONS = [
+        { id: 'tx_demo_01', type: 'income', date: getThisMonthDate(5), amount: 55000, categoryId: 'salary', categoryName: '本業薪資', categoryIcon: '💼', tag: 'income', accountId: 'acc_bank_main', accountName: '台幣主要活存 (薪轉/日常)', note: '本月薪資入帳' },
+        { id: 'tx_demo_02', type: 'expense', date: getThisMonthDate(6), amount: 15000, categoryId: 'housing_rent', categoryName: '房租/房貸', categoryIcon: '🏠', tag: 'need', accountId: 'acc_bank_main', accountName: '台幣主要活存 (薪轉/日常)', note: '本月房租轉帳' },
+        { id: 'tx_demo_03', type: 'expense', date: getThisMonthDate(8), amount: 11000, categoryId: 'education_self', categoryName: '進修課程/書籍購置', categoryIcon: '📚', tag: 'invest', accountId: 'acc_bank_main', accountName: '台幣主要活存 (薪轉/日常)', note: '定期定額 ETF 與進修' },
+        { id: 'tx_demo_04', type: 'expense', date: getThisMonthDate(10), amount: 4200, categoryId: 'food_dining', categoryName: '外食大餐/聚會', categoryIcon: '🥩', tag: 'want', accountId: 'card_esun', accountName: '玉山銀行信用卡', note: '好友慶生聚餐（刷玉山卡）' },
+        { id: 'tx_demo_05', type: 'expense', date: getThisMonthDate(12), amount: 3500, categoryId: 'shopping_clothing', categoryName: '服飾鞋包/精品', categoryIcon: '🛍️', tag: 'want', accountId: 'card_fubon', accountName: '富邦銀行信用卡', note: '換季添購衣物（刷富邦卡）' },
+        { id: 'tx_demo_06', type: 'expense', date: getThisMonthDate(15), amount: 4300, categoryId: 'utilities', categoryName: '水電瓦斯/網路', categoryIcon: '⚡', tag: 'need', accountId: 'card_fubon', accountName: '富邦銀行信用卡', note: '水電瓦斯扣繳（刷富邦卡）' },
+        { id: 'tx_demo_07', type: 'expense', date: getThisMonthDate(18), amount: 3200, categoryId: 'traffic_commute', categoryName: '通勤交通/加油', categoryIcon: '🚇', tag: 'need', accountId: 'acc_bank_main', accountName: '台幣主要活存 (薪轉/日常)', note: '定期票與日常通勤' }
+      ];
+
+      function loadAppData() {
+        try {
+          const raw = localStorage.getItem(STORAGE_KEY);
+          if (!raw) {
+            const initial = { version: '1.0', accounts: DEFAULT_ACCOUNTS, transactions: DEFAULT_TRANSACTIONS };
+            saveAppData(initial);
+            return initial;
+          }
+          return JSON.parse(raw);
+        } catch (e) {
+          return { version: '1.0', accounts: DEFAULT_ACCOUNTS, transactions: DEFAULT_TRANSACTIONS };
+        }
+      }
+
+      function saveAppData(data) {
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+        } catch (e) {}
+      }
+
+      // 3. 財商演算法
+      function formatCurrency(amount, prefix = 'NT$ ') {
+        const num = Math.round(Number(amount) || 0);
+        return `${prefix}${num.toLocaleString()}`;
+      }
+
+      function calculate503020(transactions = [], monthKey = getCurrentMonthKey()) {
+        const monthlyTx = transactions.filter(tx => tx.date.startsWith(monthKey));
+        let totalIncome = 0, totalExpense = 0, needExpense = 0, wantExpense = 0, investExpense = 0;
+
+        monthlyTx.forEach(tx => {
+          if (tx.type === 'income') {
+            totalIncome += Number(tx.amount);
+          } else if (tx.type === 'expense') {
+            const amt = Number(tx.amount);
+            totalExpense += amt;
+            if (tx.tag === 'need') needExpense += amt;
+            else if (tx.tag === 'want') wantExpense += amt;
+            else if (tx.tag === 'invest') investExpense += amt;
+          }
+        });
+
+        const needPercent = totalExpense > 0 ? (needExpense / totalExpense) * 100 : 0;
+        const wantPercent = totalExpense > 0 ? (wantExpense / totalExpense) * 100 : 0;
+        const investPercent = totalExpense > 0 ? (investExpense / totalExpense) * 100 : 0;
+        const savingsRate = totalIncome > 0 ? Math.max(0, ((totalIncome - totalExpense) / totalIncome) * 100) : 0;
+
+        const diagnostics = [];
+        if (totalExpense > 0) {
+          if (wantPercent > 35) {
+            diagnostics.push({
+              type: 'warning',
+              title: '慾望支出偏高預警',
+              message: `本月彈性慾望佔總支出 ${wantPercent.toFixed(1)}%（建議控制在 30% 以內），適度延遲非必要享樂能加速財富累積。`
+            });
+          }
+          if (investExpense === 0 && totalIncome > 0) {
+            diagnostics.push({
+              type: 'caution',
+              title: '尚未啟動資產投資',
+              message: '本月尚未規劃自我成長或指數化投資，記得落實「先支付給未來的自己」法則！'
+            });
+          } else if (investPercent >= 20) {
+            diagnostics.push({
+              type: 'success',
+              title: '投資儲蓄達標',
+              message: `本月投資與儲蓄佔比達 ${investPercent.toFixed(1)}%，表現優異！持續保持複利滾動。`
+            });
+          }
+        }
+
+        return {
+          monthKey,
+          totalIncome,
+          totalExpense,
+          netSavings: totalIncome - totalExpense,
+          savingsRate,
+          need: { amount: needExpense, percent: needPercent },
+          want: { amount: wantExpense, percent: wantPercent },
+          invest: { amount: investExpense, percent: investPercent },
+          diagnostics
+        };
+      }
+
+      function calculateCreditCardHealth(account, transactions = [], monthKey = getCurrentMonthKey()) {
+        if (account.type !== 'credit') return null;
+        const limit = Number(account.creditLimit || 60000);
+        const safeLimit = Number(account.safeLimit || 18000);
+        const currentUnpaid = Number(account.balance || 0);
+
+        const monthlySpent = transactions
+          .filter(tx => tx.type === 'expense' && tx.accountId === account.id && tx.date.startsWith(monthKey))
+          .reduce((sum, tx) => sum + Number(tx.amount), 0);
+
+        const utilizationRatio = limit > 0 ? (monthlySpent / limit) * 100 : 0;
+        const remainingSafeCredit = Math.max(0, safeLimit - monthlySpent);
+        const isOverSafeLimit = monthlySpent > safeLimit;
+        const isNearSafeLimit = monthlySpent >= safeLimit * 0.8 && !isOverSafeLimit;
+
+        let statusLevel = 'safe', statusText = '信用安全 (極佳)', statusColor = '#10B981';
+        if (isOverSafeLimit) {
+          statusLevel = 'danger';
+          statusText = '已超 30% 安全線 (影響評分)';
+          statusColor = '#EF4444';
+        } else if (isNearSafeLimit) {
+          statusLevel = 'warning';
+          statusText = '接近 30% 警戒線 (請留意)';
+          statusColor = '#F59E0B';
+        }
+
+        return {
+          accountId: account.id,
+          accountName: account.name,
+          bankName: account.bankName,
+          creditLimit: limit,
+          safeLimit,
+          monthlySpent,
+          currentUnpaid,
+          remainingSafeCredit,
+          utilizationRatio,
+          statusLevel,
+          statusText,
+          statusColor
+        };
+      }
+
+      function calculateRealAvailableBalance(accounts = []) {
+        let liquidAssets = 0, totalCreditDebt = 0, emergencyFund = 0, investmentAssets = 0;
+        accounts.forEach(acc => {
+          const bal = Number(acc.balance || 0);
+          if (acc.type === 'liquid' || acc.type === 'bank' || acc.type === 'cash') liquidAssets += bal;
+          else if (acc.type === 'credit') totalCreditDebt += bal;
+          else if (acc.type === 'emergency') emergencyFund += bal;
+          else if (acc.type === 'investment') investmentAssets += bal;
+        });
+        return {
+          liquidAssets,
+          totalCreditDebt,
+          emergencyFund,
+          investmentAssets,
+          realAvailable: liquidAssets - totalCreditDebt
+        };
+      }
+
+      function calculateEmergencyFundHealth(emergencyBalance, monthlyNeedExpense = 30000) {
+        const validNeed = monthlyNeedExpense > 0 ? monthlyNeedExpense : 30000;
+        const monthsCovered = emergencyBalance / validNeed;
+        const progress = Math.min(100, (emergencyBalance / (validNeed * 6)) * 100);
+        let healthText = '防護不足', badgeColor = '#EF4444';
+
+        if (monthsCovered >= 6) {
+          healthText = '黃金安全盾 (6個月以上)';
+          badgeColor = '#10B981';
+        } else if (monthsCovered >= 3) {
+          healthText = '基礎防護達成 (3~6個月)';
+          badgeColor = '#6366F1';
+        } else if (monthsCovered >= 1) {
+          healthText = '初步建立中 (1~3個月)';
+          badgeColor = '#F59E0B';
+        }
+
+        return {
+          emergencyBalance,
+          monthsCovered: Number(monthsCovered.toFixed(1)),
+          progressTo6Months: Number(progress.toFixed(1)),
+          healthText,
+          badgeColor
+        };
+      }
+
+      function showToast(message, type = 'success') {
+        const container = document.getElementById('toast-container');
+        if (!container) return;
+        const toast = document.createElement('div');
+        toast.className = `toast ${type}`;
+        let icon = type === 'warning' ? '⚠️' : type === 'error' ? '🚨' : '✨';
+        toast.innerHTML = `<span>${icon}</span><span>${message}</span>`;
+        container.appendChild(toast);
+        setTimeout(() => {
+          toast.style.opacity = '0';
+          toast.style.transform = 'translateY(-10px)';
+          setTimeout(() => toast.remove(), 300);
+        }, 3200);
+      }
+
+      // 4. UI 渲染模組
+      let appState = loadAppData();
+      let currentFilter = 'all';
+      let pendingPayCard = null;
+
+      let currentEntryState = {
+        type: 'expense',
+        amount: 0,
+        categoryId: 'food_daily',
+        categoryName: '日常三餐',
+        categoryIcon: '🍚',
+        tag: 'need',
+        accountId: 'card_esun',
+        accountName: '玉山銀行信用卡',
+        date: new Date().toISOString().split('T')[0],
+        note: ''
+      };
+
+      function renderDashboard() {
+        const { accounts, transactions } = appState;
+        const currentMonth = getCurrentMonthKey();
+        const realBalInfo = calculateRealAvailableBalance(accounts);
+        const fin503020 = calculate503020(transactions, currentMonth);
+
+        // 頂部四卡
+        document.getElementById('val-real-available').textContent = formatCurrency(realBalInfo.realAvailable);
+        document.getElementById('sub-real-available').innerHTML = `已扣除待繳卡費 ${formatCurrency(realBalInfo.totalCreditDebt)}（杜絕假性富裕）`;
+        document.getElementById('val-total-income').textContent = formatCurrency(fin503020.totalIncome);
+        document.getElementById('val-total-expense').textContent = formatCurrency(fin503020.totalExpense);
+        document.getElementById('val-savings-rate').textContent = `${fin503020.savingsRate.toFixed(1)}%`;
+        document.getElementById('sub-savings-rate').textContent = `淨存下 ${formatCurrency(fin503020.netSavings)}`;
+
+        // 雙信用卡 30% 信用風控
+        const creditContainer = document.getElementById('credit-cards-container');
+        const creditAccounts = accounts.filter(a => a.type === 'credit');
+        creditContainer.innerHTML = '';
+
+        creditAccounts.forEach(card => {
+          const health = calculateCreditCardHealth(card, transactions, currentMonth);
+          const isEsun = card.id === 'card_esun' || card.bankName.includes('玉山');
+          const themeClass = isEsun ? 'card-esun-theme' : 'card-fubon-theme';
+          const fillPercent = Math.min(100, health.utilizationRatio);
+          let fillClass = health.statusLevel === 'warning' ? 'warning' : health.statusLevel === 'danger' ? 'danger' : '';
+
+          const cardEl = document.createElement('div');
+          cardEl.className = `credit-card-item ${themeClass}`;
+          cardEl.innerHTML = `
+            <div class="card-top">
+              <div class="bank-identity">
+                <div class="bank-chip"></div>
+                <div>
+                  <div class="bank-name-text">${card.bankName}</div>
+                  <div class="bank-sub-text">總額度 ${formatCurrency(card.creditLimit)}</div>
+                </div>
+              </div>
+              <span class="badge badge-${health.statusLevel}">${health.statusText}</span>
+            </div>
+            <div class="credit-card-number">•••• •••• •••• ${isEsun ? '8899' : '6688'}</div>
+            <div class="utilization-gauge-wrap">
+              <div class="gauge-header">
+                <span>本月已刷：<strong>${formatCurrency(health.monthlySpent)}</strong> (${health.utilizationRatio.toFixed(1)}%)</span>
+                <span>安全剩餘：<strong style="color: ${health.statusColor}">${formatCurrency(health.remainingSafeCredit)}</strong></span>
+              </div>
+              <div class="gauge-bar-track">
+                <div class="gauge-bar-fill ${fillClass}" style="width: ${fillPercent}%"></div>
+                <div class="safe-limit-marker" title="聯徵 30% 信用評分黃金上限線"></div>
+              </div>
+            </div>
+            <div class="card-footer-info">
+              <div class="debt-amount-wrap">
+                <div class="label">當前待繳總額</div>
+                <div class="amount">${formatCurrency(card.balance)}</div>
+              </div>
+              <button class="btn-pay-bill" data-card-id="${card.id}">💳 繳納卡費</button>
+            </div>
+          `;
+          creditContainer.appendChild(cardEl);
+        });
+
+        // 50/30/20 面板
+        document.getElementById('ratio-cards-container').innerHTML = `
+          <div class="ratio-box">
+            <div class="ratio-box-header">
+              <span class="ratio-tag-title text-need">🏠 50% 必要需求 (Needs)</span>
+              <span class="badge badge-need">${fin503020.need.percent.toFixed(1)}%</span>
+            </div>
+            <div class="ratio-box-amount">${formatCurrency(fin503020.need.amount)}</div>
+            <div class="progress-track">
+              <div class="progress-fill" style="width: ${Math.min(100, fin503020.need.percent)}%; background: var(--color-need);"></div>
+            </div>
+            <div class="ratio-box-sub"><span>房租、三餐、水電等固定開銷</span><span>目標 ≤ 50%</span></div>
+          </div>
+          <div class="ratio-box">
+            <div class="ratio-box-header">
+              <span class="ratio-tag-title text-negative">🛍️ 30% 彈性慾望 (Wants)</span>
+              <span class="badge badge-want">${fin503020.want.percent.toFixed(1)}%</span>
+            </div>
+            <div class="ratio-box-amount">${formatCurrency(fin503020.want.amount)}</div>
+            <div class="progress-track">
+              <div class="progress-fill" style="width: ${Math.min(100, fin503020.want.percent)}%; background: var(--color-want);"></div>
+            </div>
+            <div class="ratio-box-sub"><span>聚餐、購物、娛樂享受</span><span>目標 ≤ 30%</span></div>
+          </div>
+          <div class="ratio-box">
+            <div class="ratio-box-header">
+              <span class="ratio-tag-title text-invest">📈 20% 投資儲蓄 (Invest)</span>
+              <span class="badge badge-invest">${fin503020.invest.percent.toFixed(1)}%</span>
+            </div>
+            <div class="ratio-box-amount">${formatCurrency(fin503020.invest.amount)}</div>
+            <div class="progress-track">
+              <div class="progress-fill" style="width: ${Math.min(100, fin503020.invest.percent)}%; background: var(--color-invest);"></div>
+            </div>
+            <div class="ratio-box-sub"><span>ETF複利、自我投資進修</span><span>目標 ≥ 20%</span></div>
+          </div>
+        `;
+
+        // 財商診斷建議
+        const diagContainer = document.getElementById('diagnostics-container');
+        if (fin503020.diagnostics.length === 0) {
+          diagContainer.innerHTML = `
+            <div class="diagnostic-item success">
+              <span>🎯</span>
+              <div><strong>本月財務配置平衡</strong>：您的收支結構健康，持續堅持資產分流原則！</div>
+            </div>
+          `;
+        } else {
+          diagContainer.innerHTML = fin503020.diagnostics.map(d => `
+            <div class="diagnostic-item ${d.type}">
+              <span>${d.type === 'warning' ? '⚠️' : d.type === 'caution' ? '💡' : '🌟'}</span>
+              <div><strong>${d.title}</strong>：${d.message}</div>
+            </div>
+          `).join('');
+        }
+
+        // 緊急預備金防護盾
+        const emAcc = accounts.find(a => a.type === 'emergency') || { balance: 0 };
+        const emHealth = calculateEmergencyFundHealth(emAcc.balance, fin503020.need.amount);
+        document.getElementById('shield-balance').textContent = formatCurrency(emHealth.emergencyBalance);
+        document.getElementById('shield-months').textContent = `${emHealth.monthsCovered} 個月`;
+        document.getElementById('shield-progress-fill').style.width = `${emHealth.progressTo6Months}%`;
+        const shieldBadge = document.getElementById('shield-badge');
+        shieldBadge.textContent = emHealth.healthText;
+        shieldBadge.style.color = emHealth.badgeColor;
+
+        // 明細清單
+        renderLedgerList();
+      }
+
+      function renderLedgerList() {
+        const container = document.getElementById('transaction-list');
+        let filtered = [...appState.transactions].sort((a, b) => new Date(b.date) - new Date(a.date));
+
+        if (currentFilter === 'need') filtered = filtered.filter(t => t.tag === 'need');
+        else if (currentFilter === 'want') filtered = filtered.filter(t => t.tag === 'want');
+        else if (currentFilter === 'invest') filtered = filtered.filter(t => t.tag === 'invest');
+        else if (currentFilter === 'income') filtered = filtered.filter(t => t.type === 'income');
+        else if (currentFilter === 'card_esun') filtered = filtered.filter(t => t.accountId === 'card_esun');
+        else if (currentFilter === 'card_fubon') filtered = filtered.filter(t => t.accountId === 'card_fubon');
+
+        if (filtered.length === 0) {
+          container.innerHTML = `<div class="empty-state"><p>目前尚無符合篩選條件的交易紀錄</p></div>`;
+          return;
+        }
+
+        container.innerHTML = filtered.map(tx => {
+          const isIncome = tx.type === 'income';
+          let tagBadge = '';
+          if (isIncome) tagBadge = `<span class="badge badge-income">💰 收入</span>`;
+          else if (tx.tag === 'need') tagBadge = `<span class="badge badge-need">50% 必要</span>`;
+          else if (tx.tag === 'want') tagBadge = `<span class="badge badge-want">30% 慾望</span>`;
+          else if (tx.tag === 'invest') tagBadge = `<span class="badge badge-invest">20% 投資</span>`;
+          else if (tx.type === 'transfer') tagBadge = `<span class="badge badge-need">🔄 沖銷轉帳</span>`;
+
+          const sign = isIncome ? '+' : '-';
+          const amountColorClass = isIncome ? 'text-positive' : 'text-primary';
+
+          return `
+            <div class="transaction-row">
+              <div class="tx-left">
+                <div class="tx-icon-wrap">${tx.categoryIcon || '💸'}</div>
+                <div class="tx-meta">
+                  <h5>${tx.categoryName || '未分類'} ${tx.note ? `<span style="font-weight:400; font-size:0.8rem; color:var(--text-secondary);">(${tx.note})</span>` : ''}</h5>
+                  <div class="tx-meta-sub">
+                    <span>📅 ${tx.date}</span>
+                    <span>🏦 ${tx.accountName || '活存'}</span>
+                    ${tagBadge}
+                  </div>
+                </div>
+              </div>
+              <div class="tx-right">
+                <div class="tx-amount money-amount ${amountColorClass}">${sign}${formatCurrency(tx.amount)}</div>
+                <button class="btn-tx-delete" data-tx-id="${tx.id}" title="刪除本筆紀錄">🗑️</button>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      function renderCategorySelectGrid(type = 'expense') {
+        const container = document.getElementById('category-grid-select');
+        const list = type === 'income' ? DEFAULT_INCOME_CATEGORIES : DEFAULT_EXPENSE_CATEGORIES;
+        container.innerHTML = '';
+
+        list.forEach((cat, index) => {
+          const tile = document.createElement('div');
+          tile.className = `category-tile ${index === 0 ? 'active' : ''}`;
+          tile.dataset.catId = cat.id;
+          tile.innerHTML = `<span class="tile-icon">${cat.icon}</span><span class="tile-name">${cat.name}</span>`;
+
+          tile.addEventListener('click', () => {
+            container.querySelectorAll('.category-tile').forEach(t => t.classList.remove('active'));
+            tile.classList.add('active');
+            currentEntryState.categoryId = cat.id;
+            currentEntryState.categoryName = cat.name;
+            currentEntryState.categoryIcon = cat.icon;
+
+            if (type === 'expense' && cat.defaultTag) {
+              currentEntryState.tag = cat.defaultTag;
+              document.querySelectorAll('.tag-select-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.tag === cat.defaultTag);
+              });
+            }
+          });
+
+          container.appendChild(tile);
+        });
+
+        if (list.length > 0) {
+          currentEntryState.categoryId = list[0].id;
+          currentEntryState.categoryName = list[0].name;
+          currentEntryState.categoryIcon = list[0].icon;
+          if (type === 'expense' && list[0].defaultTag) {
+            currentEntryState.tag = list[0].defaultTag;
+            document.querySelectorAll('.tag-select-btn').forEach(btn => {
+              btn.classList.toggle('active', btn.dataset.tag === list[0].defaultTag);
+            });
+          }
+        }
+      }
+
+      function renderAccountSelectOptions(type = 'expense') {
+        const container = document.getElementById('account-select-container');
+        const defaultAccId = type === 'income' ? 'acc_bank_main' : 'card_esun';
+        currentEntryState.accountId = defaultAccId;
+        const targetAcc = appState.accounts.find(a => a.id === defaultAccId);
+        currentEntryState.accountName = targetAcc ? targetAcc.name : '玉山銀行信用卡';
+
+        container.innerHTML = '';
+        appState.accounts.forEach(acc => {
+          const opt = document.createElement('div');
+          let brandClass = acc.id === 'card_esun' ? 'esun' : acc.id === 'card_fubon' ? 'fubon' : '';
+          opt.className = `account-option ${brandClass} ${acc.id === defaultAccId ? 'active' : ''}`;
+          opt.innerHTML = `
+            <span style="font-size: 1.2rem;">${acc.icon || '💳'}</span>
+            <div style="text-align: left;">
+              <div style="font-size: 0.85rem; font-weight: 600; color: #FFF;">${acc.name}</div>
+              <div style="font-size: 0.72rem; color: var(--text-muted);">
+                ${acc.type === 'credit' ? `待繳: ${formatCurrency(acc.balance)}` : `餘額: ${formatCurrency(acc.balance)}`}
+              </div>
+            </div>
+          `;
+          opt.addEventListener('click', () => {
+            container.querySelectorAll('.account-option').forEach(o => o.classList.remove('active'));
+            opt.classList.add('active');
+            currentEntryState.accountId = acc.id;
+            currentEntryState.accountName = acc.name;
+            checkCreditRiskOnInput();
+          });
+          container.appendChild(opt);
+        });
+      }
+
+      function checkCreditRiskOnInput() {
+        const badge = document.getElementById('credit-warning-badge');
+        const currentAmt = Number(document.getElementById('input-amount').value) || 0;
+        const currentMonth = getCurrentMonthKey();
+        const selectedAcc = appState.accounts.find(a => a.id === currentEntryState.accountId);
+
+        if (!selectedAcc || selectedAcc.type !== 'credit') {
+          badge.style.display = 'none';
+          return;
+        }
+
+        const monthlySpent = appState.transactions
+          .filter(tx => tx.type === 'expense' && tx.accountId === selectedAcc.id && tx.date.startsWith(currentMonth))
+          .reduce((sum, tx) => sum + Number(tx.amount), 0);
+
+        const totalAfterThis = monthlySpent + currentAmt;
+        const safeLimit = selectedAcc.safeLimit || 18000;
+
+        if (totalAfterThis > safeLimit) {
+          badge.style.display = 'inline-flex';
+          badge.className = 'badge badge-danger';
+          badge.textContent = `🚨 本筆將超 $18,000 安全線 (${formatCurrency(totalAfterThis)})`;
+        } else if (totalAfterThis >= safeLimit * 0.8) {
+          badge.style.display = 'inline-flex';
+          badge.className = 'badge badge-warning';
+          badge.textContent = `⚠️ 接近 30% 警戒線 (累計 ${formatCurrency(totalAfterThis)})`;
+        } else {
+          badge.style.display = 'none';
+        }
+      }
+
+      function openEntryModal(type = 'expense') {
+        const modal = document.getElementById('modal-entry');
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('input-date').value = today;
+        document.getElementById('input-amount').value = '';
+        document.getElementById('input-note').value = '';
+        currentEntryState.date = today;
+        currentEntryState.amount = 0;
+
+        const typeBtn = document.querySelector(`.type-toggle-btn[data-tx-type="${type}"]`);
+        if (typeBtn) typeBtn.click();
+
+        modal.classList.add('active');
+        setTimeout(() => document.getElementById('input-amount').focus(), 100);
+      }
+
+      // 事件綁定
+      document.addEventListener('DOMContentLoaded', () => {
+        renderDashboard();
+
+        // 每日金句
+        const randQuote = WEALTH_QUOTES[Math.floor(Math.random() * WEALTH_QUOTES.length)];
+        document.getElementById('daily-wisdom-quote').textContent = `“${randQuote.quote}”`;
+        document.getElementById('daily-wisdom-author').textContent = `—— ${randQuote.author}`;
+
+        // 記帳 Modal 開關
+        document.getElementById('btn-quick-record-trigger').addEventListener('click', () => openEntryModal());
+        document.getElementById('btn-quick-add-header').addEventListener('click', () => openEntryModal());
+
+        document.querySelectorAll('[data-close-modal]').forEach(btn => {
+          btn.addEventListener('click', () => {
+            document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('active'));
+          });
+        });
+
+        document.querySelectorAll('.modal-overlay').forEach(overlay => {
+          overlay.addEventListener('click', (e) => {
+            if (e.target === overlay) overlay.classList.remove('active');
+          });
+        });
+
+        // 類型切換
+        document.querySelectorAll('.type-toggle-btn').forEach(btn => {
+          btn.addEventListener('click', () => {
+            document.querySelectorAll('.type-toggle-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            const type = btn.dataset.txType;
+            currentEntryState.type = type;
+
+            const tagGroup = document.getElementById('group-tag-select');
+            const categoryHint = document.getElementById('selected-category-hint');
+            if (type === 'income') {
+              currentEntryState.tag = 'income';
+              if (tagGroup) tagGroup.style.display = 'none';
+              if (categoryHint) categoryHint.textContent = '入帳時將提供 50/30/20 智能分流建議';
+            } else {
+              if (tagGroup) tagGroup.style.display = 'block';
+              if (categoryHint) categoryHint.textContent = '自動關聯財商標籤（可手動微調）';
+            }
+
+            renderCategorySelectGrid(type);
+            renderAccountSelectOptions(type);
+            checkCreditRiskOnInput();
+          });
+        });
+
+        // 財商標籤按鈕
+        document.querySelectorAll('.tag-select-btn').forEach(btn => {
+          btn.addEventListener('click', () => {
+            document.querySelectorAll('.tag-select-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            currentEntryState.tag = btn.dataset.tag;
+          });
+        });
+
+        // 輸入金額檢查
+        document.getElementById('input-amount').addEventListener('input', checkCreditRiskOnInput);
+
+        // 提交記帳
+        document.getElementById('btn-submit-entry').addEventListener('click', () => {
+          const amtInput = document.getElementById('input-amount');
+          const amount = Number(amtInput.value);
+          if (!amount || amount <= 0) {
+            showToast('請輸入正確金額！', 'error');
+            amtInput.focus();
+            return;
+          }
+
+          const dateInput = document.getElementById('input-date').value || new Date().toISOString().split('T')[0];
+          const noteInput = document.getElementById('input-note').value.trim();
+
+          const newTx = {
+            id: `tx_${Date.now()}`,
+            type: currentEntryState.type,
+            amount: amount,
+            categoryId: currentEntryState.categoryId,
+            categoryName: currentEntryState.categoryName,
+            categoryIcon: currentEntryState.categoryIcon,
+            tag: currentEntryState.tag,
+            accountId: currentEntryState.accountId,
+            accountName: currentEntryState.accountName,
+            date: dateInput,
+            note: noteInput
+          };
+
+          const targetAcc = appState.accounts.find(a => a.id === newTx.accountId);
+          if (targetAcc) {
+            if (newTx.type === 'expense') {
+              if (targetAcc.type === 'credit') targetAcc.balance = Number(targetAcc.balance || 0) + amount;
+              else targetAcc.balance = Number(targetAcc.balance || 0) - amount;
+            } else if (newTx.type === 'income') {
+              targetAcc.balance = Number(targetAcc.balance || 0) + amount;
+            }
+          }
+
+          appState.transactions.unshift(newTx);
+          saveAppData(appState);
+          document.getElementById('modal-entry').classList.remove('active');
+          renderDashboard();
+          showToast(`已成功記錄【${newTx.categoryName}】${formatCurrency(amount)}！`, 'success');
+
+          if (newTx.type === 'income' && amount >= 5000) {
+            setTimeout(() => {
+              const modalSplit = document.getElementById('modal-split-advisor');
+              document.getElementById('split-total-amount').textContent = formatCurrency(amount);
+              document.getElementById('split-need-amt').textContent = formatCurrency(Math.round(amount * 0.5));
+              document.getElementById('split-want-amt').textContent = formatCurrency(Math.round(amount * 0.3));
+              document.getElementById('split-invest-amt').textContent = formatCurrency(Math.round(amount * 0.2));
+              modalSplit.classList.add('active');
+            }, 400);
+          }
+        });
+
+        // 篩選標籤
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+          btn.addEventListener('click', () => {
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            currentFilter = btn.dataset.filter;
+            renderLedgerList();
+          });
+        });
+
+        // 點擊事件委派 (刪除 & 繳卡費)
+        document.addEventListener('click', (e) => {
+          const deleteBtn = e.target.closest('.btn-tx-delete');
+          if (deleteBtn) {
+            const txId = deleteBtn.dataset.txId;
+            const txIndex = appState.transactions.findIndex(t => t.id === txId);
+            if (txIndex !== -1) {
+              const tx = appState.transactions[txIndex];
+              if (confirm(`確定要刪除【${tx.categoryName}】${formatCurrency(tx.amount)} 的紀錄嗎？`)) {
+                const targetAcc = appState.accounts.find(a => a.id === tx.accountId);
+                if (targetAcc) {
+                  if (tx.type === 'expense') {
+                    if (targetAcc.type === 'credit') targetAcc.balance = Math.max(0, Number(targetAcc.balance || 0) - Number(tx.amount));
+                    else targetAcc.balance = Number(targetAcc.balance || 0) + Number(tx.amount);
+                  } else if (tx.type === 'income') {
+                    targetAcc.balance = Number(targetAcc.balance || 0) - Number(tx.amount);
+                  }
+                }
+                appState.transactions.splice(txIndex, 1);
+                saveAppData(appState);
+                renderDashboard();
+                showToast('已刪除紀錄並回退餘額！', 'success');
+              }
+            }
+            return;
+          }
+
+          const payBillBtn = e.target.closest('.btn-pay-bill');
+          if (payBillBtn) {
+            const cardId = payBillBtn.dataset.cardId;
+            const card = appState.accounts.find(a => a.id === cardId);
+            if (!card) return;
+            pendingPayCard = card;
+            document.getElementById('pay-bill-card-name').textContent = `${card.bankName} (${card.name})`;
+            document.getElementById('pay-bill-amount-display').textContent = formatCurrency(card.balance);
+
+            const selectSrc = document.getElementById('select-pay-source-account');
+            const liquidAccs = appState.accounts.filter(a => a.type === 'liquid' || a.type === 'bank' || a.type === 'cash');
+            selectSrc.innerHTML = liquidAccs.map(a => `<option value="${a.id}">${a.name} (餘額: ${formatCurrency(a.balance)})</option>`).join('');
+
+            document.getElementById('modal-pay-bill').classList.add('active');
+          }
+        });
+
+        // 確認繳清卡費
+        document.getElementById('btn-confirm-pay-bill').addEventListener('click', () => {
+          if (!pendingPayCard) return;
+          const billAmount = Number(pendingPayCard.balance || 0);
+          if (billAmount <= 0) {
+            showToast('目前此卡無待繳帳款！', 'warning');
+            document.getElementById('modal-pay-bill').classList.remove('active');
+            return;
+          }
+
+          const selectSrc = document.getElementById('select-pay-source-account');
+          const srcAcc = appState.accounts.find(a => a.id === selectSrc.value);
+          if (srcAcc) {
+            srcAcc.balance = Number(srcAcc.balance) - billAmount;
+          }
+          pendingPayCard.balance = 0;
+
+          appState.transactions.unshift({
+            id: `tx_pay_${Date.now()}`,
+            type: 'transfer',
+            amount: billAmount,
+            categoryId: 'transfer',
+            categoryName: `繳納${pendingPayCard.bankName}卡費`,
+            categoryIcon: '💳',
+            tag: 'transfer',
+            accountId: srcAcc ? srcAcc.id : 'acc_bank_main',
+            accountName: srcAcc ? srcAcc.name : '主要活存',
+            date: new Date().toISOString().split('T')[0],
+            note: `沖銷結清 ${pendingPayCard.name} 待繳款（內部轉帳，無重複計算）`
+          });
+
+          saveAppData(appState);
+          document.getElementById('modal-pay-bill').classList.remove('active');
+          renderDashboard();
+          showToast(`🎉 成功繳清 ${pendingPayCard.bankName} 卡費 ${formatCurrency(billAmount)}！`, 'success');
+          pendingPayCard = null;
+        });
+
+        // 備份功能
+        const modalBackup = document.getElementById('modal-backup');
+        document.getElementById('btn-open-backup-modal').addEventListener('click', () => modalBackup.classList.add('active'));
+
+        document.getElementById('btn-export-json').addEventListener('click', () => {
+          const blob = new Blob([JSON.stringify(appState, null, 2)], { type: 'application/json' });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `finflow_backup_${new Date().toISOString().split('T')[0]}.json`;
+          a.click();
+          URL.revokeObjectURL(url);
+          showToast('已匯出 JSON 備份檔！', 'success');
+        });
+
+        document.getElementById('file-import-json').addEventListener('change', (e) => {
+          const file = e.target.files[0];
+          if (!file) return;
+          const reader = new FileReader();
+          reader.onload = (ev) => {
+            try {
+              const parsed = JSON.parse(ev.target.result);
+              if (!parsed.accounts || !parsed.transactions) throw new Error('缺少必要欄位');
+              appState = parsed;
+              saveAppData(appState);
+              renderDashboard();
+              showToast('成功還原備份資料！', 'success');
+              modalBackup.classList.remove('active');
+            } catch (err) {
+              showToast('匯入失敗，請確認檔案格式！', 'error');
+            }
+          };
+          reader.readAsText(file);
+        });
+
+        document.getElementById('btn-reset-demo').addEventListener('click', () => {
+          if (confirm('確定要重設為初始狀態嗎？')) {
+            localStorage.removeItem(STORAGE_KEY);
+            appState = loadAppData();
+            renderDashboard();
+            showToast('已重設為初始資料！', 'success');
+            modalBackup.classList.remove('active');
+          }
+        });
+      });
+    })();
+  </script>
+</body>
+</html>
