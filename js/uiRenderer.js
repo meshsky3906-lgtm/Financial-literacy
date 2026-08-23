@@ -133,6 +133,10 @@ function renderCreditGuard(accounts, transactions, currentMonth) {
       </div>
 
       <div class="credit-card-number">•••• •••• •••• ${isEsun ? '8899' : '6688'}</div>
+      <div class="credit-cycle-badge-wrap">
+        <span class="cycle-tag statement">📅 結帳日：每月 ${card.statementDay || (isEsun ? 21 : 24)} 號</span>
+        <span class="cycle-tag due">⏰ 繳款日：次月 ${card.dueDay || (isEsun ? 6 : 9)} 號</span>
+      </div>
 
       <div class="utilization-gauge-wrap">
         <div class="gauge-header">

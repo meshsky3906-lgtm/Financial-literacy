@@ -534,6 +534,8 @@
           creditLimit: 60000,
           safeLimit: 18000, // 30% 信用安全線
           balance: 0,       // 當前待繳帳款歸零
+          statementDay: 21, // 每月 21 號結帳
+          dueDay: 6,        // 隔月 6 號繳款
           icon: '💳',
           color: '#059669'
         },
@@ -545,6 +547,8 @@
           creditLimit: 60000,
           safeLimit: 18000, // 30% 信用安全線
           balance: 0,       // 當前待繳帳款歸零
+          statementDay: 24, // 每月 24 號結帳
+          dueDay: 9,        // 隔月 9 號繳款
           icon: '💳',
           color: '#0284C7'
         },
@@ -574,13 +578,26 @@
         try {
           const raw = localStorage.getItem(STORAGE_KEY);
           if (!raw) {
-            const initial = { version: '3.0', accounts: DEFAULT_ACCOUNTS, transactions: DEFAULT_TRANSACTIONS };
+            const initial = { version: '4.0', accounts: DEFAULT_ACCOUNTS, transactions: DEFAULT_TRANSACTIONS };
             saveAppData(initial);
             return initial;
           }
-          return JSON.parse(raw);
+          const parsed = JSON.parse(raw);
+          // 自動補全結帳日與繳款日
+          if (parsed.accounts) {
+            parsed.accounts.forEach(acc => {
+              if (acc.id === 'card_esun') {
+                if (!acc.statementDay) acc.statementDay = 21;
+                if (!acc.dueDay) acc.dueDay = 6;
+              } else if (acc.id === 'card_fubon') {
+                if (!acc.statementDay) acc.statementDay = 24;
+                if (!acc.dueDay) acc.dueDay = 9;
+              }
+            });
+          }
+          return parsed;
         } catch (e) {
-          return { version: '3.0', accounts: DEFAULT_ACCOUNTS, transactions: DEFAULT_TRANSACTIONS };
+          return { version: '4.0', accounts: DEFAULT_ACCOUNTS, transactions: DEFAULT_TRANSACTIONS };
         }
       }
 
@@ -913,6 +930,10 @@
               <span class="badge badge-${health.statusLevel}">${health.statusText}</span>
             </div>
             <div class="credit-card-number">•••• •••• •••• ${isEsun ? '8899' : '6688'}</div>
+            <div class="credit-cycle-badge-wrap">
+              <span class="cycle-tag statement">📅 結帳日：每月 ${card.statementDay || (isEsun ? 21 : 24)} 號</span>
+              <span class="cycle-tag due">⏰ 繳款日：次月 ${card.dueDay || (isEsun ? 6 : 9)} 號</span>
+            </div>
             <div class="utilization-gauge-wrap">
               <div class="gauge-header">
                 <span>已刷：<strong>${formatCurrency(health.monthlySpent)}</strong> (${health.utilizationRatio.toFixed(1)}%)</span>

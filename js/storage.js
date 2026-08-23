@@ -2,10 +2,10 @@
  * FinFlow 智富記帳 - 本地持久化與資料管理模組
  */
 
-const STORAGE_KEY = 'finflow_app_data_v3';
+const STORAGE_KEY = 'finflow_app_data_v4';
 
 /**
- * 預設帳戶資料庫（依據使用者指示設置玉山與富邦信用卡，額度6萬，安全上限1.8萬，初始餘額歸零）
+ * 預設帳戶資料庫（依據使用者指示設置玉山與富邦信用卡，額度6萬，安全上限1.8萬，玉山21號結帳/次月6號繳款，富邦24號結帳/次月9號繳款）
  */
 const DEFAULT_ACCOUNTS = [
   {
@@ -26,9 +26,11 @@ const DEFAULT_ACCOUNTS = [
     creditLimit: 60000,
     safeLimit: 18000, // 30% 信用安全線
     balance: 0,       // 當前待繳帳款歸零
+    statementDay: 21, // 每月 21 號結帳
+    dueDay: 6,        // 隔月 6 號繳款
     icon: '💳',
     color: '#059669', // 玉山品牌翡翠綠
-    description: '額度 $60,000 / 每月嚴格風控安全上限 $18,000'
+    description: '額度 $60,000 / 每月嚴格風控上限 $18,000 / 每月 21 號結帳、次月 6 號繳款'
   },
   {
     id: 'card_fubon',
@@ -38,9 +40,11 @@ const DEFAULT_ACCOUNTS = [
     creditLimit: 60000,
     safeLimit: 18000, // 30% 信用安全線
     balance: 0,       // 當前待繳帳款歸零
+    statementDay: 24, // 每月 24 號結帳
+    dueDay: 9,        // 隔月 9 號繳款
     icon: '💳',
     color: '#0284C7', // 富邦品牌活力藍
-    description: '額度 $60,000 / 每月嚴格風控安全上限 $18,000'
+    description: '額度 $60,000 / 每月嚴格風控上限 $18,000 / 每月 24 號結帳、次月 9 號繳款'
   },
   {
     id: 'acc_emergency',

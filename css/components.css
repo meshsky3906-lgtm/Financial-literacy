@@ -265,7 +265,42 @@
   font-size: 0.78rem;
   letter-spacing: 2px;
   color: rgba(255, 255, 255, 0.5);
-  margin-bottom: 10px;
+  margin-bottom: 6px;
+}
+
+/* 帳單週期標籤 (結帳日與繳款日) */
+.credit-cycle-badge-wrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.cycle-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: var(--radius-full);
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #E2E8F0;
+  letter-spacing: 0.2px;
+}
+
+.cycle-tag.statement {
+  background: rgba(99, 102, 241, 0.12);
+  border-color: rgba(99, 102, 241, 0.3);
+  color: #A5B4FC;
+}
+
+.cycle-tag.due {
+  background: rgba(245, 158, 11, 0.12);
+  border-color: rgba(245, 158, 11, 0.3);
+  color: #FCD34D;
 }
 
 /* 30% 信用使用率進度槽（徹底解決字體重疊問題） */
