@@ -53,8 +53,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // 3. 綁定所有互動事件
   setupEventListeners();
 
-  // 4. 檢查 URL 快捷記帳參數 (iOS 捷徑)
-  checkUrlQuickShortcut();
+  // 4. 渲染完畢（iOS 捷徑功能已移除）
 });
 
 /**
@@ -173,53 +172,14 @@ function setupEventListeners() {
     }
   });
 
-  // --- iOS 鎖屏捷徑指南彈窗 ---
-  const modalShortcut = document.getElementById('modal-shortcut-guide');
-  const openShortcutBtn = document.getElementById('btn-open-shortcut-modal');
-  const shortcutUrlInput = document.getElementById('shortcut-url-display');
-  const copyShortcutBtn = document.getElementById('btn-copy-shortcut-url');
-  const testShortcutBtn = document.getElementById('btn-test-shortcut-entry');
-
-  if (openShortcutBtn && modalShortcut) {
-    openShortcutBtn.addEventListener('click', () => {
-      if (shortcutUrlInput) {
-        const base = window.location.origin && window.location.origin !== 'null' ? `${window.location.origin}${window.location.pathname}` : window.location.href.split('?')[0];
-        shortcutUrlInput.value = `${base}?amount=`;
-      }
-      modalShortcut.classList.add('active');
-    });
-  }
-
-  if (copyShortcutBtn && shortcutUrlInput) {
-    copyShortcutBtn.addEventListener('click', async () => {
-      try {
-        if (navigator.clipboard && navigator.clipboard.writeText) {
-          await navigator.clipboard.writeText(shortcutUrlInput.value);
-        } else {
-          shortcutUrlInput.select();
-          document.execCommand('copy');
-        }
-        showToast('📋 已複製專屬捷徑記帳網址！請於 iOS 捷徑貼上。', 'success');
-      } catch (err) {
-        shortcutUrlInput.select();
-        showToast('請長按上方輸入框手動複製網址', 'warning');
-      }
-    });
-  }
-
-  if (testShortcutBtn) {
-    testShortcutBtn.addEventListener('click', () => {
-      const testAmount = prompt('【模擬 iOS 捷徑觸發】請輸入本次消費金額 (例如 120)：', '120');
-      if (testAmount && !isNaN(Number(testAmount)) && Number(testAmount) > 0) {
-        if (modalShortcut) modalShortcut.classList.remove('active');
-        recordQuickTransaction({
-          amount: Number(testAmount),
-          note: '捷徑模擬測試 (外食午餐)',
-          categoryParam: 'food_daily',
-          accountParam: 'card_esun',
-          type: 'expense'
-        });
-      }
+  // --- 重新整理按鈕 ---
+  const btnRefresh = document.getElementById('btn-refresh-page');
+  if (btnRefresh) {
+    btnRefresh.addEventListener('click', () => {
+      // 重新從 LocalStorage 載入最新資料並重繪儀表板
+      appState = loadAppData();
+      renderDashboard(appState);
+      showToast('✅ 資料已同步重新整理！', 'success');
     });
   }
 
@@ -668,6 +628,7 @@ function handleSaveTransaction() {
 
 /**
  * 刪除一筆交易並回退帳戶餘額
+ * 注意：transfer 類型需同時回退轉出與轉入帳戶
  */
 function handleDeleteTransaction(txId) {
   const txIndex = appState.transactions.findIndex(t => t.id === txId);
@@ -678,17 +639,60 @@ function handleDeleteTransaction(txId) {
     return;
   }
 
-  // 回退帳戶餘額
-  const targetAcc = appState.accounts.find(a => a.id === tx.accountId);
-  if (targetAcc) {
-    if (tx.type === 'expense') {
-      if (targetAcc.type === 'credit') {
-        targetAcc.balance = Math.max(0, Number(targetAcc.balance || 0) - Number(tx.amount));
+  const amount = Number(tx.amount || 0);
+
+  if (tx.type === 'transfer') {
+    // 轉帳記錄：解析轉出與轉入帳戶並各自回退
+    // categoryName 格式：「轉帳：fromAcc.name ➔ toAcc.name」或「繳納XXX卡費」
+    const fromAcc = appState.accounts.find(a => a.id === tx.accountId);
+
+    // 嘗試從 categoryName 反查轉入帳戶
+    const transferMatch = tx.categoryName && tx.categoryName.includes('➔');
+    let toAcc = null;
+    if (transferMatch) {
+      const parts = tx.categoryName.split('➔');
+      const toName = parts[1] ? parts[1].trim() : '';
+      toAcc = appState.accounts.find(a => a.name.trim() === toName);
+    } else if (tx.categoryName && tx.categoryName.includes('繳納')) {
+      // 繳納卡費：fromAcc 是活存（已從 accountId 找到），toAcc 是信用卡
+      // 找出 balance=0 且 type=credit 的信用卡（繳清後 balance=0）
+      // 改用 bankName 比對：categoryName 格式「繳納XXX卡費」
+      const bankNameMatch = tx.categoryName.replace('繳納', '').replace('卡費', '').trim();
+      toAcc = appState.accounts.find(a => a.type === 'credit' && (a.bankName.includes(bankNameMatch) || bankNameMatch.includes(a.bankName)));
+    }
+
+    // 回退轉出帳戶（活存 +、信用卡 -）
+    if (fromAcc) {
+      if (fromAcc.type === 'credit') {
+        fromAcc.balance = Math.max(0, Number(fromAcc.balance || 0) - amount);
       } else {
-        targetAcc.balance = Number(targetAcc.balance || 0) + Number(tx.amount);
+        fromAcc.balance = Number(fromAcc.balance || 0) + amount;
       }
-    } else if (tx.type === 'income') {
-      targetAcc.balance = Number(targetAcc.balance || 0) - Number(tx.amount);
+    }
+
+    // 回退轉入帳戶（信用卡 +、活存 -）
+    if (toAcc) {
+      if (toAcc.type === 'credit') {
+        // 原本是沖銷（credit balance - amount），回退後 balance + amount
+        toAcc.balance = Number(toAcc.balance || 0) + amount;
+      } else {
+        toAcc.balance = Math.max(0, Number(toAcc.balance || 0) - amount);
+      }
+    }
+
+  } else {
+    // 常規支出/收入回退
+    const targetAcc = appState.accounts.find(a => a.id === tx.accountId);
+    if (targetAcc) {
+      if (tx.type === 'expense') {
+        if (targetAcc.type === 'credit') {
+          targetAcc.balance = Math.max(0, Number(targetAcc.balance || 0) - amount);
+        } else {
+          targetAcc.balance = Number(targetAcc.balance || 0) + amount;
+        }
+      } else if (tx.type === 'income') {
+        targetAcc.balance = Number(targetAcc.balance || 0) - amount;
+      }
     }
   }
 
@@ -801,90 +805,5 @@ function openSplitAdvisorModal(amount) {
   modal.classList.add('active');
 }
 
-/**
- * 快速記帳執行器 (由 URL 參數或捷徑調用)
- */
-function recordQuickTransaction({ amount, note = '', categoryParam = '', accountParam = '', type = 'expense', tagParam = '' }) {
-  if (!amount || isNaN(amount) || amount <= 0) return false;
+// iOS 捷徑功能已移除
 
-  const categories = type === 'income' ? DEFAULT_INCOME_CATEGORIES : DEFAULT_EXPENSE_CATEGORIES;
-  let cat = categories.find(c => c.id === categoryParam || c.name.includes(categoryParam) || (categoryParam && categoryParam.includes(c.name)));
-  if (!cat) {
-    cat = categories[0];
-  }
-
-  let targetAcc = appState.accounts.find(a => a.id === accountParam || a.name.includes(accountParam) || (accountParam && accountParam.includes(a.name)));
-  if (!targetAcc) {
-    targetAcc = appState.accounts.find(a => a.id === 'card_esun') || appState.accounts[0];
-  }
-
-  const tag = tagParam || (type === 'income' ? 'income' : (cat.defaultTag || 'need'));
-
-  const newTx = {
-    id: `tx_sc_${Date.now()}`,
-    type: type,
-    amount: amount,
-    categoryId: cat.id,
-    categoryName: cat.name,
-    categoryIcon: cat.icon,
-    tag: tag,
-    accountId: targetAcc.id,
-    accountName: targetAcc.name,
-    date: new Date().toISOString().split('T')[0],
-    note: note || '📲 iOS 鎖屏捷徑記帳'
-  };
-
-  if (targetAcc) {
-    if (newTx.type === 'expense') {
-      if (targetAcc.type === 'credit') targetAcc.balance = Number(targetAcc.balance || 0) + amount;
-      else targetAcc.balance = Number(targetAcc.balance || 0) - amount;
-    } else if (newTx.type === 'income') {
-      targetAcc.balance = Number(targetAcc.balance || 0) + amount;
-    }
-  }
-
-  appState.transactions.unshift(newTx);
-  saveAppData(appState);
-  renderDashboard(appState);
-  showToast(`⚡ iOS 捷徑鎖屏記帳成功！【${newTx.categoryName}】${formatCurrency(amount)} 已記錄至 ${targetAcc.name}`, 'success');
-  return true;
-}
-
-/**
- * 偵測網址 URL 記帳參數 (URL Protocol Handler)
- */
-function checkUrlQuickShortcut() {
-  try {
-    const urlParams = new URLSearchParams(window.location.search);
-    const action = urlParams.get('action');
-    const amountParam = urlParams.get('amount');
-
-    if (action === 'quick_entry' || urlParams.get('quick') === '1') {
-      const modalEntry = document.getElementById('modal-entry');
-      if (modalEntry) {
-        modalEntry.classList.add('active');
-        const amtInput = document.getElementById('input-amount');
-        if (amtInput) amtInput.focus();
-      }
-      window.history.replaceState({}, '', window.location.pathname);
-      return;
-    }
-
-    if (amountParam) {
-      const amount = Number(amountParam);
-      if (!isNaN(amount) && amount > 0) {
-        recordQuickTransaction({
-          amount: amount,
-          note: urlParams.get('note') || '',
-          categoryParam: urlParams.get('category') || '',
-          accountParam: urlParams.get('account') || '',
-          type: urlParams.get('type') || 'expense',
-          tagParam: urlParams.get('tag') || ''
-        });
-        window.history.replaceState({}, '', window.location.pathname);
-      }
-    }
-  } catch (e) {
-    console.warn('URL 記帳參數檢查失敗：', e);
-  }
-}

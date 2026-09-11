@@ -140,7 +140,7 @@ function renderCreditGuard(accounts, transactions, currentMonth) {
 
       <div class="utilization-gauge-wrap">
         <div class="gauge-header">
-          <span>已刷：<strong>${formatCurrency(health.monthlySpent)}</strong> (${health.utilizationRatio.toFixed(1)}%)</span>
+          <span>佔用待繳：<strong>${formatCurrency(health.currentUnpaid)}</strong> (${health.utilizationRatio.toFixed(1)}%)</span>
           <span>安全剩餘：<strong style="color: ${health.statusColor}">${formatCurrency(health.remainingSafeCredit)}</strong></span>
         </div>
         <div class="gauge-bar-track">
@@ -283,8 +283,8 @@ export function renderTransactionLedger(state, filterTag = 'all') {
   else if (filterTag === 'want') filtered = filtered.filter(t => t.tag === 'want');
   else if (filterTag === 'invest') filtered = filtered.filter(t => t.tag === 'invest');
   else if (filterTag === 'income') filtered = filtered.filter(t => t.type === 'income');
-  else if (filterTag === 'card_esun') filtered = filtered.filter(t => t.accountId === 'card_esun');
-  else if (filterTag === 'card_fubon') filtered = filtered.filter(t => t.accountId === 'card_fubon');
+  else if (filterTag === 'card_esun') filtered = filtered.filter(t => t.accountId === 'card_esun' || t.toAccountId === 'card_esun');
+  else if (filterTag === 'card_fubon') filtered = filtered.filter(t => t.accountId === 'card_fubon' || t.toAccountId === 'card_fubon');
 
   if (filtered.length === 0) {
     container.innerHTML = `
@@ -383,7 +383,12 @@ export function openTxDetailModal(txId, state, onDeleteCallback) {
   } catch(e) {}
 
   document.getElementById('tx-detail-date').textContent = `${tx.date}${dayName}`;
-  document.getElementById('tx-detail-account').textContent = tx.accountName || '活存';
+  
+  if (isTransfer) {
+    document.getElementById('tx-detail-account').textContent = `${tx.accountName || '轉出戶'} ➔ ${tx.toAccountName || '轉入戶'}`;
+  } else {
+    document.getElementById('tx-detail-account').textContent = tx.accountName || '活存';
+  }
 
   let tagDesc = '一般交易紀錄';
   if (isIncome) tagDesc = '收入總額（建議遵循 50/30/20 進行自動化分流）';
@@ -401,7 +406,10 @@ export function openTxDetailModal(txId, state, onDeleteCallback) {
   const elImpactBox = document.getElementById('tx-detail-impact');
   const elImpactText = document.getElementById('tx-detail-impact-text');
 
-  if (tx.accountId === 'card_esun' || tx.accountId === 'card_fubon') {
+  if (isTransfer) {
+    elImpactBox.className = 'diagnostic-item info';
+    elImpactText.innerHTML = `<strong>資產調配沖銷</strong>：屬於內部資金移轉，已同步更新轉出與轉入帳戶（若轉入信用卡已即時扣抵待繳款並釋出信用額度），不重複計入生活支出。`;
+  } else if (tx.accountId === 'card_esun' || tx.accountId === 'card_fubon') {
     elImpactBox.className = 'diagnostic-item caution';
     elImpactText.innerHTML = `<strong>信用卡風控提示</strong>：此筆款項計入【${tx.accountName}】之待繳款，系統已自「真實可用現金」中即時扣除，確保您遠離假性富裕，並持續嚴守 30% 額度安全紅線（$18,000）！`;
   } else if (tx.tag === 'need') {

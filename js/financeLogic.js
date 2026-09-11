@@ -97,18 +97,14 @@ export function calculateCreditCardHealth(account, transactions = [], monthKey =
 
   const limit = Number(account.creditLimit || 60000);
   const safeLimit = Number(account.safeLimit || 18000); // 30% 安全線
-  const currentUnpaid = Number(account.balance || 0); // 當前待繳總額
+  // 當前實際待繳佔用額度 (經刷卡增加、轉帳沖銷後即時扣減)
+  const currentUnpaid = Math.max(0, Number(account.balance || 0));
 
-  // 計算當月本卡刷卡總額
-  const monthlySpent = transactions
-    .filter(tx => tx.type === 'expense' && tx.accountId === account.id && tx.date.startsWith(monthKey))
-    .reduce((sum, tx) => sum + Number(tx.amount), 0);
-
-  // 使用率以「當月刷卡額 / 總額度」計算
-  const utilizationRatio = limit > 0 ? (monthlySpent / limit) * 100 : 0;
-  const remainingSafeCredit = Math.max(0, safeLimit - monthlySpent);
-  const isOverSafeLimit = monthlySpent > safeLimit;
-  const isNearSafeLimit = monthlySpent >= safeLimit * 0.8 && !isOverSafeLimit;
+  // 信用使用率以「當前實際待繳佔用額度 / 總額度」計算
+  const utilizationRatio = limit > 0 ? (currentUnpaid / limit) * 100 : 0;
+  const remainingSafeCredit = Math.max(0, safeLimit - currentUnpaid);
+  const isOverSafeLimit = currentUnpaid > safeLimit;
+  const isNearSafeLimit = currentUnpaid >= safeLimit * 0.8 && !isOverSafeLimit;
 
   let statusLevel = 'safe'; // safe | warning | danger
   let statusText = '信用安全 (極佳)';
@@ -131,7 +127,7 @@ export function calculateCreditCardHealth(account, transactions = [], monthKey =
     creditLimit: limit,
     safeLimit: safeLimit,
     safeRatio: 30, // 30%
-    monthlySpent,
+    monthlySpent: currentUnpaid, // 當前佔用額度
     currentUnpaid,
     remainingSafeCredit,
     utilizationRatio,
