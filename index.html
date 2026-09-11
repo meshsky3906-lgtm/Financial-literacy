@@ -577,8 +577,18 @@
         <div class="shortcut-step-item">
           <div class="shortcut-step-num">3</div>
           <div class="shortcut-step-content">
-            <h5>加入第 2 個動作：【打開 URL】</h5>
-            <p>搜尋動作「打開 URL」，貼上上方複製的專屬網址，並在網址最後插入變數「提供的輸入」。</p>
+            <h5>加入動作：【打開 URL】並串接金額變數（關鍵步驟）</h5>
+            <p style="margin-bottom: 6px;">在捷徑搜尋並加入<strong>「打開 URL」</strong>動作（Safari 類別）。接著將網址與金額變數串接：</p>
+            <div style="background: rgba(0,0,0,0.35); padding: 10px; border-radius: 6px; font-size: 0.78rem; line-height: 1.6; border-left: 3px solid #6366F1;">
+              <strong>💡 兩種最直覺的設定方法（任選一種）：</strong><br>
+              <strong>方法 A（推薦・直接點選）：</strong><br>
+              1. 在「打開 URL」輸入框中貼上上方複製的網址（注意末尾必須有 <code>?amount=</code>）。<br>
+              2. <strong>此時看虛擬鍵盤正上方的一排小按鈕</strong>，會看到一個藍底白字的<strong>【提供的輸入】</strong>，直接點一下它！<br>
+              3. 看到它變成一個藍色小藥丸膠囊 <code>?amount=[提供的輸入]</code> 即完成！<br>
+              <br>
+              <strong>方法 B（最穩妥三步法）：</strong><br>
+              在「要求輸入」下方先加入一個【文字】動作，在文字框貼上網址並接上【提供的輸入】，接著下方加入【打開 URL】，它會自動開啟這串文字！
+            </div>
           </div>
         </div>
 
