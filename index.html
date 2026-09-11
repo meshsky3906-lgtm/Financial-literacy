@@ -45,6 +45,9 @@
           <button id="btn-quick-add-header" class="btn btn-primary" title="隨時極速記帳">
             ➕ 記一筆
           </button>
+          <button id="btn-open-shortcut-modal" class="btn btn-secondary" title="iOS 鎖屏快速記帳與捷徑設定教學">
+            📲 iOS 捷徑
+          </button>
           <button id="btn-open-reports-modal" class="btn btn-secondary" title="查閱月報表、季報表與年報表">
             📊 財務報表
           </button>
@@ -452,6 +455,147 @@
       <!-- 報表內容動態渲染區 -->
       <div id="report-content-container">
         <!-- JS 動態渲染 -->
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       彈窗 6：交易明細查看詳情 Modal (Transaction Detail Modal)
+       ========================================================================= -->
+  <div id="modal-tx-detail" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title">📄 交易明細詳情</h3>
+        <button class="btn-close-modal" data-close-modal>&times;</button>
+      </div>
+
+      <!-- 頂部金額與類別大卡片 -->
+      <div class="tx-detail-hero">
+        <div id="tx-detail-icon" class="tx-detail-hero-icon">💸</div>
+        <div id="tx-detail-amount" class="tx-detail-hero-amount money-amount text-primary">NT$ 0</div>
+        <div id="tx-detail-category" class="tx-detail-hero-category">日常三餐</div>
+        <div id="tx-detail-type-badge"></div>
+      </div>
+
+      <!-- 詳細屬性列表 -->
+      <div class="tx-detail-grid">
+        <div class="tx-detail-item">
+          <span class="tx-detail-label">📅 交易日期時間</span>
+          <span id="tx-detail-date" class="tx-detail-value">2026-09-11</span>
+        </div>
+        <div class="tx-detail-item">
+          <span class="tx-detail-label">🏦 交易帳戶</span>
+          <span id="tx-detail-account" class="tx-detail-value">玉山銀行信用卡</span>
+        </div>
+        <div class="tx-detail-item">
+          <span class="tx-detail-label">🎯 財商屬性分流</span>
+          <span id="tx-detail-tag" class="tx-detail-value">50% 必要需求</span>
+        </div>
+        <div class="tx-detail-item">
+          <span class="tx-detail-label">🆔 交易編號</span>
+          <span id="tx-detail-id" class="tx-detail-value" style="font-family: monospace; font-size: 0.75rem; color: var(--text-muted);">tx_123456</span>
+        </div>
+      </div>
+
+      <!-- 備註欄位 -->
+      <div class="tx-detail-note-box">
+        <div class="tx-detail-note-label">📝 備註事項</div>
+        <div id="tx-detail-note" class="tx-detail-note-content">無備註</div>
+      </div>
+
+      <!-- 財商風控影響小卡 -->
+      <div id="tx-detail-impact" class="diagnostic-item success" style="margin-bottom: 16px;">
+        <span>💡</span>
+        <div id="tx-detail-impact-text">此筆紀錄正常納入財務統計。</div>
+      </div>
+
+      <!-- 操作按鈕 -->
+      <div class="tx-detail-actions">
+        <button id="btn-tx-detail-delete" class="btn btn-outline-danger" style="flex: 1;">🗑️ 刪除本筆紀錄</button>
+        <button type="button" class="btn btn-secondary" data-close-modal style="flex: 1;">關閉</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       彈窗 7：iOS 鎖屏快速記帳與捷徑教學 Modal (iOS Shortcut Guide Modal)
+       ========================================================================= -->
+  <div id="modal-shortcut-guide" class="modal-overlay">
+    <div class="modal-card" style="max-width: 580px;">
+      <div class="modal-header">
+        <h3 class="modal-title">📲 iOS 鎖屏快速記帳設定指南</h3>
+        <button class="btn-close-modal" data-close-modal>&times;</button>
+      </div>
+
+      <div class="shortcut-header-badge">
+        <span>✨</span>
+        <span>免解鎖螢幕・鎖屏小工具・動作按鈕・輕點背面秒速記帳</span>
+      </div>
+
+      <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.6; margin-bottom: 16px;">
+        透過 iOS 內建的「捷徑」功能，可以在 iPhone 鎖定畫面上放置小工具，不用解鎖手機，直接彈出輸入框輸入金額，即可透過專屬 URL 參數秒記一筆帳！
+      </p>
+
+      <!-- 專屬捷徑 URL 產生區 -->
+      <div class="shortcut-url-card">
+        <div class="shortcut-url-card-title">
+          <span>🔗 您的專屬極速記帳 URL 格式</span>
+          <span style="font-size: 0.75rem; color: #6EE7B7;">自動偵測當前網址</span>
+        </div>
+        <div class="shortcut-url-copy-box">
+          <input type="text" id="shortcut-url-display" class="shortcut-url-input" readonly>
+          <button id="btn-copy-shortcut-url" class="btn btn-primary" style="padding: 8px 14px; font-size: 0.82rem; white-space: nowrap;">
+            📋 複製網址
+          </button>
+        </div>
+        <div class="shortcut-feature-tags">
+          <span class="shortcut-feature-tag">支援 ?amount=金額</span>
+          <span class="shortcut-feature-tag">支援 &note=備註</span>
+          <span class="shortcut-feature-tag">支援 &category=分類</span>
+          <span class="shortcut-feature-tag">自動防重複儲存</span>
+        </div>
+      </div>
+
+      <!-- 四步設定教學 -->
+      <div class="shortcut-step-list">
+        <div class="shortcut-step-item">
+          <div class="shortcut-step-num">1</div>
+          <div class="shortcut-step-content">
+            <h5>打開 iPhone 內建「捷徑」App</h5>
+            <p>點擊右上角「➕」新增一個捷徑，可命名為「⚡ 快速記帳」。</p>
+          </div>
+        </div>
+
+        <div class="shortcut-step-item">
+          <div class="shortcut-step-num">2</div>
+          <div class="shortcut-step-content">
+            <h5>加入第 1 個動作：【要求輸入】</h5>
+            <p>搜尋動作「要求輸入」，類型選「數字」，提示文字填寫「請輸入金額」。</p>
+          </div>
+        </div>
+
+        <div class="shortcut-step-item">
+          <div class="shortcut-step-num">3</div>
+          <div class="shortcut-step-content">
+            <h5>加入第 2 個動作：【打開 URL】</h5>
+            <p>搜尋動作「打開 URL」，貼上上方複製的專屬網址，並在網址最後插入變數「提供的輸入」。</p>
+          </div>
+        </div>
+
+        <div class="shortcut-step-item">
+          <div class="shortcut-step-num">4</div>
+          <div class="shortcut-step-content">
+            <h5>放置到 iPhone 鎖定畫面或輕點背面</h5>
+            <p>
+              長按鎖定畫面編輯 ➔ 加入「捷徑」小工具；或到「設定」➔「輔助使用」➔「觸控」➔「背面輕點」設為此捷徑。隨時隨地敲兩下秒記帳！
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="tx-detail-actions">
+        <button id="btn-test-shortcut-entry" class="btn btn-secondary" style="flex: 1;">🧪 測試快速記帳效果</button>
+        <button type="button" class="btn btn-primary" data-close-modal style="flex: 1;">我知道了，完成設定</button>
       </div>
     </div>
   </div>
@@ -1058,7 +1202,7 @@
           const amountColorClass = isIncome ? 'text-positive' : 'text-primary';
 
           return `
-            <div class="transaction-row">
+            <div class="transaction-row" data-tx-id="${tx.id}" title="點擊查看此筆帳務完整明細與財商風控影響">
               <div class="tx-left">
                 <div class="tx-icon-wrap">${tx.categoryIcon || '💸'}</div>
                 <div class="tx-meta">
@@ -1071,7 +1215,10 @@
                 </div>
               </div>
               <div class="tx-right">
-                <div class="tx-amount money-amount ${amountColorClass}">${sign}${formatCurrency(tx.amount)}</div>
+                <div style="text-align: right;">
+                  <div class="tx-amount money-amount ${amountColorClass}">${sign}${formatCurrency(tx.amount)}</div>
+                  <span style="font-size: 0.68rem; color: #A5B4FC; font-weight: 500; display: inline-flex; align-items: center; gap: 2px; margin-top: 2px; opacity: 0.85;">🔍 查詳情</span>
+                </div>
                 <button class="btn-tx-delete" data-tx-id="${tx.id}" title="刪除本筆紀錄">🗑️</button>
               </div>
             </div>
@@ -1609,31 +1756,141 @@
           });
         });
 
-        // 刪除交易事件 (委派)
-        document.addEventListener('click', (e) => {
-          const deleteBtn = e.target.closest('.btn-tx-delete');
-          if (deleteBtn) {
-            const txId = deleteBtn.dataset.txId;
-            const txIndex = (appState.transactions || []).findIndex(t => t.id === txId);
-            if (txIndex !== -1) {
-              const tx = appState.transactions[txIndex];
-              if (confirm(`確定要刪除【${tx.categoryName}】${formatCurrency(tx.amount)} 的紀錄嗎？`)) {
-                const targetAcc = appState.accounts.find(a => a.id === tx.accountId);
-                if (targetAcc) {
-                  if (tx.type === 'expense') {
-                    if (targetAcc.type === 'credit') targetAcc.balance = Math.max(0, Number(targetAcc.balance || 0) - Number(tx.amount));
-                    else targetAcc.balance = Number(targetAcc.balance || 0) + Number(tx.amount);
-                  } else if (tx.type === 'income') {
-                    targetAcc.balance = Number(targetAcc.balance || 0) - Number(tx.amount);
-                  }
-                }
-                appState.transactions.splice(txIndex, 1);
-                saveAppData(appState);
-                renderDashboard();
-                showToast('已刪除紀錄並回退餘額！', 'success');
+        // 統一刪除交易邏輯（包含明細彈窗與列表刪除）
+        function handleDeleteTxById(txId) {
+          const txIndex = (appState.transactions || []).findIndex(t => t.id === txId);
+          if (txIndex === -1) return;
+          const tx = appState.transactions[txIndex];
+          if (confirm(`確定要刪除【${tx.categoryName}】${formatCurrency(tx.amount)} 的紀錄嗎？\n此操作將同步回退關聯帳戶餘額。`)) {
+            const targetAcc = appState.accounts.find(a => a.id === tx.accountId);
+            if (targetAcc) {
+              if (tx.type === 'expense') {
+                if (targetAcc.type === 'credit') targetAcc.balance = Math.max(0, Number(targetAcc.balance || 0) - Number(tx.amount));
+                else targetAcc.balance = Number(targetAcc.balance || 0) + Number(tx.amount);
+              } else if (tx.type === 'income') {
+                targetAcc.balance = Number(targetAcc.balance || 0) - Number(tx.amount);
               }
             }
+            appState.transactions.splice(txIndex, 1);
+            saveAppData(appState);
+            renderDashboard();
+            showToast('已刪除紀錄並回退餘額！', 'success');
+          }
+        }
+
+        // 開啟交易明細詳情 Modal
+        function openTxDetailModal(txId) {
+          const tx = (appState.transactions || []).find(t => t.id === txId);
+          if (!tx) return;
+
+          const isIncome = tx.type === 'income';
+          const isTransfer = tx.type === 'transfer';
+          const sign = isIncome ? '+' : (isTransfer ? '' : '-');
+          const amountColorClass = isIncome ? 'text-positive' : (isTransfer ? 'text-primary' : 'text-primary');
+
+          // 圖示與大金額
+          document.getElementById('tx-detail-icon').textContent = tx.categoryIcon || (isIncome ? '💰' : '💸');
+          const elAmt = document.getElementById('tx-detail-amount');
+          elAmt.className = `tx-detail-hero-amount money-amount ${amountColorClass}`;
+          elAmt.textContent = `${sign}${formatCurrency(tx.amount)}`;
+
+          document.getElementById('tx-detail-category').textContent = tx.categoryName || '未分類';
+
+          // 標籤徽章
+          const elBadge = document.getElementById('tx-detail-type-badge');
+          if (isIncome) {
+            elBadge.innerHTML = `<span class="badge badge-income" style="font-size:0.85rem; padding: 4px 10px;">💰 收入入帳</span>`;
+          } else if (isTransfer) {
+            elBadge.innerHTML = `<span class="badge badge-need" style="font-size:0.85rem; padding: 4px 10px;">🔄 內部資產調配 / 沖銷</span>`;
+          } else if (tx.tag === 'need') {
+            elBadge.innerHTML = `<span class="badge badge-need" style="font-size:0.85rem; padding: 4px 10px;">🏠 50% 必要需求</span>`;
+          } else if (tx.tag === 'want') {
+            elBadge.innerHTML = `<span class="badge badge-want" style="font-size:0.85rem; padding: 4px 10px;">🛍️ 30% 彈性慾望</span>`;
+          } else if (tx.tag === 'invest') {
+            elBadge.innerHTML = `<span class="badge badge-invest" style="font-size:0.85rem; padding: 4px 10px;">📈 20% 投資儲蓄</span>`;
+          } else {
+            elBadge.innerHTML = `<span class="badge" style="font-size:0.85rem; padding: 4px 10px;">一般交易</span>`;
+          }
+
+          // 星期幾計算
+          let dayName = '';
+          try {
+            const dateObj = new Date(tx.date);
+            const days = ['週日', '週一', '週二', '週三', '週四', '週五', '週六'];
+            if (!isNaN(dateObj.getTime())) {
+              dayName = ` (${days[dateObj.getDay()]})`;
+            }
+          } catch(e) {}
+
+          document.getElementById('tx-detail-date').textContent = `${tx.date}${dayName}`;
+          document.getElementById('tx-detail-account').textContent = tx.accountName || '活存';
+
+          let tagDesc = '一般交易紀錄';
+          if (isIncome) tagDesc = '收入總額（建議遵循 50/30/20 進行自動化分流）';
+          else if (isTransfer) tagDesc = '帳戶間調配沖銷（不重疊列入生活支出）';
+          else if (tx.tag === 'need') tagDesc = '50% 必要需求（維持生命基本開支）';
+          else if (tx.tag === 'want') tagDesc = '30% 彈性慾望（個人享受與休閒品味）';
+          else if (tx.tag === 'invest') tagDesc = '20% 投資儲蓄（長期資產複利累積）';
+          document.getElementById('tx-detail-tag').textContent = tagDesc;
+
+          document.getElementById('tx-detail-id').textContent = tx.id || 'N/A';
+
+          // 備註展示
+          const elNote = document.getElementById('tx-detail-note');
+          elNote.textContent = tx.note ? tx.note : '（此筆紀錄無填寫備註）';
+
+          // 智慧影響診斷
+          const elImpactBox = document.getElementById('tx-detail-impact');
+          const elImpactText = document.getElementById('tx-detail-impact-text');
+
+          if (tx.accountId === 'card_esun' || tx.accountId === 'card_fubon') {
+            elImpactBox.className = 'diagnostic-item caution';
+            elImpactText.innerHTML = `<strong>信用卡風控提示</strong>：此筆款項計入【${tx.accountName}】之待繳款，系統已自「真實可用現金」中即時扣除，確保您遠離假性富裕，並持續嚴守 30% 額度安全紅線（$18,000）！`;
+          } else if (tx.tag === 'need') {
+            elImpactBox.className = 'diagnostic-item info';
+            elImpactText.innerHTML = `<strong>必要開支評估</strong>：此類固定需求開銷是衡量「緊急預備金（3~6個月）」的重要基準，精準記帳讓資產護城河更穩固。`;
+          } else if (tx.tag === 'want') {
+            elImpactBox.className = 'diagnostic-item warning';
+            elImpactText.innerHTML = `<strong>慾望開支提醒</strong>：屬於適度犒賞性質，請確認本月 30% 慾望預算是否充裕，享受當下同時也保護未來。`;
+          } else if (tx.tag === 'invest') {
+            elImpactBox.className = 'diagnostic-item success';
+            elImpactText.innerHTML = `<strong>資產滾動利多</strong>：這筆資金正為您的長期財務自由工作，恭喜持續貫徹 20% 投資儲蓄原則！`;
+          } else {
+            elImpactBox.className = 'diagnostic-item success';
+            elImpactText.innerHTML = `<strong>財務健康</strong>：此筆交易已正確記入本地帳本，所有即時圖表與總額均已動態同步更新。`;
+          }
+
+          // 綁定彈窗內刪除按鈕
+          const delBtn = document.getElementById('btn-tx-detail-delete');
+          if (delBtn) {
+            delBtn.onclick = () => {
+              document.getElementById('modal-tx-detail').classList.remove('active');
+              handleDeleteTxById(tx.id);
+            };
+          }
+
+          document.getElementById('modal-tx-detail').classList.add('active');
+        }
+
+        // 全域委派點擊事件 (明細查看、刪除、卡片繳費等)
+        document.addEventListener('click', (e) => {
+          // 1. 刪除單筆交易按鈕
+          const deleteBtn = e.target.closest('.btn-tx-delete');
+          if (deleteBtn) {
+            e.stopPropagation();
+            const txId = deleteBtn.dataset.txId;
+            handleDeleteTxById(txId);
             return;
+          }
+
+          // 2. 點擊交易紀錄列查看詳情
+          const txRow = e.target.closest('.transaction-row');
+          if (txRow) {
+            const txId = txRow.dataset.txId;
+            if (txId) {
+              openTxDetailModal(txId);
+              return;
+            }
           }
 
           // 點擊信用卡上的「繳納卡費」按鈕
@@ -1779,6 +2036,162 @@
             }
           });
         }
+
+        // =========================================================================
+        // iOS 鎖屏捷徑與快捷記帳模組 (iOS Shortcuts & URL Parameters Handler)
+        // =========================================================================
+        const modalShortcut = document.getElementById('modal-shortcut-guide');
+        const openShortcutBtn = document.getElementById('btn-open-shortcut-modal');
+        const shortcutUrlInput = document.getElementById('shortcut-url-display');
+        const copyShortcutBtn = document.getElementById('btn-copy-shortcut-url');
+        const testShortcutBtn = document.getElementById('btn-test-shortcut-entry');
+
+        // 動態計算當前部署或本機網址
+        function getShortcutBaseUrl() {
+          const origin = window.location.origin;
+          const pathname = window.location.pathname;
+          // 支援 file:/// 或 http(s)://
+          if (origin && origin !== 'null') {
+            return `${origin}${pathname}`;
+          }
+          return window.location.href.split('?')[0];
+        }
+
+        if (openShortcutBtn && modalShortcut) {
+          openShortcutBtn.addEventListener('click', () => {
+            if (shortcutUrlInput) {
+              const base = getShortcutBaseUrl();
+              shortcutUrlInput.value = `${base}?amount=`;
+            }
+            modalShortcut.classList.add('active');
+          });
+        }
+
+        if (copyShortcutBtn && shortcutUrlInput) {
+          copyShortcutBtn.addEventListener('click', async () => {
+            try {
+              if (navigator.clipboard && navigator.clipboard.writeText) {
+                await navigator.clipboard.writeText(shortcutUrlInput.value);
+              } else {
+                shortcutUrlInput.select();
+                document.execCommand('copy');
+              }
+              showToast('📋 已複製專屬捷徑記帳網址！請於 iOS 捷徑貼上。', 'success');
+            } catch (err) {
+              shortcutUrlInput.select();
+              showToast('請長按上方輸入框手動複製網址', 'warning');
+            }
+          });
+        }
+
+        // 測試模擬快速記帳按鈕
+        if (testShortcutBtn) {
+          testShortcutBtn.addEventListener('click', () => {
+            const testAmount = prompt('【模擬 iOS 捷徑觸發】請輸入本次消費金額 (例如 120)：', '120');
+            if (testAmount && !isNaN(Number(testAmount)) && Number(testAmount) > 0) {
+              modalShortcut.classList.remove('active');
+              recordQuickTransaction({
+                amount: Number(testAmount),
+                note: '捷徑模擬測試 (外食午餐)',
+                categoryParam: 'food_daily',
+                accountParam: 'card_esun',
+                type: 'expense'
+              });
+            }
+          });
+        }
+
+        // 核心快速記帳執行器 (由 URL 參數或捷徑調用)
+        function recordQuickTransaction({ amount, note = '', categoryParam = '', accountParam = '', type = 'expense', tagParam = '' }) {
+          if (!amount || isNaN(amount) || amount <= 0) return false;
+
+          const categories = type === 'income' ? DEFAULT_INCOME_CATEGORIES : DEFAULT_EXPENSE_CATEGORIES;
+          let cat = categories.find(c => c.id === categoryParam || c.name.includes(categoryParam) || (categoryParam && categoryParam.includes(c.name)));
+          if (!cat) {
+            cat = categories[0];
+          }
+
+          let targetAcc = appState.accounts.find(a => a.id === accountParam || a.name.includes(accountParam) || (accountParam && accountParam.includes(a.name)));
+          if (!targetAcc) {
+            // 預設玉山信用卡，若無則取第一張
+            targetAcc = appState.accounts.find(a => a.id === 'card_esun') || appState.accounts[0];
+          }
+
+          const tag = tagParam || (type === 'income' ? 'income' : (cat.defaultTag || 'need'));
+
+          const newTx = {
+            id: `tx_sc_${Date.now()}`,
+            type: type,
+            amount: amount,
+            categoryId: cat.id,
+            categoryName: cat.name,
+            categoryIcon: cat.icon,
+            tag: tag,
+            accountId: targetAcc.id,
+            accountName: targetAcc.name,
+            date: new Date().toISOString().split('T')[0],
+            note: note || '📲 iOS 鎖屏捷徑記帳'
+          };
+
+          if (targetAcc) {
+            if (newTx.type === 'expense') {
+              if (targetAcc.type === 'credit') targetAcc.balance = Number(targetAcc.balance || 0) + amount;
+              else targetAcc.balance = Number(targetAcc.balance || 0) - amount;
+            } else if (newTx.type === 'income') {
+              targetAcc.balance = Number(targetAcc.balance || 0) + amount;
+            }
+          }
+
+          appState.transactions.unshift(newTx);
+          saveAppData(appState);
+          renderDashboard();
+          showToast(`⚡ iOS 捷徑鎖屏記帳成功！【${newTx.categoryName}】${formatCurrency(amount)} 已記錄至 ${targetAcc.name}`, 'success');
+          return true;
+        }
+
+        // 偵測網址 URL 記帳參數 (URL Protocol Handler)
+        function checkUrlQuickShortcut() {
+          try {
+            const urlParams = new URLSearchParams(window.location.search);
+            const action = urlParams.get('action');
+            const amountParam = urlParams.get('amount');
+
+            // 1. 純開啟記帳視窗情境 (?action=quick_entry 或 ?quick=1)
+            if (action === 'quick_entry' || urlParams.get('quick') === '1') {
+              const modalEntry = document.getElementById('modal-entry');
+              if (modalEntry) {
+                modalEntry.classList.add('active');
+                const amtInput = document.getElementById('input-amount');
+                if (amtInput) amtInput.focus();
+              }
+              window.history.replaceState({}, '', window.location.pathname);
+              return;
+            }
+
+            // 2. 帶有金額直接自動記帳情境 (?amount=120&note=午餐)
+            if (amountParam) {
+              const amount = Number(amountParam);
+              if (!isNaN(amount) && amount > 0) {
+                recordQuickTransaction({
+                  amount: amount,
+                  note: urlParams.get('note') || '',
+                  categoryParam: urlParams.get('category') || '',
+                  accountParam: urlParams.get('account') || '',
+                  type: urlParams.get('type') || 'expense',
+                  tagParam: urlParams.get('tag') || ''
+                });
+
+                // 自動清除 URL 參數，避免使用者重新整理或下次打開時重複記帳
+                window.history.replaceState({}, '', window.location.pathname);
+              }
+            }
+          } catch (e) {
+            console.warn('URL 記帳參數檢查失敗：', e);
+          }
+        }
+
+        // 初始化時執行 URL 參數檢查
+        checkUrlQuickShortcut();
       });
     })();
   </script>

@@ -9,6 +9,7 @@ import {
   renderCategorySelectGrid, 
   renderAccountSelectOptions, 
   renderReportsModal,
+  openTxDetailModal,
   showToast, 
   formatCurrency 
 } from './uiRenderer.js';
@@ -51,6 +52,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // 3. 綁定所有互動事件
   setupEventListeners();
+
+  // 4. 檢查 URL 快捷記帳參數 (iOS 捷徑)
+  checkUrlQuickShortcut();
 });
 
 /**
@@ -144,9 +148,20 @@ function setupEventListeners() {
     // 刪除單筆交易
     const deleteBtn = e.target.closest('.btn-tx-delete');
     if (deleteBtn) {
+      e.stopPropagation();
       const txId = deleteBtn.dataset.txId;
       handleDeleteTransaction(txId);
       return;
+    }
+
+    // 點擊交易列開啟詳情查看
+    const txRow = e.target.closest('.transaction-row');
+    if (txRow) {
+      const txId = txRow.dataset.txId;
+      if (txId) {
+        openTxDetailModal(txId, appState, (id) => handleDeleteTransaction(id));
+        return;
+      }
     }
 
     // 點擊信用卡上的「繳納卡費」按鈕
@@ -157,6 +172,56 @@ function setupEventListeners() {
       return;
     }
   });
+
+  // --- iOS 鎖屏捷徑指南彈窗 ---
+  const modalShortcut = document.getElementById('modal-shortcut-guide');
+  const openShortcutBtn = document.getElementById('btn-open-shortcut-modal');
+  const shortcutUrlInput = document.getElementById('shortcut-url-display');
+  const copyShortcutBtn = document.getElementById('btn-copy-shortcut-url');
+  const testShortcutBtn = document.getElementById('btn-test-shortcut-entry');
+
+  if (openShortcutBtn && modalShortcut) {
+    openShortcutBtn.addEventListener('click', () => {
+      if (shortcutUrlInput) {
+        const base = window.location.origin && window.location.origin !== 'null' ? `${window.location.origin}${window.location.pathname}` : window.location.href.split('?')[0];
+        shortcutUrlInput.value = `${base}?amount=`;
+      }
+      modalShortcut.classList.add('active');
+    });
+  }
+
+  if (copyShortcutBtn && shortcutUrlInput) {
+    copyShortcutBtn.addEventListener('click', async () => {
+      try {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          await navigator.clipboard.writeText(shortcutUrlInput.value);
+        } else {
+          shortcutUrlInput.select();
+          document.execCommand('copy');
+        }
+        showToast('📋 已複製專屬捷徑記帳網址！請於 iOS 捷徑貼上。', 'success');
+      } catch (err) {
+        shortcutUrlInput.select();
+        showToast('請長按上方輸入框手動複製網址', 'warning');
+      }
+    });
+  }
+
+  if (testShortcutBtn) {
+    testShortcutBtn.addEventListener('click', () => {
+      const testAmount = prompt('【模擬 iOS 捷徑觸發】請輸入本次消費金額 (例如 120)：', '120');
+      if (testAmount && !isNaN(Number(testAmount)) && Number(testAmount) > 0) {
+        if (modalShortcut) modalShortcut.classList.remove('active');
+        recordQuickTransaction({
+          amount: Number(testAmount),
+          note: '捷徑模擬測試 (外食午餐)',
+          categoryParam: 'food_daily',
+          accountParam: 'card_esun',
+          type: 'expense'
+        });
+      }
+    });
+  }
 
   // --- 確認繳納信用卡費 ---
   const btnConfirmPay = document.getElementById('btn-confirm-pay-bill');
@@ -734,4 +799,92 @@ function openSplitAdvisorModal(amount) {
   if (investEl) investEl.textContent = formatCurrency(split.invest);
 
   modal.classList.add('active');
+}
+
+/**
+ * 快速記帳執行器 (由 URL 參數或捷徑調用)
+ */
+function recordQuickTransaction({ amount, note = '', categoryParam = '', accountParam = '', type = 'expense', tagParam = '' }) {
+  if (!amount || isNaN(amount) || amount <= 0) return false;
+
+  const categories = type === 'income' ? DEFAULT_INCOME_CATEGORIES : DEFAULT_EXPENSE_CATEGORIES;
+  let cat = categories.find(c => c.id === categoryParam || c.name.includes(categoryParam) || (categoryParam && categoryParam.includes(c.name)));
+  if (!cat) {
+    cat = categories[0];
+  }
+
+  let targetAcc = appState.accounts.find(a => a.id === accountParam || a.name.includes(accountParam) || (accountParam && accountParam.includes(a.name)));
+  if (!targetAcc) {
+    targetAcc = appState.accounts.find(a => a.id === 'card_esun') || appState.accounts[0];
+  }
+
+  const tag = tagParam || (type === 'income' ? 'income' : (cat.defaultTag || 'need'));
+
+  const newTx = {
+    id: `tx_sc_${Date.now()}`,
+    type: type,
+    amount: amount,
+    categoryId: cat.id,
+    categoryName: cat.name,
+    categoryIcon: cat.icon,
+    tag: tag,
+    accountId: targetAcc.id,
+    accountName: targetAcc.name,
+    date: new Date().toISOString().split('T')[0],
+    note: note || '📲 iOS 鎖屏捷徑記帳'
+  };
+
+  if (targetAcc) {
+    if (newTx.type === 'expense') {
+      if (targetAcc.type === 'credit') targetAcc.balance = Number(targetAcc.balance || 0) + amount;
+      else targetAcc.balance = Number(targetAcc.balance || 0) - amount;
+    } else if (newTx.type === 'income') {
+      targetAcc.balance = Number(targetAcc.balance || 0) + amount;
+    }
+  }
+
+  appState.transactions.unshift(newTx);
+  saveAppData(appState);
+  renderDashboard(appState);
+  showToast(`⚡ iOS 捷徑鎖屏記帳成功！【${newTx.categoryName}】${formatCurrency(amount)} 已記錄至 ${targetAcc.name}`, 'success');
+  return true;
+}
+
+/**
+ * 偵測網址 URL 記帳參數 (URL Protocol Handler)
+ */
+function checkUrlQuickShortcut() {
+  try {
+    const urlParams = new URLSearchParams(window.location.search);
+    const action = urlParams.get('action');
+    const amountParam = urlParams.get('amount');
+
+    if (action === 'quick_entry' || urlParams.get('quick') === '1') {
+      const modalEntry = document.getElementById('modal-entry');
+      if (modalEntry) {
+        modalEntry.classList.add('active');
+        const amtInput = document.getElementById('input-amount');
+        if (amtInput) amtInput.focus();
+      }
+      window.history.replaceState({}, '', window.location.pathname);
+      return;
+    }
+
+    if (amountParam) {
+      const amount = Number(amountParam);
+      if (!isNaN(amount) && amount > 0) {
+        recordQuickTransaction({
+          amount: amount,
+          note: urlParams.get('note') || '',
+          categoryParam: urlParams.get('category') || '',
+          accountParam: urlParams.get('account') || '',
+          type: urlParams.get('type') || 'expense',
+          tagParam: urlParams.get('tag') || ''
+        });
+        window.history.replaceState({}, '', window.location.pathname);
+      }
+    }
+  } catch (e) {
+    console.warn('URL 記帳參數檢查失敗：', e);
+  }
 }

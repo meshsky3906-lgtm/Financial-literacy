@@ -313,7 +313,7 @@ export function renderTransactionLedger(state, filterTag = 'all') {
     const amountColorClass = isIncome ? 'text-positive' : 'text-primary';
 
     return `
-      <div class="transaction-row">
+      <div class="transaction-row" data-tx-id="${tx.id}" title="點擊查看此筆帳務完整明細與財商風控影響">
         <div class="tx-left">
           <div class="tx-icon-wrap">${tx.categoryIcon || '💸'}</div>
           <div class="tx-meta">
@@ -326,14 +326,107 @@ export function renderTransactionLedger(state, filterTag = 'all') {
           </div>
         </div>
         <div class="tx-right">
-          <div class="tx-amount money-amount ${amountColorClass}">
-            ${sign}${formatCurrency(tx.amount)}
+          <div style="text-align: right;">
+            <div class="tx-amount money-amount ${amountColorClass}">
+              ${sign}${formatCurrency(tx.amount)}
+            </div>
+            <span style="font-size: 0.68rem; color: #A5B4FC; font-weight: 500; display: inline-flex; align-items: center; gap: 2px; margin-top: 2px; opacity: 0.85;">🔍 查詳情</span>
           </div>
           <button class="btn-tx-delete" data-tx-id="${tx.id}" title="刪除本筆紀錄">🗑️</button>
         </div>
       </div>
     `;
   }).join('');
+}
+
+/**
+ * 開啟交易明細詳情 Modal
+ */
+export function openTxDetailModal(txId, state, onDeleteCallback) {
+  const tx = (state.transactions || []).find(t => t.id === txId);
+  if (!tx) return;
+
+  const isIncome = tx.type === 'income';
+  const isTransfer = tx.type === 'transfer';
+  const sign = isIncome ? '+' : (isTransfer ? '' : '-');
+  const amountColorClass = isIncome ? 'text-positive' : 'text-primary';
+
+  document.getElementById('tx-detail-icon').textContent = tx.categoryIcon || (isIncome ? '💰' : '💸');
+  const elAmt = document.getElementById('tx-detail-amount');
+  elAmt.className = `tx-detail-hero-amount money-amount ${amountColorClass}`;
+  elAmt.textContent = `${sign}${formatCurrency(tx.amount)}`;
+
+  document.getElementById('tx-detail-category').textContent = tx.categoryName || '未分類';
+
+  const elBadge = document.getElementById('tx-detail-type-badge');
+  if (isIncome) {
+    elBadge.innerHTML = `<span class="badge badge-income" style="font-size:0.85rem; padding: 4px 10px;">💰 收入入帳</span>`;
+  } else if (isTransfer) {
+    elBadge.innerHTML = `<span class="badge badge-need" style="font-size:0.85rem; padding: 4px 10px;">🔄 內部資產調配 / 沖銷</span>`;
+  } else if (tx.tag === 'need') {
+    elBadge.innerHTML = `<span class="badge badge-need" style="font-size:0.85rem; padding: 4px 10px;">🏠 50% 必要需求</span>`;
+  } else if (tx.tag === 'want') {
+    elBadge.innerHTML = `<span class="badge badge-want" style="font-size:0.85rem; padding: 4px 10px;">🛍️ 30% 彈性慾望</span>`;
+  } else if (tx.tag === 'invest') {
+    elBadge.innerHTML = `<span class="badge badge-invest" style="font-size:0.85rem; padding: 4px 10px;">📈 20% 投資儲蓄</span>`;
+  } else {
+    elBadge.innerHTML = `<span class="badge" style="font-size:0.85rem; padding: 4px 10px;">一般交易</span>`;
+  }
+
+  let dayName = '';
+  try {
+    const dateObj = new Date(tx.date);
+    const days = ['週日', '週一', '週二', '週三', '週四', '週五', '週六'];
+    if (!isNaN(dateObj.getTime())) {
+      dayName = ` (${days[dateObj.getDay()]})`;
+    }
+  } catch(e) {}
+
+  document.getElementById('tx-detail-date').textContent = `${tx.date}${dayName}`;
+  document.getElementById('tx-detail-account').textContent = tx.accountName || '活存';
+
+  let tagDesc = '一般交易紀錄';
+  if (isIncome) tagDesc = '收入總額（建議遵循 50/30/20 進行自動化分流）';
+  else if (isTransfer) tagDesc = '帳戶間調配沖銷（不重疊列入生活支出）';
+  else if (tx.tag === 'need') tagDesc = '50% 必要需求（維持生命基本開支）';
+  else if (tx.tag === 'want') tagDesc = '30% 彈性慾望（個人享受與休閒品味）';
+  else if (tx.tag === 'invest') tagDesc = '20% 投資儲蓄（長期資產複利累積）';
+  document.getElementById('tx-detail-tag').textContent = tagDesc;
+
+  document.getElementById('tx-detail-id').textContent = tx.id || 'N/A';
+
+  const elNote = document.getElementById('tx-detail-note');
+  elNote.textContent = tx.note ? tx.note : '（此筆紀錄無填寫備註）';
+
+  const elImpactBox = document.getElementById('tx-detail-impact');
+  const elImpactText = document.getElementById('tx-detail-impact-text');
+
+  if (tx.accountId === 'card_esun' || tx.accountId === 'card_fubon') {
+    elImpactBox.className = 'diagnostic-item caution';
+    elImpactText.innerHTML = `<strong>信用卡風控提示</strong>：此筆款項計入【${tx.accountName}】之待繳款，系統已自「真實可用現金」中即時扣除，確保您遠離假性富裕，並持續嚴守 30% 額度安全紅線（$18,000）！`;
+  } else if (tx.tag === 'need') {
+    elImpactBox.className = 'diagnostic-item info';
+    elImpactText.innerHTML = `<strong>必要開支評估</strong>：此類固定需求開銷是衡量「緊急預備金（3~6個月）」的重要基準，精準記帳讓資產護城河更穩固。`;
+  } else if (tx.tag === 'want') {
+    elImpactBox.className = 'diagnostic-item warning';
+    elImpactText.innerHTML = `<strong>慾望開支提醒</strong>：屬於適度犒賞性質，請確認本月 30% 慾望預算是否充裕，享受當下同時也保護未來。`;
+  } else if (tx.tag === 'invest') {
+    elImpactBox.className = 'diagnostic-item success';
+    elImpactText.innerHTML = `<strong>資產滾動利多</strong>：這筆資金正為您的長期財務自由工作，恭喜持續貫徹 20% 投資儲蓄原則！`;
+  } else {
+    elImpactBox.className = 'diagnostic-item success';
+    elImpactText.innerHTML = `<strong>財務健康</strong>：此筆交易已正確記入本地帳本，所有即時圖表與總額均已動態同步更新。`;
+  }
+
+  const delBtn = document.getElementById('btn-tx-detail-delete');
+  if (delBtn) {
+    delBtn.onclick = () => {
+      document.getElementById('modal-tx-detail').classList.remove('active');
+      if (onDeleteCallback) onDeleteCallback(tx.id);
+    };
+  }
+
+  document.getElementById('modal-tx-detail').classList.add('active');
 }
 
 /**

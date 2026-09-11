@@ -681,6 +681,21 @@
   border: 1px solid var(--surface-border);
   border-radius: var(--radius-md);
   gap: 8px;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
+
+.transaction-row:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(99, 102, 241, 0.35);
+  transform: translateY(-1.5px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.22);
+}
+
+.transaction-row:active {
+  transform: translateY(0);
+  background: rgba(255, 255, 255, 0.07);
 }
 
 .tx-left {
@@ -1313,4 +1328,228 @@
 .rank-badge.top-1 { background: #F59E0B; color: #000; }
 .rank-badge.top-2 { background: #94A3B8; color: #000; }
 .rank-badge.top-3 { background: #B45309; color: #FFF; }
+
+/* =========================================================================
+   交易詳情彈窗專屬樣式 (Transaction Details Modal)
+   ========================================================================= */
+.tx-detail-hero {
+  text-align: center;
+  padding: 20px 16px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.01) 100%);
+  border: 1px solid var(--surface-border);
+  border-radius: var(--radius-lg);
+  margin-bottom: 20px;
+}
+
+.tx-detail-hero-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.08);
+  font-size: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+}
+
+.tx-detail-hero-amount {
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  margin-bottom: 8px;
+}
+
+.tx-detail-hero-category {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #FFF;
+  margin-bottom: 10px;
+}
+
+.tx-detail-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.tx-detail-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--surface-border);
+  border-radius: var(--radius-md);
+  font-size: 0.88rem;
+}
+
+.tx-detail-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.tx-detail-value {
+  color: #FFF;
+  font-weight: 600;
+  text-align: right;
+  max-width: 60%;
+  word-break: break-word;
+}
+
+.tx-detail-note-box {
+  padding: 12px 14px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--surface-border);
+  border-radius: var(--radius-md);
+  margin-bottom: 20px;
+}
+
+.tx-detail-note-label {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+
+.tx-detail-note-content {
+  font-size: 0.9rem;
+  color: var(--text-primary);
+  line-height: 1.5;
+  white-space: pre-wrap;
+}
+
+.tx-detail-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+/* =========================================================================
+   iOS 鎖屏捷徑指南專屬樣式 (iOS Shortcut Guide Modal)
+   ========================================================================= */
+.shortcut-header-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  background: rgba(99, 102, 241, 0.15);
+  color: #A5B4FC;
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin-bottom: 14px;
+}
+
+.shortcut-step-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.shortcut-step-item {
+  display: flex;
+  gap: 12px;
+  padding: 14px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--surface-border);
+  border-radius: var(--radius-md);
+  transition: border-color 0.2s;
+}
+
+.shortcut-step-item:hover {
+  border-color: rgba(99, 102, 241, 0.4);
+}
+
+.shortcut-step-num {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  color: #FFF;
+  font-size: 0.85rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.shortcut-step-content {
+  flex: 1;
+}
+
+.shortcut-step-content h5 {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #FFF;
+  margin-bottom: 4px;
+}
+
+.shortcut-step-content p {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin: 0;
+}
+
+.shortcut-url-card {
+  padding: 16px;
+  background: rgba(99, 102, 241, 0.05);
+  border: 1px solid rgba(99, 102, 241, 0.25);
+  border-radius: var(--radius-md);
+  margin-bottom: 16px;
+}
+
+.shortcut-url-card-title {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #A5B4FC;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.shortcut-url-copy-box {
+  display: flex;
+  gap: 8px;
+}
+
+.shortcut-url-input {
+  flex: 1;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--surface-border);
+  border-radius: var(--radius-sm);
+  padding: 8px 12px;
+  font-size: 0.82rem;
+  color: #E2E8F0;
+  font-family: monospace;
+  outline: none;
+}
+
+.shortcut-url-input:focus {
+  border-color: var(--color-primary);
+}
+
+.shortcut-feature-tags {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+
+.shortcut-feature-tag {
+  font-size: 0.75rem;
+  padding: 3px 8px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+}
 

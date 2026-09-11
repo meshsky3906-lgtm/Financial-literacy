@@ -20,5 +20,19 @@
       "type": "image/png",
       "purpose": "any maskable"
     }
+  ],
+  "shortcuts": [
+    {
+      "name": "⚡ 隨時極速記帳",
+      "short_name": "快速記帳",
+      "description": "立即開啟記帳面板",
+      "url": "./index.html?action=quick_entry",
+      "icons": [
+        {
+          "src": "icons/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    }
   ]
 }
