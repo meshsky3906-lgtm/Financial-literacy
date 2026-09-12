@@ -28,7 +28,14 @@
 <body>
 
   <div class="app-container">
+
+    <!-- =====================================================================
+         頁面視圖容器：儀表板 (index 0) / 債務管理 (index 1)
+         ===================================================================== -->
     
+    <!-- ===== 頁面 0：儀表板 ===== -->
+    <div id="page-dashboard" class="page-view active">
+
     <!-- 頂部導航列 (大器獨立標題 + 快捷工具) -->
     <header class="navbar glass-panel">
       <div class="navbar-top-row">
@@ -190,6 +197,109 @@
         <!-- 明細項目動態渲染 -->
       </div>
     </section>
+
+    </div><!-- end #page-dashboard -->
+
+    <!-- ===== 頁面 1：債務管理 ===== -->
+    <div id="page-debt" class="page-view">
+
+      <!-- 債務頁頂部標題 -->
+      <div class="wisdom-card glass-panel" style="margin-bottom: 16px; background: linear-gradient(135deg, rgba(239,68,68,0.08), rgba(99,102,241,0.08));">
+        <div class="wisdom-icon">🏦</div>
+        <div>
+          <div class="wisdom-quote" style="font-size: 0.92rem;">掌控債務，就是掌控財務自由的速度。每一筆按時還款，都是在累積信用資產。</div>
+          <div class="wisdom-author">—— 財商債務管理守則</div>
+        </div>
+      </div>
+
+      <!-- 債務 4 大總覽卡片 -->
+      <div class="debt-overview-grid">
+        <div class="debt-stat-card card-total-debt">
+          <div class="debt-stat-label">💸 總負債餘額</div>
+          <div id="debt-val-total" class="debt-stat-value">NT$ 0</div>
+          <div id="debt-sub-total" class="debt-stat-sub">目前未還清總額</div>
+        </div>
+        <div class="debt-stat-card card-monthly-pay">
+          <div class="debt-stat-label">📅 每月還款壓力</div>
+          <div id="debt-val-monthly" class="debt-stat-value">NT$ 0</div>
+          <div id="debt-sub-monthly" class="debt-stat-sub">本月合計應繳</div>
+        </div>
+        <div class="debt-stat-card card-debt-ratio">
+          <div class="debt-stat-label">📊 負債佔資產比</div>
+          <div id="debt-val-ratio" class="debt-stat-value">0%</div>
+          <div id="debt-sub-ratio" class="debt-stat-sub">建議低於 40%</div>
+        </div>
+        <div class="debt-stat-card card-paid-count">
+          <div class="debt-stat-label">✅ 已還清筆數</div>
+          <div id="debt-val-paid" class="debt-stat-value">0 筆</div>
+          <div id="debt-sub-paid" class="debt-stat-sub">累積還清成就</div>
+        </div>
+      </div>
+
+      <!-- 月還款壓力警示橫幅 -->
+      <div id="debt-pressure-bar" class="debt-pressure-bar safe">
+        <span id="debt-pressure-icon">✅</span>
+        <span id="debt-pressure-text">目前月還款佔主要活存比例健康，財務現金流穩定。</span>
+      </div>
+
+      <!-- 整體還清進度條 -->
+      <div class="debt-progress-section">
+        <div class="debt-progress-header">
+          <span class="debt-progress-title">🎯 債務整體還清進度</span>
+          <span id="debt-overall-pct" class="debt-progress-pct">0%</span>
+        </div>
+        <div class="debt-progress-track">
+          <div id="debt-overall-fill" class="debt-progress-fill" style="width: 0%"></div>
+        </div>
+        <div style="font-size: 0.7rem; color: var(--text-muted); margin-top: 6px;" id="debt-progress-sub">尚未建立任何債務紀錄</div>
+      </div>
+
+      <!-- 即將到期還款提示 -->
+      <div id="upcoming-payments-section" class="upcoming-banner" style="display:none;">
+        <div class="upcoming-banner-title">⏰ 本月還款提醒</div>
+        <div id="upcoming-payments-list"></div>
+      </div>
+
+      <!-- 現金流連動說明 -->
+      <div class="debt-sync-hint">
+        <span>🔗</span>
+        <div><strong>資金連動：</strong>點擊「本月還款」後，系統會自動從<strong>主要活存帳戶</strong>扣除還款金額，並新增一筆<strong>必要支出記錄</strong>（計入 50% 生活配置），確保儀表板帳務完全準確。</div>
+      </div>
+
+      <!-- 債務清單 -->
+      <div class="debt-list-section">
+        <div class="debt-list-header">
+          <span class="debt-list-title">📋 債務明細清單</span>
+          <button id="btn-open-add-debt" class="btn btn-primary" style="font-size: 0.82rem; padding: 7px 14px;">
+            ➕ 新增債務
+          </button>
+        </div>
+        <!-- 債務卡片動態渲染 -->
+        <div id="debt-cards-container"></div>
+      </div>
+
+      <!-- 已還清債務折疊區 -->
+      <div id="debt-paid-section" class="debt-paid-section" style="display:none;">
+        <button class="debt-paid-toggle" id="btn-toggle-paid-debts">
+          <span>✅ 已還清債務紀錄</span>
+          <span id="paid-debts-count-badge" class="badge badge-safe">0 筆</span>
+        </button>
+        <div id="debt-paid-list" class="debt-paid-list"></div>
+      </div>
+
+    </div><!-- end #page-debt -->
+
+    <!-- ===== 底部 Tab Bar 分頁導航 ===== -->
+    <nav class="tab-bar" id="main-tab-bar" role="tablist" aria-label="主導航">
+      <button class="tab-btn active" id="tab-btn-dashboard" data-page="dashboard" role="tab" aria-selected="true">
+        <span class="tab-icon">📊</span>
+        <span>儀表板</span>
+      </button>
+      <button class="tab-btn" id="tab-btn-debt" data-page="debt" role="tab" aria-selected="false">
+        <span class="tab-icon">💳</span>
+        <span>債務管理</span>
+      </button>
+    </nav>
 
   </div>
 
@@ -517,6 +627,147 @@
     </div>
   </div>
 
+
+  <!-- =========================================================================
+       彈窗 7：新增債務 Modal (Add Debt Modal)
+       ========================================================================= -->
+  <div id="modal-add-debt" class="modal-overlay">
+    <div class="modal-card" style="max-width: 520px;">
+      <div class="modal-header">
+        <h3 class="modal-title">➕ 新增債務明細</h3>
+        <button class="btn-close-modal" data-close-modal>&times;</button>
+      </div>
+
+      <!-- 債務類別選擇 -->
+      <div style="margin-bottom: 14px;">
+        <label class="field-label">債務類型（點擊選擇）</label>
+        <div class="debt-category-select-grid" id="debt-cat-grid">
+          <!-- JS 動態填充 -->
+        </div>
+      </div>
+
+      <!-- 債務名稱 + 債權人 -->
+      <div class="debt-form-grid">
+        <div>
+          <label class="field-label">債務名稱 <span style="color:#EF4444;">*</span></label>
+          <input type="text" id="debt-input-name" class="input-large-amount"
+            style="font-size: 0.95rem; font-weight: normal; padding: 10px 14px;"
+            placeholder="例如：台灣銀行學貸" maxlength="30">
+        </div>
+        <div>
+          <label class="field-label">債權人 / 銀行</label>
+          <input type="text" id="debt-input-creditor" class="input-large-amount"
+            style="font-size: 0.95rem; font-weight: normal; padding: 10px 14px;"
+            placeholder="例如：台灣銀行" maxlength="30">
+        </div>
+      </div>
+
+      <!-- 借款總額 + 剩餘未還 -->
+      <div class="debt-form-grid">
+        <div>
+          <label class="field-label">借款總額 <span style="color:#EF4444;">*</span></label>
+          <div class="amount-input-box" style="padding: 6px 10px;">
+            <span class="currency-symbol" style="font-size: 0.85rem;">NT$</span>
+            <input type="number" id="debt-input-total" class="input-large-amount"
+              style="font-size: 1rem; padding: 4px 0;" placeholder="0" inputmode="numeric" min="0">
+          </div>
+        </div>
+        <div>
+          <label class="field-label">剩餘未還金額 <span style="color:#EF4444;">*</span></label>
+          <div class="amount-input-box" style="padding: 6px 10px;">
+            <span class="currency-symbol" style="font-size: 0.85rem;">NT$</span>
+            <input type="number" id="debt-input-remaining" class="input-large-amount"
+              style="font-size: 1rem; padding: 4px 0;" placeholder="0" inputmode="numeric" min="0">
+          </div>
+        </div>
+      </div>
+
+      <!-- 月還款額 + 年利率 -->
+      <div class="debt-form-grid">
+        <div>
+          <label class="field-label">每月還款金額</label>
+          <div class="amount-input-box" style="padding: 6px 10px;">
+            <span class="currency-symbol" style="font-size: 0.85rem;">NT$</span>
+            <input type="number" id="debt-input-monthly" class="input-large-amount"
+              style="font-size: 1rem; padding: 4px 0;" placeholder="0" inputmode="numeric" min="0">
+          </div>
+        </div>
+        <div>
+          <label class="field-label">年利率 (%)</label>
+          <input type="number" id="debt-input-rate" class="input-large-amount"
+            style="font-size: 0.95rem; font-weight: normal; padding: 10px 14px;"
+            placeholder="例如 1.5" inputmode="decimal" min="0" max="100" step="0.1">
+        </div>
+      </div>
+
+      <!-- 每月還款日 + 開始日期 + 預計結束日 -->
+      <div class="debt-form-grid">
+        <div>
+          <label class="field-label">每月還款日（號）</label>
+          <input type="number" id="debt-input-dueday" class="input-large-amount"
+            style="font-size: 0.95rem; font-weight: normal; padding: 10px 14px;"
+            placeholder="1~31" min="1" max="31" inputmode="numeric">
+        </div>
+        <div>
+          <label class="field-label">貸款開始年月</label>
+          <input type="month" id="debt-input-start" class="input-large-amount"
+            style="font-size: 0.9rem; font-weight: normal; padding: 10px 14px;">
+        </div>
+      </div>
+
+      <!-- 備註 -->
+      <div style="margin-bottom: 20px;">
+        <label class="field-label">備註（選填）</label>
+        <input type="text" id="debt-input-note" class="input-large-amount"
+          style="font-size: 0.9rem; font-weight: normal; padding: 10px 14px;"
+          placeholder="例如：政府補息、還款方案備忘" maxlength="80">
+      </div>
+
+      <button id="btn-save-debt" class="btn btn-primary" style="width: 100%; padding: 14px; font-size: 1rem;">
+        確認新增債務 ✅
+      </button>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       彈窗 8：本月還款確認 Modal (Monthly Payment Confirm)
+       ========================================================================= -->
+  <div id="modal-debt-pay" class="modal-overlay">
+    <div class="modal-card" style="max-width: 440px;">
+      <div class="modal-header">
+        <h3 class="modal-title">💳 確認本月還款</h3>
+        <button class="btn-close-modal" data-close-modal>&times;</button>
+      </div>
+
+      <div class="diagnostic-item caution" style="margin-bottom: 18px;">
+        <span>🔗</span>
+        <div><strong>資金連動提示</strong>：確認後將自動從<strong>主要活存帳戶</strong>扣除還款金額，並同步更新儀表板現金流。</div>
+      </div>
+
+      <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--surface-border); border-radius: var(--radius-md); padding: 16px; margin-bottom: 20px;">
+        <div style="font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 4px;">還款債務</div>
+        <div id="debt-pay-name" style="font-size: 1.1rem; font-weight: 700; color: #FFF; margin-bottom: 12px;">學生貸款</div>
+        <div style="font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 4px;">還款金額</div>
+        <div id="debt-pay-amount-display" class="money-amount" style="font-size: 1.8rem; font-weight: 800; color: #FCD34D;">NT$ 0</div>
+        <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 6px;" id="debt-pay-remaining-preview">還款後剩餘：NT$ 0</div>
+      </div>
+
+      <!-- 自訂還款金額 -->
+      <div style="margin-bottom: 20px;">
+        <label class="field-label">自訂還款金額（留空則使用月還款額）</label>
+        <div class="amount-input-box" style="padding: 8px 12px;">
+          <span class="currency-symbol">NT$</span>
+          <input type="number" id="debt-pay-custom-amount" class="input-large-amount"
+            style="font-size: 1.1rem; padding: 4px 0;" placeholder="自訂金額（選填）" inputmode="numeric" min="0">
+        </div>
+      </div>
+
+      <button id="btn-confirm-debt-pay" class="btn btn-emerald" style="width: 100%; padding: 14px; font-size: 1.05rem;">
+        確認還款並同步資金 🚀
+      </button>
+    </div>
+  </div>
+
   <!-- Toast 提示容器 -->
   <div id="toast-container" class="toast-container"></div>
 
@@ -639,12 +890,22 @@
         try {
           const raw = localStorage.getItem(STORAGE_KEY);
           if (!raw) {
-            const initial = { version: '4.0', accounts: DEFAULT_ACCOUNTS, transactions: DEFAULT_TRANSACTIONS };
+            const initial = { version: '4.1', accounts: DEFAULT_ACCOUNTS, transactions: DEFAULT_TRANSACTIONS, debts: [] };
             saveAppData(initial);
             return initial;
           }
           const parsed = JSON.parse(raw);
-          // 自動補全結帳日與繳款日
+
+          // ── 向前相容遷移（Migration）：確保舊版手機/桌機資料永不流失 ──
+          // [v4.0 → v4.1] 補全缺少的 debts 欄位
+          if (!Array.isArray(parsed.debts)) parsed.debts = [];
+
+          // [v4.1] 確保每筆債務都有 paymentHistory 陣列
+          parsed.debts.forEach(debt => {
+            if (!Array.isArray(debt.paymentHistory)) debt.paymentHistory = [];
+          });
+
+          // 自動補全信用卡結帳日與繳款日（舊版資料相容）
           if (parsed.accounts) {
             parsed.accounts.forEach(acc => {
               if (acc.id === 'card_esun') {
@@ -656,9 +917,12 @@
               }
             });
           }
+
+          // 標記版本（不影響任何功能，僅供未來診斷用）
+          parsed.version = '4.1';
           return parsed;
         } catch (e) {
-          return { version: '4.0', accounts: DEFAULT_ACCOUNTS, transactions: DEFAULT_TRANSACTIONS };
+          return { version: '4.1', accounts: DEFAULT_ACCOUNTS, transactions: DEFAULT_TRANSACTIONS, debts: [] };
         }
       }
 
@@ -1439,10 +1703,465 @@
       }
 
       // =========================================================================
+      // 債務管理模組 (Debt Manager - 內嵌自包含)
+      // =========================================================================
+
+      const DEBT_CATEGORIES = [
+        { id: 'mortgage',    name: '房貸',       icon: '🏠', color: '#6366F1' },
+        { id: 'car_loan',    name: '車貸',       icon: '🚗', color: '#3B82F6' },
+        { id: 'student',     name: '學貸',       icon: '🎓', color: '#8B5CF6' },
+        { id: 'personal',    name: '個人信貸',   icon: '🏦', color: '#0EA5E9' },
+        { id: 'credit_card', name: '信用卡循環', icon: '💳', color: '#F43F5E' },
+        { id: 'installment', name: '分期付款',   icon: '📦', color: '#F59E0B' },
+        { id: 'friend',      name: '私人借貸',   icon: '🤝', color: '#10B981' },
+        { id: 'other',       name: '其他債務',   icon: '📋', color: '#64748B' }
+      ];
+
+      let pendingDebtId = null;
+      let currentDebtCategoryId = 'mortgage';
+
+      function getDebts() {
+        return Array.isArray(appState.debts) ? appState.debts : [];
+      }
+
+      function addDebt(debtData) {
+        if (!Array.isArray(appState.debts)) appState.debts = [];
+        const cat = DEBT_CATEGORIES.find(c => c.id === (debtData.category || 'other')) || DEBT_CATEGORIES[7];
+        const newDebt = {
+          id: `debt_${Date.now()}_${Math.random().toString(36).substr(2,5)}`,
+          name: debtData.name.trim(),
+          category: debtData.category || 'other',
+          creditor: (debtData.creditor || '').trim(),
+          totalAmount: Number(debtData.totalAmount) || 0,
+          remaining: Number(debtData.remaining) || 0,
+          monthlyPayment: Number(debtData.monthlyPayment) || 0,
+          interestRate: Number(debtData.interestRate) || 0,
+          dueDay: Number(debtData.dueDay) || 0,
+          startDate: debtData.startDate || new Date().toISOString().substr(0, 7),
+          note: (debtData.note || '').trim(),
+          isPaid: false,
+          createdAt: new Date().toISOString()
+        };
+        appState.debts.unshift(newDebt);
+        return newDebt;
+      }
+
+      function deleteDebtById(debtId) {
+        if (!Array.isArray(appState.debts)) return false;
+        const idx = appState.debts.findIndex(d => d.id === debtId);
+        if (idx === -1) return false;
+        appState.debts.splice(idx, 1);
+        return true;
+      }
+
+      function doMonthlyPayment(debtId, customAmount) {
+        if (!Array.isArray(appState.debts)) return null;
+        const debt = appState.debts.find(d => d.id === debtId);
+        if (!debt) return null;
+        const payAmount = (customAmount !== null && customAmount !== undefined && customAmount > 0)
+          ? Number(customAmount) : Number(debt.monthlyPayment);
+        if (payAmount <= 0) return null;
+
+        const remainingBefore = Number(debt.remaining);
+        debt.remaining = Math.max(0, remainingBefore - payAmount);
+        const remainingAfter = debt.remaining;
+        if (debt.remaining === 0) debt.isPaid = true;
+
+        // ── 寫入還款歷史記錄（含精確時間戳，作為未來還款依據）──
+        if (!Array.isArray(debt.paymentHistory)) debt.paymentHistory = [];
+        const now = new Date();
+        debt.paymentHistory.push({
+          id: `pay_${Date.now()}`,
+          date: now.toISOString().split('T')[0],                  // YYYY-MM-DD
+          time: now.toTimeString().split(' ')[0],                  // HH:MM:SS
+          datetime: now.toISOString(),                             // 完整 ISO 時間戳（UTC）
+          amount: payAmount,
+          remainingBefore: remainingBefore,
+          remainingAfter: remainingAfter,
+          isPaidOff: debt.isPaid,
+          note: customAmount ? '自訂金額還款' : '按月還款額'
+        });
+
+        // 連動主要活存
+        const mainAcc = (appState.accounts || []).find(a => a.type === 'liquid');
+        if (mainAcc) mainAcc.balance = Number(mainAcc.balance || 0) - payAmount;
+
+        const catInfo = DEBT_CATEGORIES.find(c => c.id === debt.category) || DEBT_CATEGORIES[7];
+        const newTx = {
+          id: `tx_debt_${Date.now()}`,
+          type: 'expense',
+          amount: payAmount,
+          categoryId: 'debt_payment',
+          categoryName: `債務還款：${debt.name}`,
+          categoryIcon: catInfo.icon,
+          tag: 'need',
+          accountId: mainAcc ? mainAcc.id : 'acc_bank_main',
+          accountName: mainAcc ? mainAcc.name : '主要活存',
+          date: now.toISOString().split('T')[0],
+          note: `${debt.creditor ? `[${debt.creditor}] ` : ''}月還款（自動連動扣款）`,
+          debtId: debtId
+        };
+        if (!Array.isArray(appState.transactions)) appState.transactions = [];
+        appState.transactions.unshift(newTx);
+        return newTx;
+      }
+
+      function calcDebtSummary() {
+        const debts = getDebts();
+        const active = debts.filter(d => !d.isPaid);
+        const paid   = debts.filter(d => d.isPaid);
+
+        const totalRemaining   = active.reduce((s, d) => s + Number(d.remaining || 0), 0);
+        const totalOriginal    = debts.reduce((s, d) => s + Number(d.totalAmount || 0), 0);
+        const totalMonthly     = active.reduce((s, d) => s + Number(d.monthlyPayment || 0), 0);
+        const totalAlreadyPaid = debts.reduce((s, d) => s + (Number(d.totalAmount||0) - Number(d.remaining||0)), 0);
+
+        const totalAssets = (appState.accounts || []).reduce((s, a) => {
+          if (a.type === 'credit') return s;
+          return s + Math.max(0, Number(a.balance || 0));
+        }, 0);
+
+        const debtRatio = (totalAssets + totalRemaining) > 0
+          ? Math.min(100, Math.round(totalRemaining / (totalAssets + totalRemaining) * 100))
+          : (totalRemaining > 0 ? 100 : 0);
+
+        const mainAcc = (appState.accounts || []).find(a => a.type === 'liquid');
+        const mainBalance = mainAcc ? Number(mainAcc.balance || 0) : 0;
+        const pressureRatio = mainBalance > 0
+          ? Math.round(totalMonthly / mainBalance * 100)
+          : (totalMonthly > 0 ? 100 : 0);
+
+        const overallPct = totalOriginal > 0
+          ? Math.round(totalAlreadyPaid / totalOriginal * 100) : 0;
+
+        const debtsWithETA = active.map(d => {
+          const monthly = Number(d.monthlyPayment || 0);
+          const rem = Number(d.remaining || 0);
+          const monthsLeft = monthly > 0 ? Math.ceil(rem / monthly) : null;
+          const catInfo = DEBT_CATEGORIES.find(c => c.id === d.category) || DEBT_CATEGORIES[7];
+          const paidAmt = Number(d.totalAmount || 0) - rem;
+          const progress = Number(d.totalAmount) > 0
+            ? Math.round(paidAmt / Number(d.totalAmount) * 100) : 0;
+          return { ...d, monthsLeft, catInfo, progress, paidAmt };
+        });
+
+        return { totalRemaining, totalOriginal, totalMonthly, totalAlreadyPaid,
+          totalAssets, debtRatio, pressureRatio, mainBalance, overallPct,
+          activeCount: active.length, paidCount: paid.length, totalCount: debts.length,
+          debtsWithETA, paidDebts: paid };
+      }
+
+      // --- 渲染函式 ---
+      function renderDebtPage() {
+        const s = calcDebtSummary();
+        // 總覽卡片
+        const el = (id) => document.getElementById(id);
+        if (el('debt-val-total'))   el('debt-val-total').textContent   = formatCurrency(s.totalRemaining);
+        if (el('debt-sub-total'))   el('debt-sub-total').textContent   = `共 ${s.activeCount} 筆未清償`;
+        if (el('debt-val-monthly')) el('debt-val-monthly').textContent = formatCurrency(s.totalMonthly);
+        if (el('debt-sub-monthly')) el('debt-sub-monthly').textContent = `活存 ${formatCurrency(s.mainBalance)}`;
+        if (el('debt-val-ratio'))   el('debt-val-ratio').textContent   = `${s.debtRatio}%`;
+        if (el('debt-sub-ratio'))   el('debt-sub-ratio').textContent   =
+          s.debtRatio < 30 ? '✅ 負債比率健康' : s.debtRatio < 40 ? '⚠️ 接近警戒值' : '🚨 超過安全紅線';
+        if (el('debt-val-paid'))    el('debt-val-paid').textContent    = `${s.paidCount} 筆`;
+        if (el('debt-sub-paid'))    el('debt-sub-paid').textContent    = `累積已還 ${formatCurrency(s.totalAlreadyPaid)}`;
+
+        // 壓力警示
+        const bar = el('debt-pressure-bar');
+        if (bar) {
+          bar.className = 'debt-pressure-bar';
+          if (s.totalMonthly === 0) {
+            bar.classList.add('safe');
+            el('debt-pressure-icon').textContent = '✅';
+            el('debt-pressure-text').textContent = '目前無債務還款壓力，財務現金流健康。';
+          } else if (s.pressureRatio < 30) {
+            bar.classList.add('safe');
+            el('debt-pressure-icon').textContent = '✅';
+            el('debt-pressure-text').textContent = `月還款 ${formatCurrency(s.totalMonthly)} 佔活存 ${s.pressureRatio}%，現金流穩健。`;
+          } else if (s.pressureRatio < 60) {
+            bar.classList.add('warning');
+            el('debt-pressure-icon').textContent = '⚠️';
+            el('debt-pressure-text').textContent = `月還款 ${formatCurrency(s.totalMonthly)} 佔活存 ${s.pressureRatio}%，注意現金儲備。`;
+          } else {
+            bar.classList.add('danger');
+            el('debt-pressure-icon').textContent = '🚨';
+            el('debt-pressure-text').textContent = `月還款 ${formatCurrency(s.totalMonthly)} 佔活存 ${s.pressureRatio}%，現金流壓力極高！`;
+          }
+        }
+
+        // 整體進度
+        if (el('debt-overall-fill')) el('debt-overall-fill').style.width = `${s.overallPct}%`;
+        if (el('debt-overall-pct'))  el('debt-overall-pct').textContent  = `${s.overallPct}%`;
+        if (el('debt-progress-sub')) el('debt-progress-sub').textContent =
+          s.totalCount === 0 ? '尚未建立任何債務紀錄'
+            : `已還清 ${formatCurrency(s.totalAlreadyPaid)}，剩餘 ${formatCurrency(s.totalRemaining)}`;
+
+        // 到期提示
+        renderUpcomingPaymentsBanner();
+
+        // 債務卡片
+        renderDebtCards(s);
+
+        // 已還清區塊
+        const paidSec = el('debt-paid-section');
+        const paidList = el('debt-paid-list');
+        const paidBadge = el('paid-debts-count-badge');
+        if (paidSec) paidSec.style.display = s.paidDebts.length > 0 ? 'block' : 'none';
+        if (paidBadge) paidBadge.textContent = `${s.paidDebts.length} 筆`;
+        if (paidList) {
+          paidList.innerHTML = s.paidDebts.map(d => {
+            const c = DEBT_CATEGORIES.find(x => x.id === d.category) || DEBT_CATEGORIES[7];
+            return `<div class="debt-paid-item">
+              <span style="display:flex;align-items:center;gap:8px;font-size:0.85rem;">
+                ${c.icon} ${d.name}
+                ${d.creditor ? `<span style="font-size:0.7rem;color:var(--text-muted)">${d.creditor}</span>` : ''}
+              </span>
+              <span style="display:flex;align-items:center;gap:8px;">
+                <span style="font-size:0.82rem;color:#6EE7B7;font-weight:700;">✅ 已還清</span>
+                <button class="btn btn-outline-danger btn-delete-debt" data-debt-id="${d.id}" style="padding:3px 8px;font-size:0.7rem;">🗑️</button>
+              </span>
+            </div>`;
+          }).join('');
+        }
+      }
+
+      function renderUpcomingPaymentsBanner() {
+        const section = document.getElementById('upcoming-payments-section');
+        const listEl  = document.getElementById('upcoming-payments-list');
+        if (!section || !listEl) return;
+        const debts = getDebts();
+        const today = new Date();
+        const curDay = today.getDate();
+        const daysInMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate();
+        const upcoming = debts
+          .filter(d => !d.isPaid && d.dueDay > 0 && d.monthlyPayment > 0)
+          .map(d => {
+            const due = d.dueDay >= curDay ? d.dueDay - curDay : (daysInMonth - curDay) + d.dueDay;
+            const c = DEBT_CATEGORIES.find(x => x.id === d.category) || DEBT_CATEGORIES[7];
+            return { ...d, due, catInfo: c };
+          })
+          .sort((a, b) => a.due - b.due)
+          .slice(0, 5);
+
+        if (upcoming.length === 0) { section.style.display = 'none'; return; }
+        section.style.display = 'flex';
+        listEl.innerHTML = upcoming.map(d => {
+          const cls = d.due === 0 ? 'urgent' : d.due <= 3 ? 'urgent' : d.due <= 7 ? 'soon' : 'ok';
+          const label = d.due === 0 ? '今日到期' : `還剩 ${d.due} 天`;
+          return `<div class="upcoming-item">
+            <span class="upcoming-item-name">${d.catInfo.icon} ${d.name}
+              <span style="font-size:0.7rem;color:var(--text-muted)">${formatCurrency(d.monthlyPayment)}</span>
+            </span>
+            <span class="upcoming-item-days ${cls}">${label}</span>
+          </div>`;
+        }).join('');
+      }
+
+      function renderDebtCards(s) {
+        const container = document.getElementById('debt-cards-container');
+        if (!container) return;
+        if (s.debtsWithETA.length === 0) {
+          container.innerHTML = `<div class="debt-empty-state">
+            <div class="debt-empty-icon">🎉</div>
+            <div class="debt-empty-title">目前無未清償債務</div>
+            <div class="debt-empty-sub">點擊右上角「新增債務」<br>開始建立您的債務管理紀錄</div>
+          </div>`;
+          return;
+        }
+        container.innerHTML = s.debtsWithETA.map(d => {
+          const fc = d.catInfo.color;
+          const eta = d.monthsLeft !== null ? `約 ${d.monthsLeft} 個月還清` : '未設月還款';
+          const rate = d.interestRate > 0 ? `年利率 ${d.interestRate}%` : '—';
+          const due = d.dueDay > 0 ? `每月 ${d.dueDay} 號` : '—';
+          return `<div class="debt-card" data-debt-id="${d.id}">
+            <div class="debt-card-top">
+              <div class="debt-card-left">
+                <div class="debt-cat-icon" style="background:${fc}22;border:1px solid ${fc}55">${d.catInfo.icon}</div>
+                <div class="debt-card-info">
+                  <div class="debt-card-name">${d.name}</div>
+                  <div class="debt-card-meta">${d.creditor ? d.creditor + ' ･ ' : ''}${d.catInfo.name}</div>
+                </div>
+              </div>
+              <div class="debt-card-right">
+                <div class="debt-remaining-amount">${formatCurrency(d.remaining)}</div>
+                <div class="debt-card-actions">
+                  <button class="btn-pay-debt" data-debt-id="${d.id}">💸 本月還款</button>
+                  <button class="btn btn-outline-danger btn-delete-debt" data-debt-id="${d.id}">🗑️</button>
+                </div>
+              </div>
+            </div>
+            <div class="debt-card-progress-wrap">
+              <div class="debt-card-progress-labels">
+                <span>已還 ${d.progress}%</span>
+                <span>剩 ${formatCurrency(d.remaining)} / 原 ${formatCurrency(d.totalAmount)}</span>
+              </div>
+              <div class="debt-card-progress-track">
+                <div class="debt-card-progress-fill" style="width:${d.progress}%;background:linear-gradient(90deg,${fc},${fc}aa)"></div>
+              </div>
+            </div>
+            <div class="debt-card-kpi-row">
+              <div class="debt-kpi-item"><span class="debt-kpi-label">月還款</span><span class="debt-kpi-value">${d.monthlyPayment > 0 ? formatCurrency(d.monthlyPayment) : '—'}</span></div>
+              <div class="debt-kpi-item"><span class="debt-kpi-label">還款日</span><span class="debt-kpi-value">${due}</span></div>
+              <div class="debt-kpi-item"><span class="debt-kpi-label">利率</span><span class="debt-kpi-value">${rate}</span></div>
+              <div class="debt-kpi-item"><span class="debt-kpi-label">預計還清</span><span class="debt-kpi-value">${eta}</span></div>
+            </div>
+            ${d.note ? `<div style="font-size:0.72rem;color:var(--text-muted);margin-top:8px">📝 ${d.note}</div>` : ''}
+            ${renderPaymentHistoryHTML(d)}
+          </div>`;
+        }).join('');
+      }
+
+      // 渲染「還款歷史記錄」折疊清單
+      function renderPaymentHistoryHTML(d) {
+        const history = Array.isArray(d.paymentHistory) ? d.paymentHistory : [];
+        if (history.length === 0) return '';
+        const rows = [...history].reverse().map((p, i) => {
+          const localDate = new Date(p.datetime || `${p.date}T${p.time || '00:00:00'}`);
+          const dateStr = localDate.toLocaleDateString('zh-TW', { year: 'numeric', month: '2-digit', day: '2-digit', weekday: 'short' });
+          const timeStr = localDate.toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit' });
+          const isLatest = i === 0;
+          return `<div class="debt-pay-history-row ${isLatest ? 'latest' : ''}">
+            <div class="dph-left">
+              <span class="dph-index">#${history.length - i}</span>
+              <div class="dph-datetime">
+                <span class="dph-date">${dateStr}</span>
+                <span class="dph-time">${timeStr}</span>
+              </div>
+            </div>
+            <div class="dph-right">
+              <span class="dph-amount">-${formatCurrency(p.amount)}</span>
+              <span class="dph-remaining">剩 ${formatCurrency(p.remainingAfter)}</span>
+            </div>
+            ${p.isPaidOff ? '<span class="dph-paid-badge">🏆 還清</span>' : ''}
+          </div>`;
+        }).join('');
+        return `
+          <div class="debt-pay-history-section" id="dph-${d.id}">
+            <button class="debt-pay-history-toggle" data-dph-id="${d.id}">
+              <span>📋 還款歷史記錄（共 ${history.length} 筆）</span>
+              <span class="dph-toggle-arrow">▶</span>
+            </button>
+            <div class="debt-pay-history-list" id="dph-list-${d.id}">
+              ${rows}
+            </div>
+          </div>`;
+      }
+
+      // --- Tab Bar 切換 ---
+      function switchPage(pageId) {
+        document.querySelectorAll('.tab-btn').forEach(b => {
+          b.classList.toggle('active', b.dataset.page === pageId);
+          b.setAttribute('aria-selected', b.dataset.page === pageId ? 'true' : 'false');
+        });
+        document.querySelectorAll('.page-view').forEach(v => v.classList.remove('active'));
+        const target = document.getElementById(`page-${pageId}`);
+        if (target) target.classList.add('active');
+        if (pageId === 'debt') renderDebtPage();
+      }
+
+      // --- 開啟新增債務 Modal ---
+      function openAddDebtModal() {
+        currentDebtCategoryId = DEBT_CATEGORIES[0].id;
+        const catGrid = document.getElementById('debt-cat-grid');
+        if (catGrid) {
+          catGrid.innerHTML = DEBT_CATEGORIES.map(c =>
+            `<button type="button" class="debt-cat-btn ${c.id === currentDebtCategoryId ? 'active' : ''}" data-cat-id="${c.id}">
+              <span class="dcat-icon">${c.icon}</span>
+              <span class="dcat-name">${c.name}</span>
+            </button>`).join('');
+          catGrid.querySelectorAll('.debt-cat-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+              catGrid.querySelectorAll('.debt-cat-btn').forEach(b => b.classList.remove('active'));
+              btn.classList.add('active');
+              currentDebtCategoryId = btn.dataset.catId;
+            });
+          });
+        }
+        ['debt-input-name','debt-input-creditor','debt-input-total',
+         'debt-input-remaining','debt-input-monthly','debt-input-rate',
+         'debt-input-dueday','debt-input-note'].forEach(id => {
+          const e = document.getElementById(id); if (e) e.value = '';
+        });
+        const startEl = document.getElementById('debt-input-start');
+        if (startEl) startEl.value = new Date().toISOString().substr(0, 7);
+        document.getElementById('modal-add-debt')?.classList.add('active');
+      }
+
+      // --- 儲存新增債務 ---
+      function handleSaveDebt() {
+        const name = document.getElementById('debt-input-name')?.value.trim();
+        const total = Number(document.getElementById('debt-input-total')?.value) || 0;
+        const rem   = Number(document.getElementById('debt-input-remaining')?.value) || 0;
+        if (!name) { showToast('請填寫債務名稱！', 'error'); return; }
+        if (total <= 0) { showToast('請填寫借款總額！', 'error'); return; }
+        if (rem < 0 || rem > total) { showToast('剩餘金額不合理（不可大於借款總額）！', 'error'); return; }
+
+        addDebt({
+          name, category: currentDebtCategoryId,
+          creditor: document.getElementById('debt-input-creditor')?.value || '',
+          totalAmount: total, remaining: rem,
+          monthlyPayment: Number(document.getElementById('debt-input-monthly')?.value) || 0,
+          interestRate: Number(document.getElementById('debt-input-rate')?.value) || 0,
+          dueDay: Number(document.getElementById('debt-input-dueday')?.value) || 0,
+          startDate: document.getElementById('debt-input-start')?.value || '',
+          note: document.getElementById('debt-input-note')?.value || ''
+        });
+        saveAppData(appState);
+        document.getElementById('modal-add-debt')?.classList.remove('active');
+        renderDebtPage();
+        showToast(`✅ 已新增債務【${name}】剩餘 ${formatCurrency(rem)}！`, 'success');
+      }
+
+      // --- 開啟月還款確認 Modal ---
+      function openDebtPayModal(debtId) {
+        const debt = getDebts().find(d => d.id === debtId);
+        if (!debt) return;
+        pendingDebtId = debtId;
+        const nameEl   = document.getElementById('debt-pay-name');
+        const amtEl    = document.getElementById('debt-pay-amount-display');
+        const prevEl   = document.getElementById('debt-pay-remaining-preview');
+        const custEl   = document.getElementById('debt-pay-custom-amount');
+        if (nameEl) nameEl.textContent = `${debt.name}${debt.creditor ? ` (${debt.creditor})` : ''}`;
+        if (amtEl)  amtEl.textContent  = formatCurrency(debt.monthlyPayment);
+        if (custEl) custEl.value = '';
+        const afterPay = Math.max(0, Number(debt.remaining) - Number(debt.monthlyPayment));
+        if (prevEl) prevEl.textContent = `按月還款額後剩餘：${formatCurrency(afterPay)}`;
+        if (custEl) {
+          custEl.oninput = () => {
+            const v = Number(custEl.value) || Number(debt.monthlyPayment);
+            const after = Math.max(0, Number(debt.remaining) - v);
+            if (amtEl)  amtEl.textContent  = formatCurrency(v);
+            if (prevEl) prevEl.textContent = `還款後剩餘：${formatCurrency(after)}`;
+          };
+        }
+        document.getElementById('modal-debt-pay')?.classList.add('active');
+      }
+
+      // --- 確認執行還款 ---
+      function handleConfirmDebtPay() {
+        if (!pendingDebtId) return;
+        const custEl = document.getElementById('debt-pay-custom-amount');
+        const cust = custEl ? (Number(custEl.value) || null) : null;
+        const newTx = doMonthlyPayment(pendingDebtId, cust);
+        if (!newTx) { showToast('還款金額有誤，請確認！', 'error'); return; }
+        saveAppData(appState);
+        document.getElementById('modal-debt-pay')?.classList.remove('active');
+        renderDashboard(); // 同步儀表板
+        renderDebtPage();
+        const debt = getDebts().find(d => d.id === pendingDebtId);
+        const msg = debt?.isPaid
+          ? `🎉 恭喜！債務【${newTx.categoryName.replace('債務還款：','')}】已完全還清！`
+          : `✅ 已還款 ${formatCurrency(newTx.amount)}，資金已同步扣除！`;
+        showToast(msg, 'success');
+        pendingDebtId = null;
+      }
+
+      // =========================================================================
       // 單一 DOMContentLoaded 事件處理器
       // =========================================================================
       document.addEventListener('DOMContentLoaded', () => {
         renderDashboard();
+        renderDebtPage();
 
         // 每日金句
         const randQuote = WEALTH_QUOTES[Math.floor(Math.random() * WEALTH_QUOTES.length)];
@@ -1987,9 +2706,68 @@
           btnRefresh.addEventListener('click', () => {
             appState = loadAppData();
             renderDashboard();
+            renderDebtPage();
             showToast('🔄 帳務資料已重新整理並同步！', 'success');
           });
         }
+
+        // =========================================================================
+        // Tab Bar 分頁切換
+        // =========================================================================
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+          btn.addEventListener('click', () => switchPage(btn.dataset.page));
+        });
+
+        // =========================================================================
+        // 債務管理：新增債務 Modal
+        // =========================================================================
+        const btnOpenAddDebt = document.getElementById('btn-open-add-debt');
+        if (btnOpenAddDebt) btnOpenAddDebt.addEventListener('click', openAddDebtModal);
+
+        const btnSaveDebt = document.getElementById('btn-save-debt');
+        if (btnSaveDebt) btnSaveDebt.addEventListener('click', handleSaveDebt);
+
+        const btnConfirmDebtPay = document.getElementById('btn-confirm-debt-pay');
+        if (btnConfirmDebtPay) btnConfirmDebtPay.addEventListener('click', handleConfirmDebtPay);
+
+        // 事件委派：本月還款、刪除債務、已還清折疊
+        document.addEventListener('click', (e) => {
+          const payDebtBtn = e.target.closest('.btn-pay-debt');
+          if (payDebtBtn) {
+            e.stopPropagation();
+            openDebtPayModal(payDebtBtn.dataset.debtId);
+            return;
+          }
+          const delDebtBtn = e.target.closest('.btn-delete-debt');
+          if (delDebtBtn) {
+            e.stopPropagation();
+            const debt = getDebts().find(d => d.id === delDebtBtn.dataset.debtId);
+            if (!debt) return;
+            if (!confirm(`確定要刪除債務【${debt.name}】？此操作不可復原。`)) return;
+            deleteDebtById(delDebtBtn.dataset.debtId);
+            saveAppData(appState);
+            renderDebtPage();
+            showToast(`已刪除債務【${debt.name}】`, 'success');
+            return;
+          }
+          const paidToggle = e.target.closest('#btn-toggle-paid-debts');
+          if (paidToggle) {
+            document.getElementById('debt-paid-list')?.classList.toggle('open');
+            return;
+          }
+          // ── 還款歷史折疊途換（事件委派）──
+          const dphToggle = e.target.closest('.debt-pay-history-toggle');
+          if (dphToggle) {
+            const id = dphToggle.dataset.dphId;
+            const list = document.getElementById(`dph-list-${id}`);
+            const arrow = dphToggle.querySelector('.dph-toggle-arrow');
+            if (list) {
+              const isOpen = list.classList.toggle('open');
+              if (arrow) arrow.textContent = isOpen ? '▼' : '▶';
+            }
+            return;
+          }
+        });
       });
     })();
   </script>

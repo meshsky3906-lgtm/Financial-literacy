@@ -1430,3 +1430,836 @@
   margin-top: 10px;
 }
 
+
+/* ==========================================================================
+   Tab Bar 底部分頁導航列 (Page Navigation)
+   ========================================================================== */
+.tab-bar {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 680px;
+  background: rgba(11, 15, 23, 0.92);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: stretch;
+  z-index: 900;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+.tab-btn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 10px 6px 12px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  color: var(--text-muted);
+  font-family: inherit;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  transition: all var(--transition-fast);
+  position: relative;
+}
+
+.tab-btn .tab-icon {
+  font-size: 1.45rem;
+  line-height: 1;
+  transition: transform var(--transition-bounce);
+}
+
+.tab-btn.active {
+  color: var(--color-need);
+}
+
+.tab-btn.active .tab-icon {
+  transform: translateY(-2px) scale(1.08);
+}
+
+.tab-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 20%;
+  right: 20%;
+  height: 2px;
+  background: var(--color-need);
+  border-radius: 0 0 4px 4px;
+  transform: scaleX(0);
+  transition: transform var(--transition-normal);
+}
+
+.tab-btn.active::before {
+  transform: scaleX(1);
+}
+
+/* Tab 頁面容器：預設隱藏，active 時顯示 */
+.page-view {
+  display: none;
+  animation: pageFadeIn 0.28s ease forwards;
+}
+
+.page-view.active {
+  display: block;
+}
+
+@keyframes pageFadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* 因底部 Tab Bar 固定，主內容需加底部 padding */
+.app-container {
+  padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px)) !important;
+}
+
+
+/* ==========================================================================
+   債務管理頁面樣式 (Debt Management Page)
+   ========================================================================== */
+
+/* 債務總覽 4 卡片 */
+.debt-overview-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+@media (min-width: 768px) {
+  .debt-overview-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+  }
+}
+
+.debt-stat-card {
+  background: var(--surface-glass);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--surface-border);
+  border-radius: var(--radius-md);
+  padding: 14px 12px;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 100px;
+  transition: all var(--transition-normal);
+}
+
+.debt-stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--card-accent, rgba(255,255,255,0.1));
+}
+
+.debt-stat-card.card-total-debt {
+  --card-accent: linear-gradient(90deg, #EF4444, #F43F5E);
+  background: linear-gradient(145deg, rgba(239,68,68,0.1), rgba(15,23,42,0.8));
+  border-color: rgba(239,68,68,0.25);
+}
+
+.debt-stat-card.card-monthly-pay {
+  --card-accent: linear-gradient(90deg, #F59E0B, #D97706);
+  background: linear-gradient(145deg, rgba(245,158,11,0.1), rgba(15,23,42,0.8));
+  border-color: rgba(245,158,11,0.25);
+}
+
+.debt-stat-card.card-debt-ratio {
+  --card-accent: linear-gradient(90deg, #6366F1, #8B5CF6);
+  background: linear-gradient(145deg, rgba(99,102,241,0.1), rgba(15,23,42,0.8));
+  border-color: rgba(99,102,241,0.25);
+}
+
+.debt-stat-card.card-paid-count {
+  --card-accent: linear-gradient(90deg, #10B981, #059669);
+  background: linear-gradient(145deg, rgba(16,185,129,0.1), rgba(15,23,42,0.8));
+  border-color: rgba(16,185,129,0.25);
+}
+
+.debt-stat-label {
+  font-size: 0.72rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+
+.debt-stat-value {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.3rem;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  line-height: 1.1;
+  word-break: break-all;
+}
+
+.debt-stat-sub {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  margin-top: 5px;
+  line-height: 1.3;
+}
+
+/* 到期還款提示橫幅 */
+.upcoming-banner {
+  background: linear-gradient(135deg, rgba(245,158,11,0.12), rgba(239,68,68,0.08));
+  border: 1px solid rgba(245,158,11,0.3);
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+  margin-bottom: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.upcoming-banner-title {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #FCD34D;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.upcoming-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 10px;
+  background: rgba(255,255,255,0.04);
+  border-radius: var(--radius-sm);
+  font-size: 0.78rem;
+}
+
+.upcoming-item-name {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.upcoming-item-days {
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+}
+
+.upcoming-item-days.urgent {
+  background: rgba(239,68,68,0.2);
+  color: #EF4444;
+  border: 1px solid rgba(239,68,68,0.4);
+}
+
+.upcoming-item-days.soon {
+  background: rgba(245,158,11,0.2);
+  color: #F59E0B;
+  border: 1px solid rgba(245,158,11,0.4);
+}
+
+.upcoming-item-days.ok {
+  background: rgba(16,185,129,0.15);
+  color: #10B981;
+  border: 1px solid rgba(16,185,129,0.35);
+}
+
+/* 整體還清進度條 */
+.debt-progress-section {
+  background: var(--surface-glass);
+  border: 1px solid var(--surface-border);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  margin-bottom: 16px;
+}
+
+.debt-progress-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.debt-progress-title {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+}
+
+.debt-progress-pct {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #10B981;
+}
+
+.debt-progress-track {
+  height: 8px;
+  background: rgba(255,255,255,0.07);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.debt-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #10B981, #059669);
+  border-radius: var(--radius-full);
+  transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 0 8px rgba(16,185,129,0.4);
+}
+
+/* 債務清單 */
+.debt-list-section {
+  background: var(--surface-glass);
+  border: 1px solid var(--surface-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+
+.debt-list-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--surface-border);
+}
+
+.debt-list-title {
+  font-size: 1rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.debt-empty-state {
+  text-align: center;
+  padding: 48px 24px;
+  color: var(--text-muted);
+}
+
+.debt-empty-icon {
+  font-size: 3rem;
+  margin-bottom: 12px;
+  opacity: 0.5;
+}
+
+.debt-empty-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+}
+
+.debt-empty-sub {
+  font-size: 0.82rem;
+  line-height: 1.5;
+}
+
+/* 單筆債務卡片 */
+.debt-card {
+  padding: 14px 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  transition: background var(--transition-fast);
+  position: relative;
+}
+
+.debt-card:last-child {
+  border-bottom: none;
+}
+
+.debt-card:hover {
+  background: rgba(255,255,255,0.03);
+}
+
+.debt-card-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  gap: 8px;
+}
+
+.debt-card-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  min-width: 0;
+}
+
+.debt-cat-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+.debt-card-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.debt-card-name {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.debt-card-meta {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.debt-card-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.debt-remaining-amount {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #FDA4AF;
+  letter-spacing: -0.5px;
+}
+
+.debt-card-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+/* 單筆債務進度條 */
+.debt-card-progress-wrap {
+  margin-bottom: 10px;
+}
+
+.debt-card-progress-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+
+.debt-card-progress-track {
+  height: 5px;
+  background: rgba(255,255,255,0.08);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.debt-card-progress-fill {
+  height: 100%;
+  border-radius: var(--radius-full);
+  transition: width 0.6s ease;
+}
+
+/* 債務底部 KPI 列 */
+.debt-card-kpi-row {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.debt-kpi-item {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.debt-kpi-label {
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.debt-kpi-value {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+}
+
+/* 已還清債務區塊 */
+.debt-paid-section {
+  margin-top: 12px;
+}
+
+.debt-paid-toggle {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 16px;
+  background: rgba(16,185,129,0.06);
+  border: 1px solid rgba(16,185,129,0.2);
+  border-radius: var(--radius-md);
+  color: #6EE7B7;
+  font-size: 0.82rem;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background var(--transition-fast);
+}
+
+.debt-paid-toggle:hover {
+  background: rgba(16,185,129,0.1);
+}
+
+.debt-paid-list {
+  display: none;
+  margin-top: 8px;
+  border: 1px solid rgba(16,185,129,0.15);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.debt-paid-list.open {
+  display: block;
+}
+
+.debt-paid-item {
+  padding: 10px 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  opacity: 0.6;
+}
+
+.debt-paid-item:last-child {
+  border-bottom: none;
+}
+
+/* 月還款壓力警示 */
+.debt-pressure-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: var(--radius-md);
+  margin-bottom: 16px;
+  font-size: 0.8rem;
+}
+
+.debt-pressure-bar.safe {
+  background: rgba(16,185,129,0.08);
+  border: 1px solid rgba(16,185,129,0.2);
+  color: #6EE7B7;
+}
+
+.debt-pressure-bar.warning {
+  background: rgba(245,158,11,0.08);
+  border: 1px solid rgba(245,158,11,0.25);
+  color: #FCD34D;
+}
+
+.debt-pressure-bar.danger {
+  background: rgba(239,68,68,0.08);
+  border: 1px solid rgba(239,68,68,0.25);
+  color: #FCA5A5;
+  animation: pulse-danger 2.5s infinite;
+}
+
+/* 新增債務 Modal 專屬欄位 */
+.debt-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.debt-form-grid.full {
+  grid-template-columns: 1fr;
+}
+
+.debt-category-select-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  margin-bottom: 16px;
+}
+
+.debt-cat-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  padding: 8px 4px;
+  border-radius: var(--radius-sm);
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--surface-border);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  font-family: inherit;
+  color: var(--text-muted);
+}
+
+.debt-cat-btn:hover {
+  background: rgba(255,255,255,0.08);
+  border-color: var(--surface-border-bright);
+  color: var(--text-primary);
+}
+
+.debt-cat-btn.active {
+  background: rgba(99,102,241,0.15);
+  border-color: rgba(99,102,241,0.5);
+  color: #A5B4FC;
+}
+
+.debt-cat-btn .dcat-icon {
+  font-size: 1.15rem;
+}
+
+.debt-cat-btn .dcat-name {
+  font-size: 0.62rem;
+  font-weight: 600;
+  text-align: center;
+  line-height: 1.2;
+}
+
+/* 按鈕 - 刪除 */
+.btn-outline-danger {
+  background: transparent;
+  border: 1px solid rgba(239,68,68,0.4);
+  color: #EF4444;
+  font-size: 0.78rem;
+  padding: 5px 10px;
+}
+
+.btn-outline-danger:hover {
+  background: rgba(239,68,68,0.12);
+  border-color: #EF4444;
+}
+
+/* 按鈕 - 還款 */
+.btn-pay-debt {
+  background: linear-gradient(135deg, rgba(16,185,129,0.2), rgba(5,150,105,0.15));
+  border: 1px solid rgba(16,185,129,0.4);
+  color: #6EE7B7;
+  font-size: 0.78rem;
+  padding: 5px 10px;
+  border-radius: var(--radius-md);
+  font-family: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.btn-pay-debt:hover {
+  background: linear-gradient(135deg, rgba(16,185,129,0.3), rgba(5,150,105,0.25));
+  border-color: #10B981;
+}
+
+/* 連動說明小提示 */
+.debt-sync-hint {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 10px 12px;
+  background: rgba(99,102,241,0.07);
+  border: 1px solid rgba(99,102,241,0.2);
+  border-radius: var(--radius-sm);
+  font-size: 0.75rem;
+  color: #A5B4FC;
+  margin-bottom: 16px;
+  line-height: 1.5;
+}
+
+
+/* ==========================================================================
+   還款歷史記錄清單 (Payment History Timeline)
+   ========================================================================== */
+
+/* 折疊容器 */
+.debt-pay-history-section {
+  margin-top: 10px;
+  border-top: 1px solid rgba(255,255,255,0.06);
+  padding-top: 8px;
+}
+
+/* 折疊按鈕 */
+.debt-pay-history-toggle {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 7px 10px;
+  background: rgba(99,102,241,0.06);
+  border: 1px solid rgba(99,102,241,0.18);
+  border-radius: var(--radius-sm);
+  color: #A5B4FC;
+  font-size: 0.78rem;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background var(--transition-fast);
+}
+
+.debt-pay-history-toggle:hover {
+  background: rgba(99,102,241,0.12);
+}
+
+.dph-toggle-arrow {
+  font-size: 0.6rem;
+  transition: transform var(--transition-fast);
+}
+
+/* 折疊清單：預設收起，open 時展開 */
+.debt-pay-history-list {
+  display: none;
+  margin-top: 6px;
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+.debt-pay-history-list.open {
+  display: block;
+}
+
+/* 每一筆還款記錄行 */
+.debt-pay-history-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 12px;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  transition: background var(--transition-fast);
+  position: relative;
+}
+
+.debt-pay-history-row:last-child {
+  border-bottom: none;
+}
+
+.debt-pay-history-row:hover {
+  background: rgba(255,255,255,0.03);
+}
+
+/* 最新一筆：左側藍色邊線高亮 */
+.debt-pay-history-row.latest {
+  background: rgba(99,102,241,0.05);
+  border-left: 3px solid #6366F1;
+}
+
+.debt-pay-history-row.latest::after {
+  content: 'LATEST';
+  position: absolute;
+  top: 6px;
+  right: 10px;
+  font-size: 0.58rem;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  color: #818CF8;
+  background: rgba(99,102,241,0.15);
+  border: 1px solid rgba(99,102,241,0.3);
+  border-radius: 4px;
+  padding: 1px 5px;
+}
+
+/* 左側：序號 + 日期時間 */
+.dph-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+}
+
+.dph-index {
+  font-size: 0.65rem;
+  font-weight: 800;
+  color: var(--text-muted);
+  background: rgba(255,255,255,0.06);
+  border-radius: 4px;
+  padding: 2px 5px;
+  flex-shrink: 0;
+  min-width: 26px;
+  text-align: center;
+}
+
+.dph-datetime {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.dph-date {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+}
+
+.dph-time {
+  font-size: 0.66rem;
+  color: var(--text-muted);
+}
+
+/* 右側：還款金額 + 還款後餘額 */
+.dph-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.dph-amount {
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.88rem;
+  font-weight: 800;
+  color: #FCA5A5;
+  letter-spacing: -0.3px;
+}
+
+.dph-remaining {
+  font-size: 0.65rem;
+  color: var(--text-muted);
+}
+
+/* 還清徽章 */
+.dph-paid-badge {
+  position: absolute;
+  bottom: 6px;
+  right: 10px;
+  font-size: 0.65rem;
+  font-weight: 800;
+  color: #6EE7B7;
+  background: rgba(16,185,129,0.12);
+  border: 1px solid rgba(16,185,129,0.3);
+  border-radius: 4px;
+  padding: 2px 6px;
+}
