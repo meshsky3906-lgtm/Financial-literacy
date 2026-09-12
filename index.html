@@ -1882,15 +1882,37 @@
         if (paidList) {
           paidList.innerHTML = s.paidDebts.map(d => {
             const c = DEBT_CATEGORIES.find(x => x.id === d.category) || DEBT_CATEGORIES[7];
-            return `<div class="debt-paid-item">
-              <span style="display:flex;align-items:center;gap:8px;font-size:0.85rem;">
-                ${c.icon} ${d.name}
-                ${d.creditor ? `<span style="font-size:0.7rem;color:var(--text-muted)">${d.creditor}</span>` : ''}
-              </span>
-              <span style="display:flex;align-items:center;gap:8px;">
-                <span style="font-size:0.82rem;color:#6EE7B7;font-weight:700;">✅ 已還清</span>
-                <button class="btn btn-outline-danger btn-delete-debt" data-debt-id="${d.id}" style="padding:3px 8px;font-size:0.7rem;">🗑️</button>
-              </span>
+            
+            // 擷取還款歷史 (只需精確到年月日)
+            const historyTxs = (appState.transactions || []).filter(tx => tx.debtId === d.id).sort((a, b) => {
+              const timeA = a.timestamp ? new Date(a.timestamp).getTime() : new Date(a.date).getTime();
+              const timeB = b.timestamp ? new Date(b.timestamp).getTime() : new Date(b.date).getTime();
+              return timeB - timeA;
+            });
+            const historyHtml = historyTxs.map(tx => {
+              return `<div class="debt-history-item">
+                <span class="debt-history-time">📅 ${tx.date}</span>
+                <span class="debt-history-amount">${formatCurrency(tx.amount)}</span>
+              </div>`;
+            }).join('');
+
+            return `<div style="background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.05); border-radius:var(--radius-sm); margin-bottom:8px; padding:10px;">
+              <div class="debt-paid-item" style="display:flex;justify-content:space-between;align-items:center; margin-bottom:8px;">
+                <span style="display:flex;align-items:center;gap:8px;font-size:0.85rem;">
+                  ${c.icon} ${d.name}
+                  ${d.creditor ? `<span style="font-size:0.7rem;color:var(--text-muted)">${d.creditor}</span>` : ''}
+                </span>
+                <span style="display:flex;align-items:center;gap:8px;">
+                  <span style="font-size:0.82rem;color:#6EE7B7;font-weight:700;">✅ 已還清</span>
+                  <button class="btn btn-outline-danger btn-delete-debt" data-debt-id="${d.id}" style="padding:3px 8px;font-size:0.7rem;">🗑️</button>
+                </span>
+              </div>
+              <button class="debt-history-toggle" data-debt-id="${d.id}" style="margin-top:0;">
+                查看還款紀錄 (${historyTxs.length} 筆) ▾
+              </button>
+              <div class="debt-history-list" id="history-list-${d.id}">
+                ${historyHtml || '<div style="text-align:center; padding:10px; color:var(--text-muted); font-size:0.75rem;">目前尚無還款紀錄</div>'}
+              </div>
             </div>`;
           }).join('');
         }
