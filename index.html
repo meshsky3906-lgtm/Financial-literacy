@@ -890,22 +890,12 @@
         try {
           const raw = localStorage.getItem(STORAGE_KEY);
           if (!raw) {
-            const initial = { version: '4.1', accounts: DEFAULT_ACCOUNTS, transactions: DEFAULT_TRANSACTIONS, debts: [] };
+            const initial = { version: '4.0', accounts: DEFAULT_ACCOUNTS, transactions: DEFAULT_TRANSACTIONS };
             saveAppData(initial);
             return initial;
           }
           const parsed = JSON.parse(raw);
-
-          // ── 向前相容遷移（Migration）：確保舊版手機/桌機資料永不流失 ──
-          // [v4.0 → v4.1] 補全缺少的 debts 欄位
-          if (!Array.isArray(parsed.debts)) parsed.debts = [];
-
-          // [v4.1] 確保每筆債務都有 paymentHistory 陣列
-          parsed.debts.forEach(debt => {
-            if (!Array.isArray(debt.paymentHistory)) debt.paymentHistory = [];
-          });
-
-          // 自動補全信用卡結帳日與繳款日（舊版資料相容）
+          // 自動補全結帳日與繳款日
           if (parsed.accounts) {
             parsed.accounts.forEach(acc => {
               if (acc.id === 'card_esun') {
@@ -917,12 +907,9 @@
               }
             });
           }
-
-          // 標記版本（不影響任何功能，僅供未來診斷用）
-          parsed.version = '4.1';
           return parsed;
         } catch (e) {
-          return { version: '4.1', accounts: DEFAULT_ACCOUNTS, transactions: DEFAULT_TRANSACTIONS, debts: [] };
+          return { version: '4.0', accounts: DEFAULT_ACCOUNTS, transactions: DEFAULT_TRANSACTIONS };
         }
       }
 
@@ -1762,25 +1749,8 @@
           ? Number(customAmount) : Number(debt.monthlyPayment);
         if (payAmount <= 0) return null;
 
-        const remainingBefore = Number(debt.remaining);
-        debt.remaining = Math.max(0, remainingBefore - payAmount);
-        const remainingAfter = debt.remaining;
+        debt.remaining = Math.max(0, Number(debt.remaining) - payAmount);
         if (debt.remaining === 0) debt.isPaid = true;
-
-        // ── 寫入還款歷史記錄（含精確時間戳，作為未來還款依據）──
-        if (!Array.isArray(debt.paymentHistory)) debt.paymentHistory = [];
-        const now = new Date();
-        debt.paymentHistory.push({
-          id: `pay_${Date.now()}`,
-          date: now.toISOString().split('T')[0],                  // YYYY-MM-DD
-          time: now.toTimeString().split(' ')[0],                  // HH:MM:SS
-          datetime: now.toISOString(),                             // 完整 ISO 時間戳（UTC）
-          amount: payAmount,
-          remainingBefore: remainingBefore,
-          remainingAfter: remainingAfter,
-          isPaidOff: debt.isPaid,
-          note: customAmount ? '自訂金額還款' : '按月還款額'
-        });
 
         // 連動主要活存
         const mainAcc = (appState.accounts || []).find(a => a.type === 'liquid');
@@ -1797,7 +1767,8 @@
           tag: 'need',
           accountId: mainAcc ? mainAcc.id : 'acc_bank_main',
           accountName: mainAcc ? mainAcc.name : '主要活存',
-          date: now.toISOString().split('T')[0],
+          date: new Date().toISOString().split('T')[0],
+          timestamp: new Date().toISOString(), // 紀錄精確的還款時間
           note: `${debt.creditor ? `[${debt.creditor}] ` : ''}月還款（自動連動扣款）`,
           debtId: debtId
         };
@@ -1973,6 +1944,24 @@
           const eta = d.monthsLeft !== null ? `約 ${d.monthsLeft} 個月還清` : '未設月還款';
           const rate = d.interestRate > 0 ? `年利率 ${d.interestRate}%` : '—';
           const due = d.dueDay > 0 ? `每月 ${d.dueDay} 號` : '—';
+          
+          // 擷取此債務的還款歷史
+          const historyTxs = (appState.transactions || []).filter(tx => tx.debtId === d.id).sort((a, b) => {
+            const timeA = a.timestamp ? new Date(a.timestamp).getTime() : new Date(a.date).getTime();
+            const timeB = b.timestamp ? new Date(b.timestamp).getTime() : new Date(b.date).getTime();
+            return timeB - timeA;
+          });
+          const historyHtml = historyTxs.map(tx => {
+            const dateObj = tx.timestamp ? new Date(tx.timestamp) : new Date(tx.date);
+            // 格式化為 YYYY-MM-DD HH:mm
+            const timeStr = isNaN(dateObj.getTime()) ? tx.date : 
+              `${dateObj.getFullYear()}-${String(dateObj.getMonth() + 1).padStart(2, '0')}-${String(dateObj.getDate()).padStart(2, '0')} ${String(dateObj.getHours()).padStart(2, '0')}:${String(dateObj.getMinutes()).padStart(2, '0')}`;
+            return `<div class="debt-history-item">
+              <span class="debt-history-time">🕒 ${timeStr}</span>
+              <span class="debt-history-amount">${formatCurrency(tx.amount)}</span>
+            </div>`;
+          }).join('');
+
           return `<div class="debt-card" data-debt-id="${d.id}">
             <div class="debt-card-top">
               <div class="debt-card-left">
@@ -2006,45 +1995,15 @@
               <div class="debt-kpi-item"><span class="debt-kpi-label">預計還清</span><span class="debt-kpi-value">${eta}</span></div>
             </div>
             ${d.note ? `<div style="font-size:0.72rem;color:var(--text-muted);margin-top:8px">📝 ${d.note}</div>` : ''}
-            ${renderPaymentHistoryHTML(d)}
-          </div>`;
-        }).join('');
-      }
-
-      // 渲染「還款歷史記錄」折疊清單
-      function renderPaymentHistoryHTML(d) {
-        const history = Array.isArray(d.paymentHistory) ? d.paymentHistory : [];
-        if (history.length === 0) return '';
-        const rows = [...history].reverse().map((p, i) => {
-          const localDate = new Date(p.datetime || `${p.date}T${p.time || '00:00:00'}`);
-          const dateStr = localDate.toLocaleDateString('zh-TW', { year: 'numeric', month: '2-digit', day: '2-digit', weekday: 'short' });
-          const timeStr = localDate.toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit' });
-          const isLatest = i === 0;
-          return `<div class="debt-pay-history-row ${isLatest ? 'latest' : ''}">
-            <div class="dph-left">
-              <span class="dph-index">#${history.length - i}</span>
-              <div class="dph-datetime">
-                <span class="dph-date">${dateStr}</span>
-                <span class="dph-time">${timeStr}</span>
-              </div>
-            </div>
-            <div class="dph-right">
-              <span class="dph-amount">-${formatCurrency(p.amount)}</span>
-              <span class="dph-remaining">剩 ${formatCurrency(p.remainingAfter)}</span>
-            </div>
-            ${p.isPaidOff ? '<span class="dph-paid-badge">🏆 還清</span>' : ''}
-          </div>`;
-        }).join('');
-        return `
-          <div class="debt-pay-history-section" id="dph-${d.id}">
-            <button class="debt-pay-history-toggle" data-dph-id="${d.id}">
-              <span>📋 還款歷史記錄（共 ${history.length} 筆）</span>
-              <span class="dph-toggle-arrow">▶</span>
+            
+            <button class="debt-history-toggle" data-debt-id="${d.id}">
+              查看還款紀錄 (${historyTxs.length} 筆) ▾
             </button>
-            <div class="debt-pay-history-list" id="dph-list-${d.id}">
-              ${rows}
+            <div class="debt-history-list" id="history-list-${d.id}">
+              ${historyHtml || '<div style="text-align:center; padding:10px; color:var(--text-muted); font-size:0.75rem;">目前尚無還款紀錄</div>'}
             </div>
           </div>`;
+        }).join('');
       }
 
       // --- Tab Bar 切換 ---
@@ -2755,15 +2714,14 @@
             document.getElementById('debt-paid-list')?.classList.toggle('open');
             return;
           }
-          // ── 還款歷史折疊途換（事件委派）──
-          const dphToggle = e.target.closest('.debt-pay-history-toggle');
-          if (dphToggle) {
-            const id = dphToggle.dataset.dphId;
-            const list = document.getElementById(`dph-list-${id}`);
-            const arrow = dphToggle.querySelector('.dph-toggle-arrow');
+          const historyToggle = e.target.closest('.debt-history-toggle');
+          if (historyToggle) {
+            const list = document.getElementById(`history-list-${historyToggle.dataset.debtId}`);
             if (list) {
-              const isOpen = list.classList.toggle('open');
-              if (arrow) arrow.textContent = isOpen ? '▼' : '▶';
+              list.classList.toggle('open');
+              const isOpen = list.classList.contains('open');
+              const txCount = historyToggle.textContent.match(/\d+/)[0];
+              historyToggle.innerHTML = `查看還款紀錄 (${txCount} 筆) ${isOpen ? '▴' : '▾'}`;
             }
             return;
           }
