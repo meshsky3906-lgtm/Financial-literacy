@@ -1,32 +1,37 @@
 /* ==========================================================================
-   FinFlow 智富記帳 - 現代奢華深色玻璃擬態設計系統 (Main Design System)
+   FinFlow 智富記帳 V2 — 琥珀金科技奢華設計系統 (Amber Luxe Design System)
    ========================================================================== */
 
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;600;700;900&family=Outfit:wght@300;400;500;600;700;800&display=swap');
 
 :root {
-  /* 色彩系統 - 科技奢華調色盤 */
-  --bg-main: #0B0F17;
-  --bg-gradient: radial-gradient(circle at 15% 15%, rgba(99, 102, 241, 0.15) 0%, transparent 40%),
-                 radial-gradient(circle at 85% 25%, rgba(139, 92, 246, 0.12) 0%, transparent 45%),
-                 radial-gradient(circle at 50% 85%, rgba(16, 185, 129, 0.08) 0%, transparent 50%),
-                 #080C14;
+  /* 色彩系統 - 琥珀金 × 深海藍 奢華調色盤 */
+  --bg-main: #080C14;
+  --bg-gradient: radial-gradient(ellipse at 20% 0%, rgba(217, 119, 6, 0.12) 0%, transparent 50%),
+                 radial-gradient(ellipse at 80% 10%, rgba(245, 158, 11, 0.08) 0%, transparent 40%),
+                 radial-gradient(ellipse at 50% 100%, rgba(14, 165, 233, 0.06) 0%, transparent 50%),
+                 linear-gradient(180deg, #080C14 0%, #0B1120 50%, #0D0F18 100%);
   
-  --surface-glass: rgba(18, 24, 38, 0.75);
-  --surface-glass-hover: rgba(28, 36, 56, 0.85);
-  --surface-glass-card: rgba(15, 23, 42, 0.65);
-  --surface-glass-modal: rgba(11, 15, 23, 0.95);
-  --surface-border: rgba(255, 255, 255, 0.08);
-  --surface-border-bright: rgba(255, 255, 255, 0.18);
-  --surface-border-focus: rgba(99, 102, 241, 0.6);
+  --surface-glass: rgba(14, 20, 32, 0.80);
+  --surface-glass-hover: rgba(20, 28, 44, 0.88);
+  --surface-glass-card: rgba(12, 18, 30, 0.70);
+  --surface-glass-modal: rgba(8, 12, 20, 0.96);
+  --surface-border: rgba(255, 255, 255, 0.06);
+  --surface-border-bright: rgba(217, 119, 6, 0.25);
+  --surface-border-focus: rgba(245, 158, 11, 0.6);
 
   /* 文字色彩 */
-  --text-primary: #F8FAFC;
-  --text-secondary: #94A3B8;
-  --text-muted: #64748B;
+  --text-primary: #F1F5F9;
+  --text-secondary: #8B9AB5;
+  --text-muted: #546380;
   --text-inverse: #0F172A;
 
-  /* 財商語義色彩 */
+  /* 金色強調系統 */
+  --color-gold: #F59E0B;
+  --color-gold-light: #FCD34D;
+  --color-gold-glow: rgba(245, 158, 11, 0.35);
+
+  /* 財商語義色彩 (微調更溫暖) */
   --color-income: #10B981;        /* 翡翠綠 - 收入 */
   --color-income-glow: rgba(16, 185, 129, 0.35);
 
@@ -49,20 +54,20 @@
 
   /* 排版與陰影 */
   --font-family-base: 'Outfit', 'Noto Sans TC', system-ui, -apple-system, sans-serif;
-  --radius-sm: 8px;
-  --radius-md: 14px;
-  --radius-lg: 20px;
-  --radius-xl: 26px;
+  --radius-sm: 10px;
+  --radius-md: 16px;
+  --radius-lg: 22px;
+  --radius-xl: 28px;
   --radius-full: 9999px;
 
-  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.25);
-  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.35);
-  --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.5);
-  --shadow-glow: 0 0 25px rgba(99, 102, 241, 0.25);
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 8px 28px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.55);
+  --shadow-glow-gold: 0 0 30px rgba(245, 158, 11, 0.2);
 
   --transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-normal: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-bounce: 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  --transition-normal: 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-bounce: 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 /* 基礎重設 */
@@ -76,7 +81,6 @@
 html {
   font-size: 16px;
   scroll-behavior: smooth;
-  /* 支援 iOS 瀏海與底部橫條全螢幕安全區域 */
   padding-top: env(safe-area-inset-top);
   padding-left: env(safe-area-inset-left);
   padding-right: env(safe-area-inset-right);
@@ -95,11 +99,23 @@ body {
   padding-bottom: calc(30px + env(safe-area-inset-bottom, 0px));
 }
 
-/* 主容器（專為手機操作優先設計，電腦端自然居中） */
+/* 微粒紋理覆蓋 (奢華質感) */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.025'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* 主容器 */
 .app-container {
   max-width: 680px;
   margin: 0 auto;
   padding: 14px 12px 30px 12px;
+  position: relative;
+  z-index: 1;
 }
 
 @media (min-width: 768px) {
@@ -108,11 +124,11 @@ body {
   }
 }
 
-/* 玻璃擬物通用面板 */
+/* 玻璃擬物通用面板 - V2 更深邃 */
 .glass-panel {
   background: var(--surface-glass);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(20px) saturate(1.2);
+  -webkit-backdrop-filter: blur(20px) saturate(1.2);
   border: 1px solid var(--surface-border);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-md);
@@ -123,11 +139,12 @@ body {
   border-color: var(--surface-border-bright);
 }
 
-/* 頂部導航列（獨立大器標題佈局） */
+/* 頂部導航列 - V2 精簡化 */
 .navbar {
   padding: 14px 16px;
   margin-bottom: 18px;
   border-radius: var(--radius-lg);
+  border-bottom: 1px solid rgba(245, 158, 11, 0.1);
 }
 
 @media (min-width: 768px) {
@@ -158,12 +175,12 @@ body {
   width: 42px;
   height: 42px;
   border-radius: var(--radius-md);
-  background: linear-gradient(135deg, #6366F1, #8B5CF6, #10B981);
+  background: linear-gradient(135deg, #D97706, #F59E0B, #FCD34D);
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 20px;
-  box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+  box-shadow: 0 4px 18px rgba(245, 158, 11, 0.45);
   flex-shrink: 0;
 }
 
@@ -178,7 +195,7 @@ body {
   font-size: 1.2rem;
   font-weight: 800;
   letter-spacing: -0.5px;
-  background: linear-gradient(90deg, #FFFFFF, #CBD5E1);
+  background: linear-gradient(90deg, #FCD34D, #F59E0B, #D97706);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   line-height: 1.2;
@@ -200,9 +217,9 @@ body {
   font-weight: 700;
   padding: 2px 8px;
   border-radius: var(--radius-full);
-  background: rgba(99, 102, 241, 0.2);
-  color: #A5B4FC;
-  border: 1px solid rgba(99, 102, 241, 0.4);
+  background: rgba(245, 158, 11, 0.15);
+  color: #FCD34D;
+  border: 1px solid rgba(245, 158, 11, 0.35);
   white-space: nowrap;
 }
 
@@ -213,7 +230,7 @@ body {
   margin-left: auto;
 }
 
-/* 按鈕系統 */
+/* 按鈕系統 - V2 琥珀主題 */
 .btn {
   display: inline-flex;
   align-items: center;
@@ -241,14 +258,16 @@ body {
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #6366F1, #4F46E5);
-  color: #FFFFFF;
-  box-shadow: 0 4px 14px rgba(79, 70, 229, 0.4);
+  background: linear-gradient(135deg, #D97706, #F59E0B);
+  color: #0F172A;
+  box-shadow: 0 4px 16px rgba(217, 119, 6, 0.4);
+  font-weight: 700;
 }
 
 .btn-primary:active, .btn-primary:hover {
-  background: linear-gradient(135deg, #4F46E5, #4338CA);
+  background: linear-gradient(135deg, #B45309, #D97706);
   transform: translateY(-1px);
+  color: #FFFFFF;
 }
 
 .btn-emerald {
@@ -262,13 +281,13 @@ body {
 }
 
 .btn-secondary {
-  background: rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.04);
   color: var(--text-primary);
   border: 1px solid var(--surface-border);
 }
 
 .btn-secondary:active, .btn-secondary:hover {
-  background: rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.10);
   border-color: var(--surface-border-bright);
 }
 
@@ -359,16 +378,20 @@ body {
 .text-negative { color: var(--color-want); }
 .text-need { color: var(--color-need); }
 .text-invest { color: var(--color-invest); }
+.text-gold { color: var(--color-gold-light); }
 
 /* 滾動條美化 */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
 }
 ::-webkit-scrollbar-track {
   background: rgba(15, 23, 42, 0.6);
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(245, 158, 11, 0.2);
   border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(245, 158, 11, 0.4);
 }

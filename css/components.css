@@ -3,8 +3,176 @@
    ========================================================================== */
 
 /* --------------------------------------------------------------------------
-   1. 頂部總覽英雄卡片 (Overview Hero Banner)
+   0. V2 Hero 主卡片 + 三欄快覽條 (Amber Luxe)
    -------------------------------------------------------------------------- */
+
+.hero-balance-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 22px 20px;
+  margin-bottom: 14px;
+  position: relative;
+  overflow: hidden;
+  border-image: linear-gradient(135deg, rgba(245, 158, 11, 0.3), rgba(217, 119, 6, 0.1), transparent) 1;
+  border: none;
+  border-radius: var(--radius-xl) !important;
+  background: linear-gradient(145deg, rgba(217, 119, 6, 0.08), rgba(14, 20, 32, 0.85)),
+              radial-gradient(ellipse at 15% 50%, rgba(245, 158, 11, 0.12), transparent 60%);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(245, 158, 11, 0.15);
+}
+
+.hero-balance-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #D97706, #FCD34D, #D97706);
+}
+
+.hero-left {
+  flex: 1;
+}
+
+.hero-label {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+  margin-bottom: 6px;
+}
+
+.hero-amount {
+  font-size: 2rem;
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -1px;
+  word-break: break-all;
+}
+
+@media (min-width: 768px) {
+  .hero-amount {
+    font-size: 2.6rem;
+  }
+}
+
+.hero-subtext {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  margin-top: 6px;
+}
+
+/* SVG 環形儲蓄率圖表 */
+.hero-ring-wrap {
+  width: 80px;
+  height: 80px;
+  position: relative;
+  flex-shrink: 0;
+}
+
+@media (min-width: 768px) {
+  .hero-ring-wrap {
+    width: 96px;
+    height: 96px;
+  }
+}
+
+.hero-ring-svg {
+  width: 100%;
+  height: 100%;
+}
+
+.hero-ring-label {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.hero-ring-pct-text {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--color-gold-light);
+}
+
+.hero-ring-sub {
+  font-size: 0.6rem;
+  color: var(--text-muted);
+  margin-top: -2px;
+}
+
+/* 三欄快覽條 */
+.quick-stats-row {
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+  background: var(--surface-glass);
+  border: 1px solid var(--surface-border);
+  border-radius: var(--radius-lg);
+  padding: 14px 8px;
+  margin-bottom: 16px;
+  backdrop-filter: blur(16px);
+}
+
+.quick-stat-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 0 6px;
+}
+
+.qs-label {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.qs-value {
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+@media (min-width: 768px) {
+  .qs-value {
+    font-size: 1.2rem;
+  }
+}
+
+.qs-bar {
+  width: 80%;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 2px;
+  margin-top: 4px;
+  overflow: hidden;
+}
+
+.qs-bar-fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 0.6s ease;
+  width: 0%;
+}
+
+.qs-bar-fill.qs-income { background: linear-gradient(90deg, #10B981, #34D399); width: 100%; }
+.qs-bar-fill.qs-expense { background: linear-gradient(90deg, #F43F5E, #FB7185); width: 100%; }
+.qs-bar-fill.qs-savings { background: linear-gradient(90deg, #D97706, #FCD34D); }
+
+.qs-divider {
+  width: 1px;
+  background: rgba(255, 255, 255, 0.08);
+  align-self: stretch;
+}
+
+/* --------------------------------------------------------------------------
+   1. 頂部總覽英雄卡片 (Overview Hero Banner) — 保留向後兼容
+   -------------------------------------------------------------------------- */
+
 .overview-section {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
