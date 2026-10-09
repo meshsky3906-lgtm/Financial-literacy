@@ -270,18 +270,69 @@ function renderEmergencyShield(accounts, monthlyNeedExpense) {
 }
 
 /**
- * 渲染交易歷史明細流
+ * 依年月份分組交易紀錄輔助函式
+ */
+function groupTransactionsByYearAndMonth(transactions) {
+  const sorted = [...transactions].sort((a, b) => new Date(b.date) - new Date(a.date));
+  const yearMap = new Map();
+  
+  sorted.forEach(tx => {
+    const d = new Date(tx.date);
+    const year = isNaN(d.getFullYear()) ? '其他年份' : String(d.getFullYear());
+    const monthNum = isNaN(d.getMonth()) ? '00' : String(d.getMonth() + 1).padStart(2, '0');
+    const monthKey = `${year}-${monthNum}`;
+
+    if (!yearMap.has(year)) {
+      yearMap.set(year, new Map());
+    }
+    const monthMap = yearMap.get(year);
+    if (!monthMap.has(monthKey)) {
+      monthMap.set(monthKey, {
+        year,
+        month: monthNum,
+        monthKey,
+        txs: [],
+        totalExpense: 0,
+        totalIncome: 0,
+        needAmt: 0,
+        wantAmt: 0,
+        investAmt: 0,
+        transferAmt: 0
+      });
+    }
+
+    const mData = monthMap.get(monthKey);
+    mData.txs.push(tx);
+
+    const amt = Number(tx.amount) || 0;
+    if (tx.type === 'income') {
+      mData.totalIncome += amt;
+    } else if (tx.type === 'transfer') {
+      mData.transferAmt += amt;
+    } else {
+      mData.totalExpense += amt;
+      if (tx.tag === 'need') mData.needAmt += amt;
+      else if (tx.tag === 'want') mData.wantAmt += amt;
+      else if (tx.tag === 'invest') mData.investAmt += amt;
+    }
+  });
+
+  return yearMap;
+}
+
+/**
+ * 渲染交易歷史明細流 (依年份與月份分組縮放)
  */
 export function renderTransactionLedger(state, filterTag = 'all') {
   const container = document.getElementById('transaction-list');
   if (!container) return;
 
   const { transactions } = state;
-  let filtered = [...transactions].sort((a, b) => new Date(b.date) - new Date(a.date));
+  let filtered = [...transactions];
 
-  if (filterTag === 'need') filtered = filtered.filter(t => t.tag === 'need');
-  else if (filterTag === 'want') filtered = filtered.filter(t => t.tag === 'want');
-  else if (filterTag === 'invest') filtered = filtered.filter(t => t.tag === 'invest');
+  if (filterTag === 'need') filtered = filtered.filter(t => t.tag === 'need' && t.type !== 'income' && t.type !== 'transfer');
+  else if (filterTag === 'want') filtered = filtered.filter(t => t.tag === 'want' && t.type !== 'income' && t.type !== 'transfer');
+  else if (filterTag === 'invest') filtered = filtered.filter(t => t.tag === 'invest' && t.type !== 'income' && t.type !== 'transfer');
   else if (filterTag === 'income') filtered = filtered.filter(t => t.type === 'income');
   else if (filterTag === 'card_esun') filtered = filtered.filter(t => t.accountId === 'card_esun' || t.toAccountId === 'card_esun');
   else if (filterTag === 'card_fubon') filtered = filtered.filter(t => t.accountId === 'card_fubon' || t.toAccountId === 'card_fubon');
@@ -295,48 +346,197 @@ export function renderTransactionLedger(state, filterTag = 'all') {
     return;
   }
 
-  container.innerHTML = filtered.map(tx => {
-    const isIncome = tx.type === 'income';
-    let tagBadge = '';
+  const yearMap = groupTransactionsByYearAndMonth(filtered);
+  const years = Array.from(yearMap.keys()).sort((a, b) => b.localeCompare(a));
 
-    if (isIncome) {
-      tagBadge = `<span class="badge badge-income">💰 收入</span>`;
-    } else if (tx.tag === 'need') {
-      tagBadge = `<span class="badge badge-need">50% 必要</span>`;
-    } else if (tx.tag === 'want') {
-      tagBadge = `<span class="badge badge-want">30% 慾望</span>`;
-    } else if (tx.tag === 'invest') {
-      tagBadge = `<span class="badge badge-invest">20% 投資</span>`;
-    }
+  container.innerHTML = years.map(year => {
+    const monthMap = yearMap.get(year);
+    const months = Array.from(monthMap.values()).sort((a, b) => b.monthKey.localeCompare(a.monthKey));
+    
+    let yearTxsCount = 0;
+    let yearExpense = 0;
+    months.forEach(m => {
+      yearTxsCount += m.txs.length;
+      yearExpense += m.totalExpense;
+    });
 
-    const sign = isIncome ? '+' : '-';
-    const amountColorClass = isIncome ? 'text-positive' : 'text-primary';
+    const monthCardsHtml = months.map(m => {
+      const netSavings = m.totalIncome - m.totalExpense;
+      const netSign = netSavings >= 0 ? '+' : '';
+      const netColor = netSavings >= 0 ? '#10B981' : '#F43F5E';
+      
+      const totalExp = m.totalExpense;
+      const needPct = totalExp > 0 ? (m.needAmt / totalExp) * 100 : 0;
+      const wantPct = totalExp > 0 ? (m.wantAmt / totalExp) * 100 : 0;
+      const investPct = totalExp > 0 ? (m.investAmt / totalExp) * 100 : 0;
+
+      return `
+        <div class="month-summary-card" data-month-key="${m.monthKey}" title="點擊開啟 ${m.year} 年 ${m.month} 月完整收支明細彈窗">
+          <div class="month-card-header">
+            <div class="month-card-title-wrap">
+              <span class="month-badge-pill">📅 ${m.year} 年 ${m.month} 月</span>
+              <span class="month-tx-count-pill">${m.txs.length} 筆紀錄</span>
+            </div>
+            <div class="month-card-arrow">
+              <span>🔍 查看明細</span>
+              <span>➔</span>
+            </div>
+          </div>
+
+          <div class="month-stats-row">
+            <div class="month-stat-item">
+              <span class="month-stat-label">💸 總支出</span>
+              <span class="month-stat-val text-negative">${formatCurrency(m.totalExpense)}</span>
+            </div>
+            <div class="month-stat-item">
+              <span class="month-stat-label">💰 總收入</span>
+              <span class="month-stat-val text-positive">${formatCurrency(m.totalIncome)}</span>
+            </div>
+            <div class="month-stat-item">
+              <span class="month-stat-label">⚖️ 淨結餘</span>
+              <span class="month-stat-val" style="color: ${netColor};">${netSign}${formatCurrency(netSavings)}</span>
+            </div>
+          </div>
+
+          ${totalExp > 0 ? `
+            <div class="month-ratio-mini-bar" title="50% 必要 (${needPct.toFixed(0)}%) / 30% 慾望 (${wantPct.toFixed(0)}%) / 20% 投資 (${investPct.toFixed(0)}%)">
+              <div class="month-ratio-mini-seg" style="width: ${needPct}%; background: var(--color-need);"></div>
+              <div class="month-ratio-mini-seg" style="width: ${wantPct}%; background: var(--color-want);"></div>
+              <div class="month-ratio-mini-seg" style="width: ${investPct}%; background: var(--color-invest);"></div>
+            </div>
+          ` : ''}
+        </div>
+      `;
+    }).join('');
 
     return `
-      <div class="transaction-row" data-tx-id="${tx.id}" title="點擊查看此筆帳務完整明細與財商風控影響">
-        <div class="tx-left">
-          <div class="tx-icon-wrap">${tx.categoryIcon || '💸'}</div>
-          <div class="tx-meta">
-            <h5>${tx.categoryName || '未分類'} ${tx.note ? `<span style="font-weight:400; font-size:0.8rem; color:var(--text-secondary);">(${tx.note})</span>` : ''}</h5>
-            <div class="tx-meta-sub">
-              <span>📅 ${tx.date}</span>
-              <span>🏦 ${tx.accountName || '活存'}</span>
-              ${tagBadge}
-            </div>
+      <div class="year-group-section">
+        <div class="year-group-header">
+          <div class="year-group-title">
+            <span>📆 ${year} 年度</span>
+          </div>
+          <div class="year-group-badges">
+            <span class="year-group-badge">共 ${yearTxsCount} 筆</span>
+            <span class="year-group-badge" style="background: rgba(244, 63, 94, 0.12); color: #FDA4AF; border-color: rgba(244, 63, 94, 0.25);">年支出 ${formatCurrency(yearExpense)}</span>
           </div>
         </div>
-        <div class="tx-right">
-          <div style="text-align: right;">
-            <div class="tx-amount money-amount ${amountColorClass}">
-              ${sign}${formatCurrency(tx.amount)}
-            </div>
-            <span style="font-size: 0.68rem; color: #A5B4FC; font-weight: 500; display: inline-flex; align-items: center; gap: 2px; margin-top: 2px; opacity: 0.85;">🔍 查詳情</span>
-          </div>
-          <button class="btn-tx-delete" data-tx-id="${tx.id}" title="刪除本筆紀錄">🗑️</button>
+        <div class="month-cards-grid">
+          ${monthCardsHtml}
         </div>
       </div>
     `;
   }).join('');
+}
+
+// 當前開啟的月份明細狀態
+export let currentMonthLedgerKey = null;
+export let currentMonthLedgerFilter = 'all';
+
+/**
+ * 開啟月份收支明細彙整 Modal
+ */
+export function openMonthLedgerModal(monthKey, state, subFilter = 'all') {
+  currentMonthLedgerKey = monthKey;
+  currentMonthLedgerFilter = subFilter;
+
+  const modal = document.getElementById('modal-month-ledger');
+  if (!modal) return;
+
+  const [yearStr, monthStr] = monthKey.split('-');
+  const titleEl = document.getElementById('month-ledger-modal-title');
+  const subEl = document.getElementById('month-ledger-modal-sub');
+  if (titleEl) titleEl.textContent = `📅 ${yearStr} 年 ${monthStr} 月 交易明細彙整`;
+
+  const monthTxs = (state.transactions || []).filter(t => {
+    if (!t.date) return false;
+    return t.date.startsWith(monthKey);
+  }).sort((a, b) => new Date(b.date) - new Date(a.date));
+
+  let totalExp = 0;
+  let totalInc = 0;
+  monthTxs.forEach(t => {
+    const amt = Number(t.amount) || 0;
+    if (t.type === 'income') totalInc += amt;
+    else if (t.type !== 'transfer') totalExp += amt;
+  });
+
+  const net = totalInc - totalExp;
+  const netSign = net >= 0 ? '+' : '';
+
+  const expEl = document.getElementById('month-ledger-modal-expense');
+  const incEl = document.getElementById('month-ledger-modal-income');
+  const netEl = document.getElementById('month-ledger-modal-net');
+  if (expEl) expEl.textContent = formatCurrency(totalExp);
+  if (incEl) incEl.textContent = formatCurrency(totalInc);
+  if (netEl) {
+    netEl.textContent = `${netSign}${formatCurrency(net)}`;
+    netEl.style.color = net >= 0 ? '#10B981' : '#F43F5E';
+  }
+
+  // 更新彈窗內按鈕狀態與計數
+  document.querySelectorAll('.month-modal-filter-btn').forEach(btn => {
+    const filter = btn.dataset.monthFilter;
+    btn.classList.toggle('active', filter === currentMonthLedgerFilter);
+    if (filter === 'all') {
+      btn.textContent = `全部 (${monthTxs.length})`;
+    }
+  });
+
+  // 依彈窗內篩選條件過濾
+  let displayTxs = monthTxs;
+  if (currentMonthLedgerFilter === 'need') displayTxs = monthTxs.filter(t => t.tag === 'need' && t.type !== 'income' && t.type !== 'transfer');
+  else if (currentMonthLedgerFilter === 'want') displayTxs = monthTxs.filter(t => t.tag === 'want' && t.type !== 'income' && t.type !== 'transfer');
+  else if (currentMonthLedgerFilter === 'invest') displayTxs = monthTxs.filter(t => t.tag === 'invest' && t.type !== 'income' && t.type !== 'transfer');
+  else if (currentMonthLedgerFilter === 'income') displayTxs = monthTxs.filter(t => t.type === 'income');
+  else if (currentMonthLedgerFilter === 'transfer') displayTxs = monthTxs.filter(t => t.type === 'transfer');
+
+  if (subEl) subEl.textContent = `當月共 ${monthTxs.length} 筆紀錄 (目前顯示 ${displayTxs.length} 筆)`;
+
+  const listContainer = document.getElementById('month-ledger-modal-list');
+  if (listContainer) {
+    if (displayTxs.length === 0) {
+      listContainer.innerHTML = `<div class="empty-state" style="padding: 24px;"><p>此月份尚無符合篩選條件的交易紀錄</p></div>`;
+    } else {
+      listContainer.innerHTML = displayTxs.map(tx => {
+        const isIncome = tx.type === 'income';
+        const isTransfer = tx.type === 'transfer';
+        let tagBadge = '';
+        if (isIncome) tagBadge = `<span class="badge badge-income">💰 收入</span>`;
+        else if (isTransfer) tagBadge = `<span class="badge badge-need">🔄 沖銷轉帳</span>`;
+        else if (tx.tag === 'need') tagBadge = `<span class="badge badge-need">50% 必要</span>`;
+        else if (tx.tag === 'want') tagBadge = `<span class="badge badge-want">30% 慾望</span>`;
+        else if (tx.tag === 'invest') tagBadge = `<span class="badge badge-invest">20% 投資</span>`;
+
+        const sign = isIncome ? '+' : (isTransfer ? '' : '-');
+        const amountColorClass = isIncome ? 'text-positive' : (isTransfer ? 'text-primary' : 'text-primary');
+
+        return `
+          <div class="transaction-row" data-tx-id="${tx.id}" title="點擊查看此筆帳務完整明細">
+            <div class="tx-left">
+              <div class="tx-icon-wrap">${tx.categoryIcon || '💸'}</div>
+              <div class="tx-meta">
+                <h5>${tx.categoryName || '未分類'} ${tx.note ? `<span style="font-weight:400; font-size:0.8rem; color:var(--text-secondary);">(${tx.note})</span>` : ''}</h5>
+                <div class="tx-meta-sub">
+                  <span>📅 ${tx.date}</span>
+                  <span>🏦 ${tx.accountName || '活存'}</span>
+                  ${tagBadge}
+                </div>
+              </div>
+            </div>
+            <div class="tx-right">
+              <div style="text-align: right;">
+                <div class="tx-amount money-amount ${amountColorClass}">${sign}${formatCurrency(tx.amount)}</div>
+                <span style="font-size: 0.68rem; color: #A5B4FC; font-weight: 500; display: inline-flex; align-items: center; gap: 2px; margin-top: 2px; opacity: 0.85;">🔍 查詳情</span>
+              </div>
+              <button class="btn-tx-delete" data-tx-id="${tx.id}" title="刪除本筆紀錄">🗑️</button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+  }
+
+  modal.classList.add('active');
 }
 
 /**

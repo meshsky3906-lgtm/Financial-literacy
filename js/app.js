@@ -10,6 +10,9 @@ import {
   renderAccountSelectOptions, 
   renderReportsModal,
   openTxDetailModal,
+  openMonthLedgerModal,
+  currentMonthLedgerKey,
+  currentMonthLedgerFilter,
   showToast, 
   formatCurrency 
 } from './uiRenderer.js';
@@ -182,6 +185,26 @@ function setupEventListeners() {
       e.stopPropagation();
       const txId = deleteBtn.dataset.txId;
       handleDeleteTransaction(txId);
+      return;
+    }
+
+    // 點擊月份摘要卡片 -> 開啟該月份交易明細彈窗
+    const monthCard = e.target.closest('.month-summary-card');
+    if (monthCard) {
+      const mKey = monthCard.dataset.monthKey;
+      if (mKey) {
+        openMonthLedgerModal(mKey, appState);
+        return;
+      }
+    }
+
+    // 點擊月份明細彈窗內的篩選標籤
+    const monthFilterBtn = e.target.closest('.month-modal-filter-btn');
+    if (monthFilterBtn) {
+      const f = monthFilterBtn.dataset.monthFilter;
+      if (currentMonthLedgerKey) {
+        openMonthLedgerModal(currentMonthLedgerKey, appState, f);
+      }
       return;
     }
 
@@ -735,6 +758,10 @@ function handleDeleteTransaction(txId) {
   appState.transactions.splice(txIndex, 1);
   saveAppData(appState);
   renderDashboard(appState);
+  const monthModal = document.getElementById('modal-month-ledger');
+  if (monthModal && monthModal.classList.contains('active') && currentMonthLedgerKey) {
+    openMonthLedgerModal(currentMonthLedgerKey, appState, currentMonthLedgerFilter);
+  }
   showToast('交易已成功刪除並回退餘額！', 'success');
 }
 

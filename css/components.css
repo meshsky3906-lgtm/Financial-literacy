@@ -2320,3 +2320,170 @@
   font-weight: 600;
   font-family: 'Outfit', sans-serif;
 }
+
+/* --------------------------------------------------------------------------
+   14. 年月份收支流水帳區隔分組與縮放卡片 (Year/Month Ledger Groups & Cards)
+   -------------------------------------------------------------------------- */
+.year-group-section {
+  margin-bottom: 24px;
+}
+
+.year-group-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-md);
+  margin-bottom: 12px;
+}
+
+.year-group-title {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #F8FAFC;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.year-group-badges {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.year-group-badge {
+  font-size: 0.72rem;
+  padding: 3px 10px;
+  border-radius: 20px;
+  background: rgba(99, 102, 241, 0.15);
+  color: #A5B4FC;
+  border: 1px solid rgba(99, 102, 241, 0.3);
+  font-weight: 600;
+}
+
+.month-cards-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.month-summary-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--surface-border);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  cursor: pointer;
+  transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  position: relative;
+  overflow: hidden;
+}
+
+.month-summary-card:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(99, 102, 241, 0.45);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28);
+}
+
+.month-summary-card:active {
+  transform: translateY(0);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.month-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.month-card-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.month-badge-pill {
+  font-size: 0.98rem;
+  font-weight: 800;
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.month-tx-count-pill {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  background: rgba(255, 255, 255, 0.06);
+  padding: 2px 8px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.month-card-arrow {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.78rem;
+  color: #A5B4FC;
+  font-weight: 600;
+  background: rgba(165, 180, 252, 0.1);
+  padding: 4px 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(165, 180, 252, 0.25);
+  transition: all 0.2s ease;
+}
+
+.month-summary-card:hover .month-card-arrow {
+  background: rgba(99, 102, 241, 0.3);
+  color: #FFFFFF;
+  border-color: rgba(99, 102, 241, 0.6);
+  transform: translateX(2px);
+}
+
+.month-stats-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px;
+  background: rgba(0, 0, 0, 0.25);
+  border-radius: var(--radius-sm);
+  padding: 8px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.month-stat-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.month-stat-label {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  margin-bottom: 2px;
+}
+
+.month-stat-val {
+  font-size: 0.88rem;
+  font-weight: 700;
+  font-family: 'Outfit', sans-serif;
+  white-space: nowrap;
+}
+
+.month-ratio-mini-bar {
+  display: flex;
+  height: 4px;
+  border-radius: 2px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.month-ratio-mini-seg {
+  height: 100%;
+}
+
