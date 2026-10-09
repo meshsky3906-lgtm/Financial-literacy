@@ -10,9 +10,8 @@ import {
   renderAccountSelectOptions, 
   renderReportsModal,
   openTxDetailModal,
-  openMonthLedgerModal,
-  currentMonthLedgerKey,
-  currentMonthLedgerFilter,
+  expandedMonthKeys,
+  monthSubFilters,
   showToast, 
   formatCurrency 
 } from './uiRenderer.js';
@@ -177,9 +176,9 @@ function setupEventListeners() {
     });
   });
 
-  // --- 交易明細刪除與卡片繳費點擊（事件委派） ---
+  // --- 交易明細手風琴切換、篩選、詳情查看、刪除與卡片繳費點擊（事件委派） ---
   document.addEventListener('click', (e) => {
-    // 刪除單筆交易
+    // 1. 刪除單筆交易
     const deleteBtn = e.target.closest('.btn-tx-delete');
     if (deleteBtn) {
       e.stopPropagation();
@@ -188,27 +187,35 @@ function setupEventListeners() {
       return;
     }
 
-    // 點擊月份摘要卡片 -> 開啟該月份交易明細彈窗
-    const monthCard = e.target.closest('.month-summary-card');
-    if (monthCard) {
-      const mKey = monthCard.dataset.monthKey;
-      if (mKey) {
-        openMonthLedgerModal(mKey, appState);
+    // 2. 點擊月份內嵌篩選標籤
+    const monthFilterChip = e.target.closest('.month-filter-chip');
+    if (monthFilterChip) {
+      e.stopPropagation();
+      const mKey = monthFilterChip.dataset.monthKey;
+      const f = monthFilterChip.dataset.monthFilter;
+      if (mKey && f) {
+        monthSubFilters.set(mKey, f);
+        renderTransactionLedger(appState, document.querySelector('.filter-btn.active')?.dataset.filter || 'all');
         return;
       }
     }
 
-    // 點擊月份明細彈窗內的篩選標籤
-    const monthFilterBtn = e.target.closest('.month-modal-filter-btn');
-    if (monthFilterBtn) {
-      const f = monthFilterBtn.dataset.monthFilter;
-      if (currentMonthLedgerKey) {
-        openMonthLedgerModal(currentMonthLedgerKey, appState, f);
+    // 3. 點擊手風琴頭部（切換該月份展開/收合）
+    const toggleHeader = e.target.closest('[data-toggle-month]');
+    if (toggleHeader) {
+      const mKey = toggleHeader.dataset.toggleMonth;
+      if (mKey) {
+        if (expandedMonthKeys.has(mKey)) {
+          expandedMonthKeys.delete(mKey);
+        } else {
+          expandedMonthKeys.add(mKey);
+        }
+        renderTransactionLedger(appState, document.querySelector('.filter-btn.active')?.dataset.filter || 'all');
+        return;
       }
-      return;
     }
 
-    // 點擊交易列開啟詳情查看
+    // 4. 點擊交易列開啟詳情查看（單一彈窗，不互相阻擋）
     const txRow = e.target.closest('.transaction-row');
     if (txRow) {
       const txId = txRow.dataset.txId;
@@ -218,7 +225,7 @@ function setupEventListeners() {
       }
     }
 
-    // 點擊信用卡上的「繳納卡費」按鈕
+    // 5. 點擊信用卡上的「繳納卡費」按鈕
     const payBillBtn = e.target.closest('.btn-pay-bill');
     if (payBillBtn) {
       const cardId = payBillBtn.dataset.cardId;
@@ -758,10 +765,6 @@ function handleDeleteTransaction(txId) {
   appState.transactions.splice(txIndex, 1);
   saveAppData(appState);
   renderDashboard(appState);
-  const monthModal = document.getElementById('modal-month-ledger');
-  if (monthModal && monthModal.classList.contains('active') && currentMonthLedgerKey) {
-    openMonthLedgerModal(currentMonthLedgerKey, appState, currentMonthLedgerFilter);
-  }
   showToast('交易已成功刪除並回退餘額！', 'success');
 }
 

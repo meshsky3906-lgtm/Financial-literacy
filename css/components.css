@@ -2322,10 +2322,10 @@
 }
 
 /* --------------------------------------------------------------------------
-   14. 年月份收支流水帳區隔分組與縮放卡片 (Year/Month Ledger Groups & Cards)
+   14. 年月份收支流水帳區隔分組與原地手風琴展開 (Year/Month In-Place Accordion Ledger)
    -------------------------------------------------------------------------- */
 .year-group-section {
-  margin-bottom: 24px;
+  margin-bottom: 22px;
 }
 
 .year-group-header {
@@ -2336,7 +2336,7 @@
   background: rgba(255, 255, 255, 0.04);
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: var(--radius-md);
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 }
 
 .year-group-title {
@@ -2367,36 +2367,38 @@
 .month-cards-grid {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
 }
 
-.month-summary-card {
+.month-accordion-card {
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid var(--surface-border);
   border-radius: var(--radius-md);
+  overflow: hidden;
+  transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.month-accordion-card.open {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(99, 102, 241, 0.45);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+}
+
+.month-accordion-header {
   padding: 14px 16px;
   cursor: pointer;
-  transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;
   flex-direction: column;
   gap: 10px;
-  position: relative;
-  overflow: hidden;
+  user-select: none;
+  transition: background 0.15s ease;
 }
 
-.month-summary-card:hover {
-  background: rgba(255, 255, 255, 0.06);
-  border-color: rgba(99, 102, 241, 0.45);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28);
+.month-accordion-header:hover {
+  background: rgba(255, 255, 255, 0.04);
 }
 
-.month-summary-card:active {
-  transform: translateY(0);
-  background: rgba(255, 255, 255, 0.08);
-}
-
-.month-card-header {
+.month-card-header-top {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -2426,25 +2428,24 @@
   border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-.month-card-arrow {
+.month-toggle-btn {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
   font-size: 0.78rem;
   color: #A5B4FC;
   font-weight: 600;
-  background: rgba(165, 180, 252, 0.1);
+  background: rgba(165, 180, 252, 0.12);
   padding: 4px 12px;
   border-radius: 8px;
   border: 1px solid rgba(165, 180, 252, 0.25);
   transition: all 0.2s ease;
 }
 
-.month-summary-card:hover .month-card-arrow {
+.month-accordion-card.open .month-toggle-btn {
   background: rgba(99, 102, 241, 0.3);
   color: #FFFFFF;
   border-color: rgba(99, 102, 241, 0.6);
-  transform: translateX(2px);
 }
 
 .month-stats-row {
@@ -2485,5 +2486,60 @@
 
 .month-ratio-mini-seg {
   height: 100%;
+}
+
+/* 手風琴展開內容區塊 */
+.month-accordion-body {
+  display: none;
+  padding: 0 16px 16px 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(0, 0, 0, 0.18);
+}
+
+.month-accordion-card.open .month-accordion-body {
+  display: block;
+}
+
+.month-inline-filter-bar {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  padding: 12px 0 8px 0;
+  margin-bottom: 8px;
+  scrollbar-width: none;
+}
+
+.month-inline-filter-bar::-webkit-scrollbar {
+  display: none;
+}
+
+.month-filter-chip {
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--text-secondary);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+}
+
+.month-filter-chip:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #FFFFFF;
+}
+
+.month-filter-chip.active {
+  background: #6366F1;
+  border-color: #818CF8;
+  color: #FFFFFF;
+}
+
+.month-tx-rows-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
