@@ -1,4 +1,4 @@
-﻿/**
+/**
  * FinFlow 智富記帳 - 預設收支分類庫與財商標籤
  * 
  * 財商標籤分為：
@@ -91,7 +91,7 @@ export const WEALTH_QUOTES = [
   }
 ];
 
-// ===== �ۭq���O���[�� (localStorage) =====
+// ===== 自訂類別儲存管理 (localStorage) =====
 const CUSTOM_CAT_KEY = 'finflow_custom_categories_v1';
 
 export function loadCustomCategories() {

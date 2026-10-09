@@ -781,6 +781,65 @@
     </div>
   </div>
 
+  <!-- =========================================================================
+       彈窗 9：收支類別自訂與管理 Modal (Category Manager Modal)
+       ========================================================================= -->
+  <div id="modal-category-manager" class="modal-overlay" style="z-index: 1100;">
+    <div class="modal-card" style="max-width: 520px; max-height: 90vh; display: flex; flex-direction: column;">
+      <div class="modal-header">
+        <h3 class="modal-title">🏷️ 自訂與管理收支類別</h3>
+        <button class="btn-close-modal" data-close-modal>&times;</button>
+      </div>
+
+      <!-- 分類切換 Tab (支出 / 收入) -->
+      <div class="type-toggle-group" style="margin-bottom: 14px;">
+        <button type="button" id="catmgr-tab-expense" class="type-toggle-btn active expense">💸 支出類別</button>
+        <button type="button" id="catmgr-tab-income" class="type-toggle-btn income">💰 收入類別</button>
+      </div>
+
+      <!-- 現有類別清單 (可捲動) -->
+      <div style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 6px; display: flex; justify-content: space-between;">
+        <span>現有類別清單</span>
+        <span style="font-size: 0.72rem; color: var(--text-muted);">點擊 ✏️ 修改名稱、圖示或標籤</span>
+      </div>
+      <div id="catmgr-list" style="display: flex; flex-direction: column; gap: 8px; max-height: 220px; overflow-y: auto; padding-right: 4px; margin-bottom: 16px; border: 1px solid var(--surface-border); border-radius: var(--radius-md); padding: 10px; background: rgba(0,0,0,0.15);">
+        <!-- JS 動態填充 -->
+      </div>
+
+      <!-- 新增 / 修改類別表單區塊 -->
+      <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--surface-border); border-radius: var(--radius-md); padding: 14px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+          <span id="catmgr-form-title" style="font-size: 0.9rem; font-weight: 700; color: #FFF;">✚ 新增類別</span>
+          <button type="button" id="catmgr-btn-cancel-edit" style="display: none; background: none; border: 1px solid var(--text-muted); color: var(--text-muted); border-radius: 4px; padding: 2px 8px; font-size: 0.75rem; cursor: pointer;">取消修改</button>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 60px 1fr; gap: 10px; margin-bottom: 10px;">
+          <div>
+            <label class="field-label" style="font-size: 0.75rem;">圖示</label>
+            <input type="text" id="catmgr-input-icon" class="input-large-amount" placeholder="📦" maxlength="4" style="font-size: 1.2rem; text-align: center; padding: 8px 4px; height: 42px; border-radius: 8px; background: rgba(0,0,0,0.2); border: 1px solid var(--surface-border); color: #FFF;">
+          </div>
+          <div>
+            <label class="field-label" style="font-size: 0.75rem;">類別名稱</label>
+            <input type="text" id="catmgr-input-name" class="input-large-amount" placeholder="例如：毛孩寵物、咖啡手搖..." style="font-size: 0.95rem; font-weight: normal; padding: 8px 12px; height: 42px; border-radius: 8px; background: rgba(0,0,0,0.2); border: 1px solid var(--surface-border); color: #FFF; width: 100%; box-sizing: border-box;">
+          </div>
+        </div>
+
+        <div id="catmgr-tag-wrap" style="margin-bottom: 12px;">
+          <label class="field-label" style="font-size: 0.75rem;">預設財商標籤 (50/30/20 法則)</label>
+          <select id="catmgr-input-tag" class="input-large-amount" style="font-size: 0.9rem; font-weight: normal; padding: 8px 12px; height: 42px; border-radius: 8px; background: #1E293B; border: 1px solid var(--surface-border); color: #FFF; width: 100%;">
+            <option value="need">🏠 50% 必要需求 (生活必需/固定開銷)</option>
+            <option value="want">🛍️ 30% 彈性慾望 (提升享受/休閒娛樂)</option>
+            <option value="invest">📈 20% 投資儲蓄 (股票ETF/未來成長)</option>
+          </select>
+        </div>
+
+        <button type="button" id="catmgr-btn-save" class="btn btn-primary" style="width: 100%; padding: 10px; font-size: 0.95rem;">
+          💾 儲存類別設定
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- Toast 提示容器 -->
   <div id="toast-container" class="toast-container"></div>
 
@@ -830,6 +889,45 @@
         { quote: "刷卡是先享受後付款，記帳時務必刷卡當下記入支出，避免假性富裕的心理盲點。", author: "現代行為經濟學" },
         { quote: "將 50% 投入生活必需、30% 犒賞適度慾望、20% 投資未來，能讓你在享受當下的同時持續邁向財務自由。", author: "50/30/20 黃金資產配置法" }
       ];
+
+      // ===== 自訂類別儲存管理 (localStorage) =====
+      const CUSTOM_CAT_KEY = 'finflow_custom_categories_v1';
+
+      function loadCustomCategories() {
+        try {
+          const raw = localStorage.getItem(CUSTOM_CAT_KEY);
+          if (!raw) return { expense: [], income: [] };
+          const parsed = JSON.parse(raw);
+          return {
+            expense: Array.isArray(parsed.expense) ? parsed.expense : [],
+            income:  Array.isArray(parsed.income)  ? parsed.income  : []
+          };
+        } catch {
+          return { expense: [], income: [] };
+        }
+      }
+
+      function saveCustomCategories(data) {
+        try {
+          localStorage.setItem(CUSTOM_CAT_KEY, JSON.stringify(data));
+        } catch (e) {
+          console.error('儲存自訂類別失敗：', e);
+        }
+      }
+
+      function getExpenseCategories() {
+        const custom = loadCustomCategories();
+        const map = new Map(DEFAULT_EXPENSE_CATEGORIES.map(c => [c.id, { ...c }]));
+        (custom.expense || []).forEach(c => map.set(c.id, c));
+        return Array.from(map.values());
+      }
+
+      function getIncomeCategories() {
+        const custom = loadCustomCategories();
+        const map = new Map(DEFAULT_INCOME_CATEGORIES.map(c => [c.id, { ...c }]));
+        (custom.income || []).forEach(c => map.set(c.id, c));
+        return Array.from(map.values());
+      }
 
       // 2. 本地儲存與初始資料 (v3 乾淨全歸零狀態)
       const STORAGE_KEY = 'finflow_app_data_v3';
@@ -1418,7 +1516,8 @@
 
       function renderCategorySelectGrid(type = 'expense') {
         const container = document.getElementById('category-grid-select');
-        const list = type === 'income' ? DEFAULT_INCOME_CATEGORIES : DEFAULT_EXPENSE_CATEGORIES;
+        if (!container) return;
+        const list = type === 'income' ? getIncomeCategories() : getExpenseCategories();
         container.innerHTML = '';
 
         list.forEach((cat, index) => {
@@ -1456,6 +1555,185 @@
             });
           }
         }
+      }
+
+      // ===== 收支類別自訂管理彈窗邏輯 =====
+      let catMgrType = 'expense';
+      let catMgrEditingId = null;
+      let catMgrCallback = null;
+
+      function openCategoryManagerModal(type = 'expense', onChangeCallback) {
+        catMgrType = type;
+        catMgrEditingId = null;
+        catMgrCallback = onChangeCallback;
+
+        const tabExpense = document.getElementById('catmgr-tab-expense');
+        const tabIncome  = document.getElementById('catmgr-tab-income');
+        if (tabExpense) tabExpense.classList.toggle('active', type === 'expense');
+        if (tabIncome)  tabIncome.classList.toggle('active',  type === 'income');
+
+        const tagWrap = document.getElementById('catmgr-tag-wrap');
+        if (tagWrap) tagWrap.style.display = type === 'income' ? 'none' : '';
+
+        renderCatMgrList();
+        resetCatMgrForm();
+        setupCatMgrEvents();
+
+        document.getElementById('modal-category-manager')?.classList.add('active');
+      }
+
+      function renderCatMgrList() {
+        const container = document.getElementById('catmgr-list');
+        if (!container) return;
+
+        const isExpense = catMgrType === 'expense';
+        const custom    = loadCustomCategories();
+        const customArr = isExpense ? (custom.expense || []) : (custom.income || []);
+        const defaultArr = isExpense ? DEFAULT_EXPENSE_CATEGORIES : DEFAULT_INCOME_CATEGORIES;
+
+        const map = new Map(defaultArr.map(c => [c.id, { ...c, _source: 'default' }]));
+        customArr.forEach(c => map.set(c.id, { ...c, _source: 'custom' }));
+        const all = Array.from(map.values());
+
+        if (all.length === 0) {
+          container.innerHTML = '<div style="color:var(--text-muted);font-size:0.85rem;text-align:center;padding:16px;">尚無類別，請於下方新增。</div>';
+          return;
+        }
+
+        const tagColors = { need: '#6366F1', want: '#F43F5E', invest: '#8B5CF6' };
+        const tagLabels = { need: '必要', want: '慾望', invest: '投資' };
+
+        container.innerHTML = all.map(cat => {
+          const isCustom = cat._source === 'custom';
+          const tagColor = tagColors[cat.defaultTag] || '#6B7280';
+          const tagLabel = tagLabels[cat.defaultTag] || '';
+          return `<div class="catmgr-row" data-cat-id="${cat.id}" style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:rgba(255,255,255,0.04);border:1px solid var(--surface-border);border-radius:10px;">
+            <span style="font-size:1.4rem;min-width:30px;text-align:center;">${cat.icon}</span>
+            <div style="flex:1;min-width:0;">
+              <div style="font-size:0.88rem;font-weight:600;color:#FFF;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${cat.name}</div>
+              <div style="display:flex;align-items:center;gap:6px;margin-top:2px;">
+                ${(isExpense && tagLabel) ? `<span style="font-size:0.68rem;padding:1px 7px;background:${tagColor}22;color:${tagColor};border-radius:20px;border:1px solid ${tagColor}44;">${tagLabel}</span>` : ''}
+                <span style="font-size:0.68rem;color:${isCustom ? '#A5B4FC' : 'var(--text-muted)'};">${isCustom ? '✏️ 已自訂' : '📦 預設'}</span>
+              </div>
+            </div>
+            <div style="display:flex;gap:6px;flex-shrink:0;">
+              <button type="button" class="catmgr-btn-edit" data-cat-id="${cat.id}" title="修改此類別" style="font-size:0.75rem;padding:4px 10px;background:rgba(165,180,252,0.15);border:1px solid rgba(165,180,252,0.3);border-radius:8px;color:#A5B4FC;cursor:pointer;">✏️ 修改</button>
+              ${isCustom ? `<button type="button" class="catmgr-btn-delete" data-cat-id="${cat.id}" title="刪除此自訂類別" style="font-size:0.75rem;padding:4px 10px;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);border-radius:8px;color:#F87171;cursor:pointer;">🗑️</button>` : ''}
+            </div>
+          </div>`;
+        }).join('');
+      }
+
+      function resetCatMgrForm() {
+        catMgrEditingId = null;
+        const title    = document.getElementById('catmgr-form-title');
+        const iconEl   = document.getElementById('catmgr-input-icon');
+        const nameEl   = document.getElementById('catmgr-input-name');
+        const tagEl    = document.getElementById('catmgr-input-tag');
+        const cancelEl = document.getElementById('catmgr-btn-cancel-edit');
+        if (title)    title.textContent = '✚ 新增類別';
+        if (iconEl)   iconEl.value = '';
+        if (nameEl)   nameEl.value = '';
+        if (tagEl)    tagEl.value = 'need';
+        if (cancelEl) cancelEl.style.display = 'none';
+      }
+
+      let catMgrEventsSetup = false;
+      function setupCatMgrEvents() {
+        if (catMgrEventsSetup) return;
+        catMgrEventsSetup = true;
+
+        document.getElementById('catmgr-tab-expense')?.addEventListener('click', () => {
+          catMgrType = 'expense';
+          document.getElementById('catmgr-tab-expense')?.classList.add('active');
+          document.getElementById('catmgr-tab-income')?.classList.remove('active');
+          const tagWrap = document.getElementById('catmgr-tag-wrap');
+          if (tagWrap) tagWrap.style.display = '';
+          renderCatMgrList();
+          resetCatMgrForm();
+        });
+
+        document.getElementById('catmgr-tab-income')?.addEventListener('click', () => {
+          catMgrType = 'income';
+          document.getElementById('catmgr-tab-income')?.classList.add('active');
+          document.getElementById('catmgr-tab-expense')?.classList.remove('active');
+          const tagWrap = document.getElementById('catmgr-tag-wrap');
+          if (tagWrap) tagWrap.style.display = 'none';
+          renderCatMgrList();
+          resetCatMgrForm();
+        });
+
+        document.getElementById('catmgr-btn-save')?.addEventListener('click', () => {
+          const iconVal = (document.getElementById('catmgr-input-icon')?.value.trim()) || '📦';
+          const nameVal = document.getElementById('catmgr-input-name')?.value.trim();
+          const tagVal  = document.getElementById('catmgr-input-tag')?.value || 'need';
+          if (!nameVal) {
+            showToast('請輸入類別名稱！', 'warning');
+            document.getElementById('catmgr-input-name')?.focus();
+            return;
+          }
+          const custom    = loadCustomCategories();
+          const isExpense = catMgrType === 'expense';
+          const arr       = [...(isExpense ? (custom.expense || []) : (custom.income || []))];
+          if (catMgrEditingId) {
+            const idx = arr.findIndex(c => c.id === catMgrEditingId);
+            const newCat = { id: catMgrEditingId, name: nameVal, icon: iconVal, ...(isExpense ? { defaultTag: tagVal } : {}) };
+            if (idx >= 0) arr[idx] = newCat; else arr.push(newCat);
+            showToast(`✅ 類別「${nameVal}」已修改完成！`, 'success');
+          } else {
+            const newId = 'custom_' + catMgrType + '_' + Date.now();
+            arr.push({ id: newId, name: nameVal, icon: iconVal, ...(isExpense ? { defaultTag: tagVal } : {}) });
+            showToast(`✅ 已新增類別「${nameVal}」！`, 'success');
+          }
+          if (isExpense) custom.expense = arr; else custom.income = arr;
+          saveCustomCategories(custom);
+          renderCatMgrList();
+          resetCatMgrForm();
+          if (typeof catMgrCallback === 'function') catMgrCallback(catMgrType);
+        });
+
+        document.getElementById('catmgr-btn-cancel-edit')?.addEventListener('click', () => {
+          resetCatMgrForm();
+        });
+
+        document.getElementById('catmgr-list')?.addEventListener('click', (e) => {
+          const editBtn = e.target.closest('.catmgr-btn-edit');
+          if (editBtn) {
+            const catId     = editBtn.dataset.catId;
+            const isExpense = catMgrType === 'expense';
+            const custom    = loadCustomCategories();
+            const defaults  = isExpense ? DEFAULT_EXPENSE_CATEGORIES : DEFAULT_INCOME_CATEGORIES;
+            const customArr = isExpense ? (custom.expense || []) : (custom.income || []);
+            const cat = customArr.find(c => c.id === catId) || defaults.find(c => c.id === catId);
+            if (!cat) return;
+            catMgrEditingId = catId;
+            document.getElementById('catmgr-input-icon').value = cat.icon || '';
+            document.getElementById('catmgr-input-name').value = cat.name || '';
+            if (isExpense && document.getElementById('catmgr-input-tag')) {
+              document.getElementById('catmgr-input-tag').value = cat.defaultTag || 'need';
+            }
+            document.getElementById('catmgr-form-title').textContent = '✏️ 修改類別：' + cat.name;
+            document.getElementById('catmgr-btn-cancel-edit').style.display = '';
+            document.getElementById('catmgr-input-name')?.focus();
+            return;
+          }
+          const delBtn = e.target.closest('.catmgr-btn-delete');
+          if (delBtn) {
+            const catId     = delBtn.dataset.catId;
+            const custom    = loadCustomCategories();
+            const isExpense = catMgrType === 'expense';
+            if (isExpense) {
+              custom.expense = (custom.expense || []).filter(c => c.id !== catId);
+            } else {
+              custom.income = (custom.income || []).filter(c => c.id !== catId);
+            }
+            saveCustomCategories(custom);
+            if (catMgrEditingId === catId) resetCatMgrForm();
+            renderCatMgrList();
+            if (typeof catMgrCallback === 'function') catMgrCallback(catMgrType);
+            showToast('已刪除自訂類別！', 'success');
+          }
+        });
       }
 
       function renderAccountSelectOptions(type = 'expense') {
@@ -2183,8 +2461,13 @@
 
         // 關閉 Modal 按鈕
         document.querySelectorAll('[data-close-modal]').forEach(btn => {
-          btn.addEventListener('click', () => {
-            document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('active'));
+          btn.addEventListener('click', (e) => {
+            const modal = btn.closest('.modal-overlay');
+            if (modal) {
+              modal.classList.remove('active');
+            } else {
+              document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('active'));
+            }
           });
         });
 
@@ -2193,6 +2476,16 @@
             if (e.target === overlay) overlay.classList.remove('active');
           });
         });
+
+        // 管理類別按鈕
+        const btnManageCategories = document.getElementById('btn-open-category-manager-from-entry');
+        if (btnManageCategories) {
+          btnManageCategories.addEventListener('click', () => {
+            openCategoryManagerModal(currentEntryState.type || 'expense', () => {
+              renderCategorySelectGrid(currentEntryState.type || 'expense');
+            });
+          });
+        }
 
         // 類型切換 (支出 / 收入 / 轉帳)
         document.querySelectorAll('.type-toggle-btn').forEach(btn => {
@@ -2571,6 +2864,9 @@
             const liquidAccs = appState.accounts.filter(a => a.type === 'liquid' || a.type === 'bank' || a.type === 'cash');
             selectSrc.innerHTML = liquidAccs.map(a => `<option value="${a.id}">${a.name} (餘額: ${formatCurrency(a.balance)})</option>`).join('');
 
+            const custAmtInput = document.getElementById('pay-bill-custom-amount');
+            if (custAmtInput) custAmtInput.value = '';
+
             document.getElementById('modal-pay-bill').classList.add('active');
           }
         });
@@ -2587,17 +2883,29 @@
               return;
             }
 
+            let payAmount = billAmount;
+            const custAmtInput = document.getElementById('pay-bill-custom-amount');
+            if (custAmtInput && custAmtInput.value.trim() !== '') {
+              const val = Number(custAmtInput.value);
+              if (!isNaN(val) && val > 0) payAmount = val;
+            }
+
             const selectSrc = document.getElementById('select-pay-source-account');
             const srcAcc = appState.accounts.find(a => a.id === selectSrc.value);
             if (srcAcc) {
-              srcAcc.balance = Number(srcAcc.balance) - billAmount;
+              if (srcAcc.balance < payAmount) {
+                if (!confirm(`警告：轉出活存帳戶餘額 (${formatCurrency(srcAcc.balance)}) 小於本次繳納金額 (${formatCurrency(payAmount)})，確定繼續扣款嗎？`)) {
+                  return;
+                }
+              }
+              srcAcc.balance = Number(srcAcc.balance) - payAmount;
             }
-            pendingPayCard.balance = 0;
+            pendingPayCard.balance = Math.max(0, Number(pendingPayCard.balance) - payAmount);
 
             appState.transactions.unshift({
               id: `tx_pay_${Date.now()}`,
               type: 'transfer',
-              amount: billAmount,
+              amount: payAmount,
               categoryId: 'transfer',
               categoryName: `繳納${pendingPayCard.bankName}卡費`,
               categoryIcon: '💳',
@@ -2613,7 +2921,7 @@
             saveAppData(appState);
             document.getElementById('modal-pay-bill').classList.remove('active');
             renderDashboard();
-            showToast(`🎉 成功繳清 ${pendingPayCard.bankName} 卡費 ${formatCurrency(billAmount)}！`, 'success');
+            showToast(`🎉 成功繳納 ${pendingPayCard.bankName} 卡費 ${formatCurrency(payAmount)}！`, 'success');
             pendingPayCard = null;
           });
         }

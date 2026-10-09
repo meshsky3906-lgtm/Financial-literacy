@@ -1,4 +1,4 @@
-﻿/**
+/**
  * FinFlow 智富記帳 - 類別管理 Modal 控制模組
  */
 
@@ -13,10 +13,12 @@ import { showToast } from './uiRenderer.js';
 let catMgrType = 'expense';
 let catMgrEditingId = null;
 let catMgrEventsSetup = false;
+let catMgrCallback = null;
 
 export function openCategoryManagerModal(type = 'expense', onChangeCallback) {
   catMgrType = type;
   catMgrEditingId = null;
+  catMgrCallback = onChangeCallback;
 
   const tabExpense = document.getElementById('catmgr-tab-expense');
   const tabIncome  = document.getElementById('catmgr-tab-income');
@@ -28,7 +30,7 @@ export function openCategoryManagerModal(type = 'expense', onChangeCallback) {
 
   renderCatMgrList();
   resetCatMgrForm();
-  setupCatMgrEvents(onChangeCallback);
+  setupCatMgrEvents();
 
   document.getElementById('modal-category-manager')?.classList.add('active');
 }
@@ -89,7 +91,7 @@ function resetCatMgrForm() {
   if (cancelEl) cancelEl.style.display = 'none';
 }
 
-function setupCatMgrEvents(onChangeCallback) {
+function setupCatMgrEvents() {
   if (catMgrEventsSetup) return;
   catMgrEventsSetup = true;
 
@@ -116,7 +118,7 @@ function setupCatMgrEvents(onChangeCallback) {
     const nameVal = document.getElementById('catmgr-input-name')?.value.trim();
     const tagVal  = document.getElementById('catmgr-input-tag')?.value || 'need';
     if (!nameVal) {
-      showToast('請輸入類別名稱！', 'error');
+      showToast('請輸入類別名稱！', 'warning');
       document.getElementById('catmgr-input-name')?.focus();
       return;
     }
@@ -137,7 +139,7 @@ function setupCatMgrEvents(onChangeCallback) {
     saveCustomCategories(custom);
     renderCatMgrList();
     resetCatMgrForm();
-    if (typeof onChangeCallback === 'function') onChangeCallback(catMgrType);
+    if (typeof catMgrCallback === 'function') catMgrCallback(catMgrType);
   });
 
   document.getElementById('catmgr-btn-cancel-edit')?.addEventListener('click', () => {
@@ -157,7 +159,9 @@ function setupCatMgrEvents(onChangeCallback) {
       catMgrEditingId = catId;
       document.getElementById('catmgr-input-icon').value = cat.icon || '';
       document.getElementById('catmgr-input-name').value = cat.name || '';
-      if (isExpense) document.getElementById('catmgr-input-tag').value = cat.defaultTag || 'need';
+      if (isExpense && document.getElementById('catmgr-input-tag')) {
+        document.getElementById('catmgr-input-tag').value = cat.defaultTag || 'need';
+      }
       document.getElementById('catmgr-form-title').textContent = '✏️ 修改類別：' + cat.name;
       document.getElementById('catmgr-btn-cancel-edit').style.display = '';
       document.getElementById('catmgr-input-name')?.focus();
@@ -176,7 +180,7 @@ function setupCatMgrEvents(onChangeCallback) {
       saveCustomCategories(custom);
       if (catMgrEditingId === catId) resetCatMgrForm();
       renderCatMgrList();
-      if (typeof onChangeCallback === 'function') onChangeCallback(catMgrType);
+      if (typeof catMgrCallback === 'function') catMgrCallback(catMgrType);
       showToast('已刪除自訂類別！', 'success');
     }
   });
