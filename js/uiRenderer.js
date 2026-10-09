@@ -2,7 +2,7 @@
  * FinFlow 智富記帳 - 介面動態渲染與互動模組 (UI Renderer)
  */
 
-import { FINANCE_TAGS, DEFAULT_EXPENSE_CATEGORIES, DEFAULT_INCOME_CATEGORIES, WEALTH_QUOTES } from './categories.js';
+import { FINANCE_TAGS, getExpenseCategories, getIncomeCategories, WEALTH_QUOTES } from './categories.js';
 import { 
   calculate503020, 
   calculateCreditCardHealth, 
@@ -457,7 +457,7 @@ export function renderCategorySelectGrid(type = 'expense', onSelectCallback) {
   const container = document.getElementById('category-grid-select');
   if (!container) return;
 
-  const list = type === 'income' ? DEFAULT_INCOME_CATEGORIES : DEFAULT_EXPENSE_CATEGORIES;
+  const list = type === 'income' ? getIncomeCategories() : getExpenseCategories();
   container.innerHTML = '';
 
   list.forEach((cat, index) => {

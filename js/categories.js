@@ -1,4 +1,4 @@
-/**
+﻿/**
  * FinFlow 智富記帳 - 預設收支分類庫與財商標籤
  * 
  * 財商標籤分為：
@@ -90,3 +90,42 @@ export const WEALTH_QUOTES = [
     author: "50/30/20 黃金資產配置法"
   }
 ];
+
+// ===== �ۭq���O���[�� (localStorage) =====
+const CUSTOM_CAT_KEY = 'finflow_custom_categories_v1';
+
+export function loadCustomCategories() {
+  try {
+    const raw = localStorage.getItem(CUSTOM_CAT_KEY);
+    if (!raw) return { expense: [], income: [] };
+    const parsed = JSON.parse(raw);
+    return {
+      expense: Array.isArray(parsed.expense) ? parsed.expense : [],
+      income:  Array.isArray(parsed.income)  ? parsed.income  : []
+    };
+  } catch {
+    return { expense: [], income: [] };
+  }
+}
+
+export function saveCustomCategories(data) {
+  try {
+    localStorage.setItem(CUSTOM_CAT_KEY, JSON.stringify(data));
+  } catch (e) {
+    console.error('儲存自訂類別失敗：', e);
+  }
+}
+
+export function getExpenseCategories() {
+  const custom = loadCustomCategories();
+  const map = new Map(DEFAULT_EXPENSE_CATEGORIES.map(c => [c.id, { ...c }]));
+  (custom.expense || []).forEach(c => map.set(c.id, c));
+  return Array.from(map.values());
+}
+
+export function getIncomeCategories() {
+  const custom = loadCustomCategories();
+  const map = new Map(DEFAULT_INCOME_CATEGORIES.map(c => [c.id, { ...c }]));
+  (custom.income || []).forEach(c => map.set(c.id, c));
+  return Array.from(map.values());
+}

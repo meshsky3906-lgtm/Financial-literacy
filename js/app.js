@@ -14,7 +14,7 @@ import {
   formatCurrency 
 } from './uiRenderer.js';
 import { calculateIncomeSplit, getCurrentMonthKey, generatePeriodReport } from './financeLogic.js';
-import { DEFAULT_EXPENSE_CATEGORIES, DEFAULT_INCOME_CATEGORIES } from './categories.js';
+import { getExpenseCategories, getIncomeCategories } from './categories.js';
 import {
   DEBT_CATEGORIES,
   addDebt,
@@ -23,6 +23,7 @@ import {
   calcDebtSummary,
   getUpcomingPayments
 } from './debtManager.js';
+import { openCategoryManagerModal } from './categoryManager.js';
 
 // 全域應用程式狀態
 let appState = {
@@ -120,6 +121,26 @@ function setupEventListeners() {
       currentEntryState.tag = btn.dataset.tag;
     });
   });
+
+  // --- 管理類別 ---
+  const btnManageCategories = document.getElementById('btn-open-category-manager-from-entry');
+  if (btnManageCategories) {
+    btnManageCategories.addEventListener('click', () => {
+      openCategoryManagerModal(currentEntryState.type || 'expense', () => {
+        renderCategorySelectGrid(currentEntryState.type || 'expense', (selectedCat) => {
+          currentEntryState.categoryId = selectedCat.id;
+          currentEntryState.categoryName = selectedCat.name;
+          currentEntryState.categoryIcon = selectedCat.icon;
+          if (currentEntryState.type === 'expense' && selectedCat.defaultTag) {
+            currentEntryState.tag = selectedCat.defaultTag;
+            document.querySelectorAll('.tag-select-btn').forEach(btn => {
+              btn.classList.toggle('active', btn.dataset.tag === selectedCat.defaultTag);
+            });
+          }
+        });
+      });
+    });
+  }
 
   // --- 金額輸入即時檢查（信用風控警戒 + 千分位動態預覽） ---
   const inputAmount = document.getElementById('input-amount');
@@ -429,7 +450,7 @@ function handleEntryTypeChange(type) {
   });
 
   // 預設選中第一個分類
-  const defaultList = type === 'income' ? DEFAULT_INCOME_CATEGORIES : DEFAULT_EXPENSE_CATEGORIES;
+  const defaultList = type === 'income' ? getIncomeCategories() : getExpenseCategories();
   if (defaultList.length > 0) {
     currentEntryState.categoryId = defaultList[0].id;
     currentEntryState.categoryName = defaultList[0].name;
@@ -733,12 +754,16 @@ function openPayBillModal(cardId) {
   if (nameEl) nameEl.textContent = `${card.bankName} (${card.name})`;
   if (amtEl) amtEl.textContent = formatCurrency(card.balance);
 
-  // 填充可供扣款的活存帳戶
   if (selectSrc) {
     const liquidAccs = appState.accounts.filter(a => a.type === 'liquid' || a.type === 'bank' || a.type === 'cash');
     selectSrc.innerHTML = liquidAccs.map(acc => `
       <option value="${acc.id}">${acc.name} (餘額: ${formatCurrency(acc.balance)})</option>
     `).join('');
+  }
+
+  const customAmountInput = document.getElementById('pay-bill-custom-amount');
+  if (customAmountInput) {
+    customAmountInput.value = '';
   }
 
   modal.classList.add('active');
@@ -757,23 +782,31 @@ function handleConfirmPayBill() {
     return;
   }
 
+  let paidAmount = billAmount;
+  const customAmountInput = document.getElementById('pay-bill-custom-amount');
+  if (customAmountInput && customAmountInput.value.trim() !== '') {
+    const parsedAmount = Number(customAmountInput.value);
+    if (!isNaN(parsedAmount) && parsedAmount > 0) {
+      paidAmount = parsedAmount;
+    }
+  }
+
   const selectSrc = document.getElementById('select-pay-source-account');
   const srcAccId = selectSrc ? selectSrc.value : 'acc_bank_main';
   const srcAcc = appState.accounts.find(a => a.id === srcAccId);
 
   if (srcAcc) {
-    if (srcAcc.balance < billAmount) {
-      if (!confirm(`警告：轉出活存帳戶餘額 (${formatCurrency(srcAcc.balance)}) 小於應繳卡費 (${formatCurrency(billAmount)})，確定繼續扣款嗎？`)) {
+    if (srcAcc.balance < paidAmount) {
+      if (!confirm(`警告：轉出活存帳戶餘額 (${formatCurrency(srcAcc.balance)}) 小於本次繳納金額 (${formatCurrency(paidAmount)})，確定繼續扣款嗎？`)) {
         return;
       }
     }
     // 活存扣除卡費
-    srcAcc.balance = Number(srcAcc.balance) - billAmount;
+    srcAcc.balance = Number(srcAcc.balance) - paidAmount;
   }
 
-  // 信用卡待繳帳款歸零
-  const paidAmount = billAmount;
-  pendingPayCard.balance = 0;
+  // 信用卡待繳帳款扣除
+  pendingPayCard.balance = Number(pendingPayCard.balance) - paidAmount;
 
   // 記錄一筆內部轉帳沖銷備註（不列入 50/30/20 支出，防止重複扣預算）
   appState.transactions.unshift({
