@@ -1,10 +1,9 @@
 /* ==========================================================================
-   FinFlow 智富記帳 - 元件樣式庫 (C 風格:Calm Paper · Mobile & iOS Optimized)
+   FinFlow 智富記帳 - 元件樣式庫 (Components Design - Mobile & iOS Optimized)
    ========================================================================== */
 
 /* --------------------------------------------------------------------------
-   0. Hero 主卡片 + 三欄快覽條
-      C 風格:整個畫面唯一的深青綠實心大卡,作為「真實可用現金」視覺焦點
+   0. V2 Hero 主卡片 + 三欄快覽條 (Amber Luxe)
    -------------------------------------------------------------------------- */
 
 .hero-balance-card {
@@ -15,34 +14,30 @@
   margin-bottom: 14px;
   position: relative;
   overflow: hidden;
+  border-image: linear-gradient(135deg, rgba(245, 158, 11, 0.3), rgba(217, 119, 6, 0.1), transparent) 1;
   border: none;
   border-radius: var(--radius-xl) !important;
-  background: linear-gradient(135deg, #0F766E 0%, #115E59 100%);
-  box-shadow: 0 10px 28px rgba(15, 118, 110, 0.30), 0 2px 6px rgba(15, 118, 110, 0.20);
+  background: linear-gradient(145deg, rgba(217, 119, 6, 0.08), rgba(14, 20, 32, 0.85)),
+              radial-gradient(ellipse at 15% 50%, rgba(245, 158, 11, 0.12), transparent 60%);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(245, 158, 11, 0.15);
 }
 
-.hero-balance-card:hover {
-  border-color: transparent;
-}
-
-/* 右上角柔光,增加層次但不花俏 */
 .hero-balance-card::before {
   content: '';
   position: absolute;
-  inset: 0;
-  background: radial-gradient(circle at 100% 0%, rgba(255, 255, 255, 0.16), transparent 55%);
-  pointer-events: none;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #D97706, #FCD34D, #D97706);
 }
 
 .hero-left {
   flex: 1;
-  position: relative;
 }
 
 .hero-label {
   font-size: 0.82rem;
-  color: rgba(255, 255, 255, 0.82);
-  font-weight: 600;
+  color: var(--text-secondary);
+  font-weight: 500;
   margin-bottom: 6px;
 }
 
@@ -52,8 +47,6 @@
   line-height: 1.15;
   letter-spacing: -1px;
   word-break: break-all;
-  color: #FFFFFF;
-  position: relative;
 }
 
 @media (min-width: 768px) {
@@ -64,9 +57,8 @@
 
 .hero-subtext {
   font-size: 0.72rem;
-  color: rgba(255, 255, 255, 0.72);
+  color: var(--text-muted);
   margin-top: 6px;
-  position: relative;
 }
 
 /* SVG 環形儲蓄率圖表 */
@@ -99,15 +91,15 @@
 }
 
 .hero-ring-pct-text {
-  font-family: 'Manrope', 'Noto Sans TC', sans-serif;
+  font-family: 'Outfit', sans-serif;
   font-size: 1.1rem;
   font-weight: 800;
-  color: #FFFFFF;
+  color: var(--color-gold-light);
 }
 
 .hero-ring-sub {
   font-size: 0.6rem;
-  color: rgba(255, 255, 255, 0.72);
+  color: var(--text-muted);
   margin-top: -2px;
 }
 
@@ -121,6 +113,7 @@
   border-radius: var(--radius-lg);
   padding: 14px 8px;
   margin-bottom: 16px;
+  backdrop-filter: blur(16px);
 }
 
 .quick-stat-item {
@@ -153,7 +146,7 @@
 .qs-bar {
   width: 80%;
   height: 3px;
-  background: rgba(28, 36, 48, 0.06);
+  background: rgba(255, 255, 255, 0.06);
   border-radius: 2px;
   margin-top: 4px;
   overflow: hidden;
@@ -168,11 +161,11 @@
 
 .qs-bar-fill.qs-income { background: linear-gradient(90deg, #10B981, #34D399); width: 100%; }
 .qs-bar-fill.qs-expense { background: linear-gradient(90deg, #F43F5E, #FB7185); width: 100%; }
-.qs-bar-fill.qs-savings { background: linear-gradient(90deg, #0F766E, #2DD4BF); }
+.qs-bar-fill.qs-savings { background: linear-gradient(90deg, #D97706, #FCD34D); }
 
 .qs-divider {
   width: 1px;
-  background: rgba(28, 36, 48, 0.08);
+  background: rgba(255, 255, 255, 0.08);
   align-self: stretch;
 }
 
@@ -221,12 +214,12 @@
   left: 0;
   right: 0;
   height: 3px;
-  background: var(--card-accent, rgba(28, 36, 48, 0.1));
+  background: var(--card-accent, rgba(255, 255, 255, 0.1));
 }
 
 .stat-card.card-real-available {
   --card-accent: linear-gradient(90deg, #10B981, #059669);
-  background: linear-gradient(145deg, rgba(16, 185, 129, 0.12), rgba(255, 255, 255, 0.96));
+  background: linear-gradient(145deg, rgba(16, 185, 129, 0.12), rgba(15, 23, 42, 0.8));
   border-color: rgba(16, 185, 129, 0.3);
   /* 手機版讓真實可用餘額橫跨整行，更加突出 */
   grid-column: span 2;
@@ -612,7 +605,7 @@
 }
 
 .ratio-box {
-  background: rgba(28, 36, 48, 0.03);
+  background: rgba(255, 255, 255, 0.03);
   border: 1px solid var(--surface-border);
   border-radius: var(--radius-md);
   padding: 12px 14px;
@@ -645,7 +638,7 @@
 
 .progress-track {
   height: 6px;
-  background: rgba(28, 36, 48, 0.08);
+  background: rgba(255, 255, 255, 0.08);
   border-radius: 3px;
   overflow: hidden;
   margin-bottom: 6px;
@@ -694,19 +687,19 @@
 .diagnostic-item.warning {
   background: rgba(245, 158, 11, 0.12);
   border: 1px solid rgba(245, 158, 11, 0.3);
-  color: #92400E;
+  color: #FDE68A;
 }
 
 .diagnostic-item.caution {
   background: rgba(99, 102, 241, 0.12);
   border: 1px solid rgba(99, 102, 241, 0.3);
-  color: #3730A3;
+  color: #C7D2FE;
 }
 
 .diagnostic-item.success {
   background: rgba(16, 185, 129, 0.12);
   border: 1px solid rgba(16, 185, 129, 0.3);
-  color: #065F46;
+  color: #A7F3D0;
 }
 
 /* --------------------------------------------------------------------------
@@ -714,7 +707,7 @@
    -------------------------------------------------------------------------- */
 .emergency-shield-card {
   padding: 14px;
-  background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(255, 255, 255, 0.96));
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(15, 23, 42, 0.7));
   border: 1px solid rgba(99, 102, 241, 0.3);
   border-radius: var(--radius-lg);
   display: flex;
@@ -766,7 +759,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-top: 1px solid rgba(28, 36, 48, 0.08);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
   padding-top: 8px;
 }
 
@@ -782,7 +775,7 @@
 .months-count {
   font-size: 1.3rem;
   font-weight: 800;
-  color: #4338CA;
+  color: #A5B4FC;
 }
 
 /* --------------------------------------------------------------------------
@@ -827,7 +820,7 @@
   font-size: 0.75rem;
   font-weight: 500;
   border-radius: var(--radius-full);
-  background: rgba(28, 36, 48, 0.05);
+  background: rgba(255, 255, 255, 0.05);
   color: var(--text-secondary);
   border: 1px solid var(--surface-border);
   cursor: pointer;
@@ -837,7 +830,7 @@
 
 .filter-btn.active {
   background: rgba(99, 102, 241, 0.25);
-  color: var(--text-primary);
+  color: #FFFFFF;
   border-color: rgba(99, 102, 241, 0.6);
 }
 
@@ -852,7 +845,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 12px 14px;
-  background: rgba(28, 36, 48, 0.02);
+  background: rgba(255, 255, 255, 0.02);
   border: 1px solid var(--surface-border);
   border-radius: var(--radius-md);
   gap: 8px;
@@ -862,15 +855,15 @@
 }
 
 .transaction-row:hover {
-  background: rgba(28, 36, 48, 0.05);
+  background: rgba(255, 255, 255, 0.05);
   border-color: rgba(99, 102, 241, 0.35);
   transform: translateY(-1.5px);
-  box-shadow: 0 6px 18px rgba(28, 36, 48, 0.08);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.22);
 }
 
 .transaction-row:active {
   transform: translateY(0);
-  background: rgba(28, 36, 48, 0.07);
+  background: rgba(255, 255, 255, 0.07);
 }
 
 .tx-left {
@@ -885,7 +878,7 @@
   width: 36px;
   height: 36px;
   border-radius: var(--radius-md);
-  background: rgba(28, 36, 48, 0.06);
+  background: rgba(255, 255, 255, 0.06);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -957,7 +950,9 @@
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(28, 36, 48, 0.48);
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   display: flex;
   align-items: flex-end; /* 手機版預設底部滑出 */
   justify-content: center;
@@ -966,8 +961,6 @@
   visibility: hidden;
   transition: opacity var(--transition-normal);
   padding: 0;
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
 }
 
 @media (min-width: 640px) {
@@ -1038,7 +1031,7 @@
 .type-toggle-group {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
-  background: rgba(28, 36, 48, 0.05);
+  background: rgba(255, 255, 255, 0.05);
   padding: 4px;
   border-radius: var(--radius-md);
   margin-bottom: 16px;
@@ -1065,7 +1058,7 @@
 .amount-input-box {
   display: flex;
   align-items: center;
-  background: var(--surface-sunken);
+  background: rgba(0, 0, 0, 0.45);
   border: 1px solid var(--surface-border);
   border-radius: var(--radius-md);
   padding: 10px 16px;
@@ -1076,13 +1069,13 @@
 .amount-input-box:focus-within {
   border-color: var(--surface-border-focus);
   box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25);
-  background: var(--surface-sunken);
+  background: rgba(0, 0, 0, 0.6);
 }
 
 .currency-symbol {
   font-size: 1.3rem;
   font-weight: 800;
-  color: #64748B;
+  color: #94A3B8;
   margin-right: 14px;
   user-select: none;
   flex-shrink: 0;
@@ -1097,8 +1090,8 @@
   padding: 0;
   font-size: 1.8rem;
   font-weight: 800;
-  color: var(--text-primary);
-  font-family: 'Manrope', 'Noto Sans TC', sans-serif;
+  color: #FFFFFF;
+  font-family: 'Outfit', sans-serif;
   outline: none;
   letter-spacing: 1.5px;
   -webkit-appearance: none;
@@ -1117,7 +1110,7 @@
   align-items: center;
   justify-content: space-between;
   font-size: 0.82rem;
-  color: #4338CA;
+  color: #A5B4FC;
   background: rgba(99, 102, 241, 0.1);
   padding: 6px 12px;
   border-radius: var(--radius-sm);
@@ -1138,7 +1131,7 @@
 }
 
 .category-tile {
-  background: rgba(28, 36, 48, 0.04);
+  background: rgba(255, 255, 255, 0.04);
   border: 1px solid var(--surface-border);
   border-radius: var(--radius-md);
   padding: 8px 2px;
@@ -1177,7 +1170,7 @@
   padding: 6px 12px;
   background: rgba(99, 102, 241, 0.15);
   border: 1px solid rgba(99, 102, 241, 0.35);
-  color: #3730A3;
+  color: #C7D2FE;
   border-radius: var(--radius-full);
   font-size: 0.76rem;
   font-weight: 600;
@@ -1189,7 +1182,7 @@
 .scene-chip-btn:hover, .scene-chip-btn:active {
   background: rgba(99, 102, 241, 0.3);
   border-color: #6366F1;
-  color: var(--text-primary);
+  color: #FFFFFF;
 }
 
 .transfer-accounts-grid {
@@ -1200,7 +1193,7 @@
 }
 
 .transfer-box {
-  background: rgba(28, 36, 48, 0.03);
+  background: rgba(255, 255, 255, 0.03);
   border: 1px solid var(--surface-border);
   border-radius: var(--radius-md);
   padding: 10px 12px;
@@ -1209,10 +1202,10 @@
 .transfer-select {
   width: 100%;
   padding: 8px 10px;
-  background: var(--surface-sunken);
+  background: rgba(0, 0, 0, 0.4);
   border: 1px solid var(--surface-border);
   border-radius: var(--radius-sm);
-  color: var(--text-primary);
+  color: #FFFFFF;
   font-size: 0.85rem;
   outline: none;
   margin-top: 4px;
@@ -1241,7 +1234,7 @@
 
 .account-option {
   padding: 10px;
-  background: rgba(28, 36, 48, 0.04);
+  background: rgba(255, 255, 255, 0.04);
   border: 1px solid var(--surface-border);
   border-radius: var(--radius-md);
   cursor: pointer;
@@ -1280,7 +1273,7 @@
   font-weight: 600;
   cursor: pointer;
   border: 1px solid var(--surface-border);
-  background: rgba(28, 36, 48, 0.03);
+  background: rgba(255, 255, 255, 0.03);
   color: var(--text-secondary);
   text-align: center;
   min-height: 36px;
@@ -1289,25 +1282,25 @@
 .tag-select-btn.active.need {
   background: rgba(99, 102, 241, 0.25);
   border-color: #6366F1;
-  color: #4338CA;
+  color: #A5B4FC;
 }
 
 .tag-select-btn.active.want {
   background: rgba(244, 63, 94, 0.25);
   border-color: #F43F5E;
-  color: #BE123C;
+  color: #FDA4AF;
 }
 
 .tag-select-btn.active.invest {
   background: rgba(139, 92, 246, 0.25);
   border-color: #8B5CF6;
-  color: #6D28D9;
+  color: #DDD6FE;
 }
 
 /* 每日智慧小卡片 */
 .wisdom-card {
   padding: 12px 14px;
-  background: linear-gradient(135deg, rgba(139, 92, 246, 0.12), rgba(255, 255, 255, 0.96));
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.12), rgba(15, 23, 42, 0.7));
   border: 1px solid rgba(139, 92, 246, 0.3);
   border-radius: var(--radius-md);
   margin-bottom: 16px;
@@ -1329,7 +1322,7 @@
 .wisdom-quote {
   font-size: 0.8rem;
   font-weight: 500;
-  color: var(--text-primary);
+  color: #F1F5F9;
   font-style: italic;
   line-height: 1.35;
 }
@@ -1340,7 +1333,7 @@
 
 .wisdom-author {
   font-size: 0.7rem;
-  color: #6D28D9;
+  color: #C4B5FD;
   margin-top: 2px;
 }
 
@@ -1390,7 +1383,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 10px;
-  background: rgba(28, 36, 48, 0.04);
+  background: rgba(255, 255, 255, 0.04);
   padding: 6px;
   border-radius: var(--radius-md);
   margin-bottom: 16px;
@@ -1422,10 +1415,10 @@
 
 .report-picker-select {
   padding: 6px 12px;
-  background: var(--surface-sunken);
+  background: rgba(0, 0, 0, 0.5);
   border: 1px solid var(--surface-border);
   border-radius: var(--radius-sm);
-  color: var(--text-primary);
+  color: #FFFFFF;
   font-size: 0.85rem;
   font-weight: 600;
   outline: none;
@@ -1446,7 +1439,7 @@
 }
 
 .report-stat-box {
-  background: rgba(28, 36, 48, 0.03);
+  background: rgba(255, 255, 255, 0.03);
   border: 1px solid var(--surface-border);
   border-radius: var(--radius-md);
   padding: 12px;
@@ -1477,7 +1470,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 8px 12px;
-  background: rgba(28, 36, 48, 0.02);
+  background: rgba(255, 255, 255, 0.02);
   border: 1px solid var(--surface-border);
   border-radius: var(--radius-sm);
 }
@@ -1510,7 +1503,7 @@
 .tx-detail-hero {
   text-align: center;
   padding: 20px 16px;
-  background: linear-gradient(180deg, rgba(28, 36, 48, 0.04) 0%, rgba(28, 36, 48, 0.01) 100%);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.01) 100%);
   border: 1px solid var(--surface-border);
   border-radius: var(--radius-lg);
   margin-bottom: 20px;
@@ -1520,13 +1513,13 @@
   width: 56px;
   height: 56px;
   border-radius: 18px;
-  background: rgba(28, 36, 48, 0.08);
+  background: rgba(255, 255, 255, 0.08);
   font-size: 28px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   margin-bottom: 12px;
-  box-shadow: 0 8px 24px rgba(28, 36, 48, 0.08);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
 }
 
 .tx-detail-hero-amount {
@@ -1539,7 +1532,7 @@
 .tx-detail-hero-category {
   font-size: 1.05rem;
   font-weight: 600;
-  color: var(--text-primary);
+  color: #FFF;
   margin-bottom: 10px;
 }
 
@@ -1555,7 +1548,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 12px 14px;
-  background: rgba(28, 36, 48, 0.02);
+  background: rgba(255, 255, 255, 0.02);
   border: 1px solid var(--surface-border);
   border-radius: var(--radius-md);
   font-size: 0.88rem;
@@ -1570,7 +1563,7 @@
 }
 
 .tx-detail-value {
-  color: var(--text-primary);
+  color: #FFF;
   font-weight: 600;
   text-align: right;
   max-width: 60%;
@@ -1579,7 +1572,7 @@
 
 .tx-detail-note-box {
   padding: 12px 14px;
-  background: rgba(28, 36, 48, 0.02);
+  background: rgba(255, 255, 255, 0.02);
   border: 1px solid var(--surface-border);
   border-radius: var(--radius-md);
   margin-bottom: 20px;
@@ -1616,14 +1609,13 @@
   transform: translateX(-50%);
   width: 100%;
   max-width: 680px;
-  background: rgba(255, 255, 255, 0.94);
-  border-top: 1px solid var(--surface-border);
-  box-shadow: 0 -4px 18px rgba(28, 36, 48, 0.06);
+  background: rgba(11, 15, 23, 0.92);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
   display: flex;
   align-items: stretch;
   z-index: 900;
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
   padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 
@@ -1720,6 +1712,8 @@
 
 .debt-stat-card {
   background: var(--surface-glass);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   border: 1px solid var(--surface-border);
   border-radius: var(--radius-md);
   padding: 14px 12px;
@@ -1737,30 +1731,30 @@
   position: absolute;
   top: 0; left: 0; right: 0;
   height: 3px;
-  background: var(--card-accent, rgba(28, 36, 48,0.1));
+  background: var(--card-accent, rgba(255,255,255,0.1));
 }
 
 .debt-stat-card.card-total-debt {
   --card-accent: linear-gradient(90deg, #EF4444, #F43F5E);
-  background: linear-gradient(145deg, rgba(239,68,68,0.1), rgba(255, 255, 255, 0.96));
+  background: linear-gradient(145deg, rgba(239,68,68,0.1), rgba(15,23,42,0.8));
   border-color: rgba(239,68,68,0.25);
 }
 
 .debt-stat-card.card-monthly-pay {
   --card-accent: linear-gradient(90deg, #F59E0B, #D97706);
-  background: linear-gradient(145deg, rgba(245,158,11,0.1), rgba(255, 255, 255, 0.96));
+  background: linear-gradient(145deg, rgba(245,158,11,0.1), rgba(15,23,42,0.8));
   border-color: rgba(245,158,11,0.25);
 }
 
 .debt-stat-card.card-debt-ratio {
   --card-accent: linear-gradient(90deg, #6366F1, #8B5CF6);
-  background: linear-gradient(145deg, rgba(99,102,241,0.1), rgba(255, 255, 255, 0.96));
+  background: linear-gradient(145deg, rgba(99,102,241,0.1), rgba(15,23,42,0.8));
   border-color: rgba(99,102,241,0.25);
 }
 
 .debt-stat-card.card-paid-count {
   --card-accent: linear-gradient(90deg, #10B981, #059669);
-  background: linear-gradient(145deg, rgba(16,185,129,0.1), rgba(255, 255, 255, 0.96));
+  background: linear-gradient(145deg, rgba(16,185,129,0.1), rgba(15,23,42,0.8));
   border-color: rgba(16,185,129,0.25);
 }
 
@@ -1772,7 +1766,7 @@
 }
 
 .debt-stat-value {
-  font-family: 'Manrope', 'Noto Sans TC', sans-serif;
+  font-family: 'Outfit', sans-serif;
   font-size: 1.3rem;
   font-weight: 800;
   letter-spacing: -0.5px;
@@ -1802,7 +1796,7 @@
 .upcoming-banner-title {
   font-size: 0.82rem;
   font-weight: 700;
-  color: #92400E;
+  color: #FCD34D;
   display: flex;
   align-items: center;
   gap: 6px;
@@ -1813,7 +1807,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 6px 10px;
-  background: rgba(28, 36, 48,0.04);
+  background: rgba(255,255,255,0.04);
   border-radius: var(--radius-sm);
   font-size: 0.78rem;
 }
@@ -1835,19 +1829,19 @@
 
 .upcoming-item-days.urgent {
   background: rgba(239,68,68,0.2);
-  color: #B91C1C;
+  color: #EF4444;
   border: 1px solid rgba(239,68,68,0.4);
 }
 
 .upcoming-item-days.soon {
   background: rgba(245,158,11,0.2);
-  color: #B45309;
+  color: #F59E0B;
   border: 1px solid rgba(245,158,11,0.4);
 }
 
 .upcoming-item-days.ok {
   background: rgba(16,185,129,0.15);
-  color: #047857;
+  color: #10B981;
   border: 1px solid rgba(16,185,129,0.35);
 }
 
@@ -1874,15 +1868,15 @@
 }
 
 .debt-progress-pct {
-  font-family: 'Manrope', 'Noto Sans TC', sans-serif;
+  font-family: 'Outfit', sans-serif;
   font-size: 1.1rem;
   font-weight: 800;
-  color: #047857;
+  color: #10B981;
 }
 
 .debt-progress-track {
   height: 8px;
-  background: rgba(28, 36, 48,0.07);
+  background: rgba(255,255,255,0.07);
   border-radius: var(--radius-full);
   overflow: hidden;
 }
@@ -1947,7 +1941,7 @@
 /* 單筆債務卡片 */
 .debt-card {
   padding: 14px 16px;
-  border-bottom: 1px solid rgba(28, 36, 48,0.05);
+  border-bottom: 1px solid rgba(255,255,255,0.05);
   transition: background var(--transition-fast);
   position: relative;
 }
@@ -1957,7 +1951,7 @@
 }
 
 .debt-card:hover {
-  background: rgba(28, 36, 48,0.03);
+  background: rgba(255,255,255,0.03);
 }
 
 .debt-card-top {
@@ -2016,10 +2010,10 @@
 }
 
 .debt-remaining-amount {
-  font-family: 'Manrope', 'Noto Sans TC', sans-serif;
+  font-family: 'Outfit', sans-serif;
   font-size: 1.1rem;
   font-weight: 800;
-  color: #BE123C;
+  color: #FDA4AF;
   letter-spacing: -0.5px;
 }
 
@@ -2045,7 +2039,7 @@
 
 .debt-card-progress-track {
   height: 5px;
-  background: rgba(28, 36, 48,0.08);
+  background: rgba(255,255,255,0.08);
   border-radius: var(--radius-full);
   overflow: hidden;
 }
@@ -2095,7 +2089,7 @@
   background: rgba(16,185,129,0.06);
   border: 1px solid rgba(16,185,129,0.2);
   border-radius: var(--radius-md);
-  color: #047857;
+  color: #6EE7B7;
   font-size: 0.82rem;
   font-weight: 600;
   font-family: inherit;
@@ -2121,7 +2115,7 @@
 
 .debt-paid-item {
   padding: 10px 16px;
-  border-bottom: 1px solid rgba(28, 36, 48,0.04);
+  border-bottom: 1px solid rgba(255,255,255,0.04);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -2146,19 +2140,19 @@
 .debt-pressure-bar.safe {
   background: rgba(16,185,129,0.08);
   border: 1px solid rgba(16,185,129,0.2);
-  color: #047857;
+  color: #6EE7B7;
 }
 
 .debt-pressure-bar.warning {
   background: rgba(245,158,11,0.08);
   border: 1px solid rgba(245,158,11,0.25);
-  color: #92400E;
+  color: #FCD34D;
 }
 
 .debt-pressure-bar.danger {
   background: rgba(239,68,68,0.08);
   border: 1px solid rgba(239,68,68,0.25);
-  color: #B91C1C;
+  color: #FCA5A5;
   animation: pulse-danger 2.5s infinite;
 }
 
@@ -2189,7 +2183,7 @@
   gap: 3px;
   padding: 8px 4px;
   border-radius: var(--radius-sm);
-  background: rgba(28, 36, 48,0.04);
+  background: rgba(255,255,255,0.04);
   border: 1px solid var(--surface-border);
   cursor: pointer;
   transition: all var(--transition-fast);
@@ -2198,7 +2192,7 @@
 }
 
 .debt-cat-btn:hover {
-  background: rgba(28, 36, 48,0.08);
+  background: rgba(255,255,255,0.08);
   border-color: var(--surface-border-bright);
   color: var(--text-primary);
 }
@@ -2206,7 +2200,7 @@
 .debt-cat-btn.active {
   background: rgba(99,102,241,0.15);
   border-color: rgba(99,102,241,0.5);
-  color: #4338CA;
+  color: #A5B4FC;
 }
 
 .debt-cat-btn .dcat-icon {
@@ -2224,7 +2218,7 @@
 .btn-outline-danger {
   background: transparent;
   border: 1px solid rgba(239,68,68,0.4);
-  color: #B91C1C;
+  color: #EF4444;
   font-size: 0.78rem;
   padding: 5px 10px;
 }
@@ -2238,7 +2232,7 @@
 .btn-pay-debt {
   background: linear-gradient(135deg, rgba(16,185,129,0.2), rgba(5,150,105,0.15));
   border: 1px solid rgba(16,185,129,0.4);
-  color: #047857;
+  color: #6EE7B7;
   font-size: 0.78rem;
   padding: 5px 10px;
   border-radius: var(--radius-md);
@@ -2266,7 +2260,7 @@
   border: 1px solid rgba(99,102,241,0.2);
   border-radius: var(--radius-sm);
   font-size: 0.75rem;
-  color: #4338CA;
+  color: #A5B4FC;
   margin-bottom: 16px;
   line-height: 1.5;
 }
@@ -2277,8 +2271,8 @@
   text-align: center;
   padding: 8px 0;
   margin-top: 10px;
-  background: rgba(28, 36, 48, 0.03);
-  border: 1px solid rgba(28, 36, 48, 0.1);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: var(--radius-sm);
   color: var(--text-secondary);
   font-size: 0.75rem;
@@ -2287,7 +2281,7 @@
 }
 
 .debt-history-toggle:hover {
-  background: rgba(28, 36, 48, 0.08);
+  background: rgba(255, 255, 255, 0.08);
   color: var(--text-primary);
 }
 
@@ -2296,7 +2290,7 @@
   margin-top: 8px;
   max-height: 150px;
   overflow-y: auto;
-  border-top: 1px dashed rgba(28, 36, 48, 0.1);
+  border-top: 1px dashed rgba(255, 255, 255, 0.1);
   padding-top: 8px;
 }
 
@@ -2309,7 +2303,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 6px 8px;
-  border-bottom: 1px solid rgba(28, 36, 48, 0.03);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
   font-size: 0.72rem;
 }
 
@@ -2322,9 +2316,9 @@
 }
 
 .debt-history-amount {
-  color: #047857;
+  color: #10B981;
   font-weight: 600;
-  font-family: 'Manrope', 'Noto Sans TC', sans-serif;
+  font-family: 'Outfit', sans-serif;
 }
 
 /* --------------------------------------------------------------------------
@@ -2339,8 +2333,8 @@
   align-items: center;
   justify-content: space-between;
   padding: 10px 14px;
-  background: rgba(28, 36, 48, 0.04);
-  border: 1px solid rgba(28, 36, 48, 0.08);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: var(--radius-md);
   margin-bottom: 10px;
 }
@@ -2348,7 +2342,7 @@
 .year-group-title {
   font-size: 1.05rem;
   font-weight: 800;
-  color: var(--text-primary);
+  color: #F8FAFC;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -2365,7 +2359,7 @@
   padding: 3px 10px;
   border-radius: 20px;
   background: rgba(99, 102, 241, 0.15);
-  color: #4338CA;
+  color: #A5B4FC;
   border: 1px solid rgba(99, 102, 241, 0.3);
   font-weight: 600;
 }
@@ -2377,7 +2371,7 @@
 }
 
 .month-accordion-card {
-  background: rgba(28, 36, 48, 0.03);
+  background: rgba(255, 255, 255, 0.03);
   border: 1px solid var(--surface-border);
   border-radius: var(--radius-md);
   overflow: hidden;
@@ -2385,9 +2379,9 @@
 }
 
 .month-accordion-card.open {
-  background: rgba(28, 36, 48, 0.05);
+  background: rgba(255, 255, 255, 0.05);
   border-color: rgba(99, 102, 241, 0.45);
-  box-shadow: 0 8px 24px rgba(28, 36, 48, 0.08);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
 }
 
 .month-accordion-header {
@@ -2401,7 +2395,7 @@
 }
 
 .month-accordion-header:hover {
-  background: rgba(28, 36, 48, 0.04);
+  background: rgba(255, 255, 255, 0.04);
 }
 
 .month-card-header-top {
@@ -2419,7 +2413,7 @@
 .month-badge-pill {
   font-size: 0.98rem;
   font-weight: 800;
-  color: var(--text-primary);
+  color: #FFFFFF;
   display: flex;
   align-items: center;
   gap: 6px;
@@ -2428,10 +2422,10 @@
 .month-tx-count-pill {
   font-size: 0.72rem;
   color: var(--text-muted);
-  background: rgba(28, 36, 48, 0.06);
+  background: rgba(255, 255, 255, 0.06);
   padding: 2px 8px;
   border-radius: 12px;
-  border: 1px solid rgba(28, 36, 48, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .month-toggle-btn {
@@ -2439,7 +2433,7 @@
   align-items: center;
   gap: 6px;
   font-size: 0.78rem;
-  color: #4338CA;
+  color: #A5B4FC;
   font-weight: 600;
   background: rgba(165, 180, 252, 0.12);
   padding: 4px 12px;
@@ -2450,7 +2444,7 @@
 
 .month-accordion-card.open .month-toggle-btn {
   background: rgba(99, 102, 241, 0.3);
-  color: var(--text-primary);
+  color: #FFFFFF;
   border-color: rgba(99, 102, 241, 0.6);
 }
 
@@ -2458,10 +2452,10 @@
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   gap: 8px;
-  background: var(--surface-sunken);
+  background: rgba(0, 0, 0, 0.25);
   border-radius: var(--radius-sm);
   padding: 8px 12px;
-  border: 1px solid rgba(28, 36, 48, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.03);
 }
 
 .month-stat-item {
@@ -2478,7 +2472,7 @@
 .month-stat-val {
   font-size: 0.88rem;
   font-weight: 700;
-  font-family: 'Manrope', 'Noto Sans TC', sans-serif;
+  font-family: 'Outfit', sans-serif;
   white-space: nowrap;
 }
 
@@ -2487,7 +2481,7 @@
   height: 4px;
   border-radius: 2px;
   overflow: hidden;
-  background: rgba(28, 36, 48, 0.06);
+  background: rgba(255, 255, 255, 0.06);
 }
 
 .month-ratio-mini-seg {
@@ -2498,8 +2492,8 @@
 .month-accordion-body {
   display: none;
   padding: 0 16px 16px 16px;
-  border-top: 1px solid rgba(28, 36, 48, 0.06);
-  background: var(--surface-sunken);
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(0, 0, 0, 0.18);
 }
 
 .month-accordion-card.open .month-accordion-body {
@@ -2524,8 +2518,8 @@
   border-radius: 20px;
   font-size: 0.72rem;
   font-weight: 600;
-  background: rgba(28, 36, 48, 0.06);
-  border: 1px solid rgba(28, 36, 48, 0.1);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   color: var(--text-secondary);
   cursor: pointer;
   white-space: nowrap;
@@ -2533,8 +2527,8 @@
 }
 
 .month-filter-chip:hover {
-  background: rgba(28, 36, 48, 0.1);
-  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.1);
+  color: #FFFFFF;
 }
 
 .month-filter-chip.active {
@@ -2549,235 +2543,3 @@
   gap: 8px;
 }
 
-
-
-/* ==========================================================================
-   C 風格覆寫層 (Calm Paper)
-   --------------------------------------------------------------------------
-   1) 讓頁面內嵌(inline style)的舊深色配色在淺底上維持可讀,不必改動 index.html 與 js/
-   2) 統一「作用中」狀態為品牌深青綠
-   3) 實體信用卡卡面維持深色,作為淺色畫面中的視覺錨點
-   ========================================================================== */
-
-/* ---- 1. Hero 環形圖:白色進度環(SVG 內的金色漸層以 CSS 覆寫) ---- */
-.hero-ring-svg circle:first-of-type {
-  stroke: rgba(255, 255, 255, 0.22);
-}
-
-#goldGradient stop:nth-child(1) { stop-color: #FFFFFF; }
-#goldGradient stop:nth-child(2) { stop-color: #99F6E4; }
-
-/* ---- 2. 內嵌舊配色對應(淺底可讀性) ---- */
-[style*="color: #FFF" i],
-[style*="color:#FFF" i] {
-  color: var(--text-primary) !important;
-}
-
-[style*="#A5B4FC" i] { color: #4338CA !important; }
-[style*="#FDA4AF" i] { color: #BE123C !important; }
-[style*="#6EE7B7" i] { color: #047857 !important; }
-[style*="#FCD34D" i] { color: #92400E !important; }
-
-[style*="rgba(0,0,0,0.2)"],
-[style*="rgba(0,0,0,0.15)"] {
-  background: var(--surface-sunken) !important;
-}
-
-[style*="#1E293B" i] {
-  background: #FFFFFF !important;
-  color: var(--text-primary) !important;
-}
-
-/* 信用卡深色卡面內的內嵌文字:還原為淺色 */
-.credit-card-item [style*="color: #FFF" i],
-.credit-card-item [style*="color:#FFF" i] { color: #FFFFFF !important; }
-.credit-card-item [style*="#A5B4FC" i] { color: #A5B4FC !important; }
-.credit-card-item [style*="#FDA4AF" i] { color: #FDA4AF !important; }
-.credit-card-item [style*="#6EE7B7" i] { color: #6EE7B7 !important; }
-.credit-card-item [style*="#FCD34D" i] { color: #FCD34D !important; }
-
-/* ---- 表單控制項 ---- */
-::placeholder {
-  color: var(--text-muted);
-  opacity: 0.75;
-}
-
-select option {
-  background: #FFFFFF;
-  color: var(--text-primary);
-}
-
-/* ---- 3. 「作用中」狀態統一為品牌深青綠 ---- */
-.filter-btn {
-  font-weight: 600;
-}
-
-.filter-btn.active {
-  background: var(--brand);
-  color: #FFFFFF;
-  border-color: var(--brand);
-}
-
-.report-tab-btn.active {
-  background: var(--brand);
-  box-shadow: 0 2px 8px var(--brand-glow);
-}
-
-.month-filter-chip.active {
-  background: var(--brand);
-  border-color: var(--brand);
-  color: #FFFFFF;
-}
-
-.tab-btn.active {
-  color: var(--brand);
-}
-
-.tab-btn::before {
-  background: var(--brand);
-}
-
-.category-tile.active,
-.account-option.active {
-  background: var(--brand-soft);
-  border-color: var(--brand);
-}
-
-.debt-cat-btn.active {
-  background: var(--brand-soft);
-  border-color: var(--brand);
-  color: var(--brand-strong);
-}
-
-.amount-input-box:focus-within {
-  box-shadow: 0 0 0 3px var(--brand-glow);
-  background: #FFFFFF;
-}
-
-.tag-select-btn.active.need,
-.tag-select-btn.active.want,
-.tag-select-btn.active.invest {
-  font-weight: 700;
-}
-
-/* ---- 每日金句:改為品牌青綠淡底 ---- */
-.wisdom-card {
-  background: linear-gradient(135deg, rgba(15, 118, 110, 0.08), #FFFFFF);
-  border: 1px solid rgba(15, 118, 110, 0.22);
-}
-
-.wisdom-author {
-  color: var(--brand-strong);
-}
-
-/* ---- 區塊標題與卡片細節 ---- */
-.section-title {
-  letter-spacing: -0.2px;
-}
-
-.quick-stats-row {
-  box-shadow: var(--shadow-sm);
-}
-
-.transaction-row:hover {
-  transform: none;
-  box-shadow: var(--shadow-md);
-}
-
-.btn-tx-delete:hover {
-  color: var(--color-danger);
-  background: rgba(220, 38, 38, 0.08);
-}
-
-/* 底部導航:放大點擊區並加強目前頁籤辨識 */
-.tab-btn {
-  min-height: 56px;
-}
-
-/* ---- 內嵌亮色語義文字 -> 淺底可讀的深色版本(涵蓋 HEX 與瀏覽器正規化後的 rgb 寫法) ---- */
-[style*="color: #10B981" i], [style*="color:#10B981" i], [style*="color: rgb(16, 185, 129)"] { color: #047857 !important; }
-[style*="color: #F43F5E" i], [style*="color:#F43F5E" i], [style*="color: rgb(244, 63, 94)"]  { color: #E11D48 !important; }
-[style*="color: #EF4444" i], [style*="color:#EF4444" i], [style*="color: rgb(239, 68, 68)"],
-[style*="#F87171" i]                                                                         { color: #B91C1C !important; }
-[style*="color: #F59E0B" i], [style*="color:#F59E0B" i], [style*="color: rgb(245, 158, 11)"] { color: #B45309 !important; }
-[style*="color: #6366F1" i], [style*="color: rgb(99, 102, 241)"]                             { color: #4F46E5 !important; }
-[style*="color: #94A3B8" i], [style*="color: rgb(148, 163, 184)"]                            { color: #64748B !important; }
-[style*="#DDD6FE" i] { color: #6D28D9 !important; }
-[style*="#7DD3FC" i] { color: #0369A1 !important; }
-
-/* 信用卡深色卡面內:還原亮色語義文字 */
-.credit-card-item [style*="color: #10B981" i], .credit-card-item [style*="color:#10B981" i] { color: #34D399 !important; }
-.credit-card-item [style*="color: #EF4444" i], .credit-card-item [style*="color:#EF4444" i] { color: #F87171 !important; }
-.credit-card-item [style*="color: #F59E0B" i], .credit-card-item [style*="color:#F59E0B" i] { color: #FBBF24 !important; }
-
-/* ---- 信用卡深色卡面:局部覆寫文字色票,讓卡內所有次要文字維持淺色可讀 ---- */
-.credit-card-item {
-  color: #F1F5F9;
-  --text-primary: #F1F5F9;
-  --text-secondary: #A9B6CC;
-  --text-muted: #8EA0BC;
-  --color-income: #34D399;
-  --color-want: #FB7185;
-}
-
-.credit-card-item .badge-safe {
-  background: rgba(52, 211, 153, 0.14);
-  color: #6EE7B7;
-  border-color: rgba(52, 211, 153, 0.45);
-}
-
-.credit-card-item .badge-warning {
-  background: rgba(251, 191, 36, 0.14);
-  color: #FCD34D;
-  border-color: rgba(251, 191, 36, 0.45);
-}
-
-.credit-card-item .badge-danger {
-  background: rgba(248, 113, 113, 0.16);
-  color: #FCA5A5;
-  border-color: rgba(248, 113, 113, 0.5);
-}
-
-/* ---- 版面細修 ---- */
-
-/* 信用風控標題:手機版讓說明文字換到標題下方,避免擠成兩欄 */
-@media (max-width: 767px) {
-  .credit-guard-section .section-title {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 2px;
-  }
-}
-
-/* 年度分組標題:空間不足時徽章換行,不再把標題壓成兩行 */
-.year-group-header {
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.year-group-title {
-  white-space: nowrap;
-}
-
-.year-group-badge {
-  white-space: nowrap;
-}
-
-/* 展開後的月份明細:列表底色改為白,避免灰疊灰 */
-.month-accordion-body {
-  background: rgba(28, 36, 48, 0.03);
-}
-
-.month-accordion-body .transaction-row {
-  background: #FFFFFF;
-}
-
-/* 債務頁:內嵌漸層的提示卡改為乾淨的淡靛色底 */
-.wisdom-card[style*="gradient"] {
-  background: linear-gradient(135deg, rgba(79, 70, 229, 0.07), #FFFFFF) !important;
-  border-color: rgba(79, 70, 229, 0.22) !important;
-}
-
-.upcoming-item {
-  background: rgba(255, 255, 255, 0.75);
-}
