@@ -55,18 +55,22 @@
       }
     });
 
-    const needPercent = totalExpense > 0 ? (needExpense / totalExpense) * 100 : 0;
-    const wantPercent = totalExpense > 0 ? (wantExpense / totalExpense) * 100 : 0;
-    const investPercent = totalExpense > 0 ? (investExpense / totalExpense) * 100 : 0;
+    // 比例分母:有收入時以「當月收入」為分母(50/30/20 原始定義:稅後收入);
+    // 當月沒有任何收入紀錄時,退而以總支出為分母,避免除以零。
+    const ratioBase = totalIncome > 0 ? totalIncome : totalExpense;
+    const ratioBasis = totalIncome > 0 ? 'income' : 'expense';
+    const needPercent = ratioBase > 0 ? (needExpense / ratioBase) * 100 : 0;
+    const wantPercent = ratioBase > 0 ? (wantExpense / ratioBase) * 100 : 0;
+    const investPercent = ratioBase > 0 ? (investExpense / ratioBase) * 100 : 0;
     const savingsRate = totalIncome > 0 ? Math.max(0, ((totalIncome - totalExpense) / totalIncome) * 100) : 0;
 
     const diagnostics = [];
     if (totalExpense > 0) {
-      if (wantPercent > 35) {
+      if (wantPercent > 30) {
         diagnostics.push({
           type: 'warning',
           title: '慾望支出偏高預警',
-          message: `本月彈性慾望佔總支出 ${wantPercent.toFixed(1)}%（建議控制在 30% 以內），適度延遲非必要享樂能加速累積本金。`
+          message: `本月彈性慾望佔${ratioBasis === 'income' ? '收入' : '支出'} ${wantPercent.toFixed(1)}%（建議控制在 30% 以內），適度延遲非必要享樂能加速累積本金。`
         });
       }
       if (investExpense === 0 && totalIncome > 0) {
@@ -79,7 +83,7 @@
         diagnostics.push({
           type: 'success',
           title: '投資儲蓄達標',
-          message: `本月投資與儲蓄佔比達 ${investPercent.toFixed(1)}%，表現優異！持續保持複利滾動。`
+          message: `本月投資與儲蓄佔${ratioBasis === 'income' ? '收入' : '支出'}比達 ${investPercent.toFixed(1)}%，表現優異！持續保持複利滾動。`
         });
       }
     }
@@ -90,6 +94,7 @@
       totalExpense,
       netSavings: totalIncome - totalExpense,
       savingsRate,
+      ratioBasis,
       need: { amount: needExpense, percent: needPercent },
       want: { amount: wantExpense, percent: wantPercent },
       invest: { amount: investExpense, percent: investPercent },
@@ -157,9 +162,13 @@
 
     const netSavings = totalIncome - totalExpense;
     const savingsRate = totalIncome > 0 ? Math.max(0, (netSavings / totalIncome) * 100) : 0;
-    const needPercent = totalExpense > 0 ? (needExpense / totalExpense) * 100 : 0;
-    const wantPercent = totalExpense > 0 ? (wantExpense / totalExpense) * 100 : 0;
-    const investPercent = totalExpense > 0 ? (investExpense / totalExpense) * 100 : 0;
+    // 比例分母:有收入時以「當月收入」為分母(50/30/20 原始定義:稅後收入);
+    // 當月沒有任何收入紀錄時,退而以總支出為分母,避免除以零。
+    const ratioBase = totalIncome > 0 ? totalIncome : totalExpense;
+    const ratioBasis = totalIncome > 0 ? 'income' : 'expense';
+    const needPercent = ratioBase > 0 ? (needExpense / ratioBase) * 100 : 0;
+    const wantPercent = ratioBase > 0 ? (wantExpense / ratioBase) * 100 : 0;
+    const investPercent = ratioBase > 0 ? (investExpense / ratioBase) * 100 : 0;
 
     const topCategories = Object.values(categoryMap)
       .sort((a, b) => b.amount - a.amount)
@@ -176,6 +185,7 @@
       totalExpense,
       netSavings,
       savingsRate,
+      ratioBasis,
       needExpense,
       needPercent,
       wantExpense,

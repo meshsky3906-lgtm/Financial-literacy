@@ -38,7 +38,7 @@ test('50/30/20:只計真實收支,轉帳不算', () => {
   assert.equal(r.want.amount, 6000);
   assert.equal(r.invest.amount, 4000);
   assert.equal(r.netSavings, 30000);
-  assert.ok(Math.abs(r.need.percent - 66.666) < 0.01);
+  assert.ok(Math.abs(r.need.percent - 33.333) < 0.01); // 方案 A:分母為收入 60000
 });
 
 test('50/30/20:無資料不會除以零', () => {
@@ -142,4 +142,27 @@ test('刪除刷卡支出 → 待繳回退;刪除繳卡費轉帳 → 待繳加回
 
 test('刪除不存在的交易回傳 null', () => {
   assert.equal(C.deleteTransactionFromState(mkState(), 'nope'), null);
+});
+
+test('第 3 點(方案 A):50/30/20 比例以當月收入為分母', () => {
+  const tx = [
+    { type: 'income', amount: 60000, date: '2026-10-01' },
+    { type: 'expense', amount: 20000, tag: 'need', date: '2026-10-02' },
+    { type: 'expense', amount: 6000, tag: 'want', date: '2026-10-03' },
+    { type: 'expense', amount: 4000, tag: 'invest', date: '2026-10-04' }
+  ];
+  const r = C.calculate503020(tx, '2026-10');
+  assert.equal(r.ratioBasis, 'income');
+  assert.ok(Math.abs(r.need.percent - 33.333) < 0.01);
+  assert.equal(r.want.percent, 10);
+  assert.ok(Math.abs(r.invest.percent - 6.667) < 0.01);
+  assert.equal(r.savingsRate, 50);
+  const rep = C.generatePeriodReport(tx, 'month', '2026-10');
+  assert.ok(Math.abs(rep.needPercent - 33.333) < 0.01);
+});
+
+test('第 3 點:當月無收入時退而以總支出為分母', () => {
+  const r = C.calculate503020([{ type: 'expense', amount: 1000, tag: 'need', date: '2026-10-02' }], '2026-10');
+  assert.equal(r.ratioBasis, 'expense');
+  assert.equal(r.need.percent, 100);
 });

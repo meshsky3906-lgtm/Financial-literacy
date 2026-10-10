@@ -408,6 +408,9 @@
             </div>
             <div class="ratio-box-sub"><span>ETF複利、自我投資進修</span><span>目標 ≥ 20%</span></div>
           </div>
+          <p style="grid-column: 1 / -1; margin: 4px 0 0; font-size: 0.72rem; color: var(--text-muted);">
+            ${fin503020.ratioBasis === 'income' ? '比例 = 該類支出 ÷ 當月收入（未花掉的收入即為儲蓄）' : '本月尚無收入紀錄，暫以總支出為比例基準'}
+          </p>
         `;
 
         // 財商診斷建議
