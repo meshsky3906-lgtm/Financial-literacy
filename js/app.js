@@ -9,7 +9,8 @@
         getLocalDateString, getLocalMonthString, getCurrentMonthKey, formatCurrency,
         calculate503020, generatePeriodReport, calculateCreditCardHealth,
         calculateRealAvailableBalance, calculateEmergencyFundHealth,
-        DEBT_CATEGORIES, applyDebtPayment, deleteTransactionFromState
+        DEBT_CATEGORIES, applyDebtPayment, deleteTransactionFromState,
+        DEFAULT_INVEST_SETTINGS, calculateInvestmentPlan
       } = window.FinFlowCore;
 
       // 1. 分類與財商標籤庫
@@ -1448,6 +1449,191 @@
         }).join('');
       }
 
+
+      // =========================================================================
+      // 每月投入建議頁(唯讀試算;設定存在獨立的 localStorage 鍵,不更動帳務資料結構)
+      // 唯一寫入帳務資料的地方:信用卡選填欄位 monthlyDue(每月固定應繳)。
+      // =========================================================================
+      const INVEST_SETTINGS_KEY = 'finflow_invest_settings_v1';
+
+      function loadInvestSettings() {
+        const base = JSON.parse(JSON.stringify(DEFAULT_INVEST_SETTINGS));
+        try {
+          const raw = JSON.parse(localStorage.getItem(INVEST_SETTINGS_KEY) || 'null');
+          if (!raw || typeof raw !== 'object') return base;
+          const num = (v, min, max, def) => (Number.isFinite(Number(v)) && Number(v) >= min && Number(v) <= max) ? Number(v) : def;
+          base.avgMonths = Math.floor(num(raw.avgMonths, 1, 12, base.avgMonths));
+          base.reserveMonths = num(raw.reserveMonths, 0, 24, base.reserveMonths);
+          base.bufferMonths = num(raw.bufferMonths, 0, 12, base.bufferMonths);
+          base.monthlyFillCap = (raw.monthlyFillCap > 0) ? Number(raw.monthlyFillCap) : null;
+          if (Array.isArray(raw.allocation) && raw.allocation.length === base.allocation.length) {
+            base.allocation = base.allocation.map((d, i) => ({ symbol: d.symbol, percent: num(raw.allocation[i] && raw.allocation[i].percent, 0, 100, d.percent) }));
+          }
+        } catch (e) {}
+        return base;
+      }
+
+      function saveInvestSettings(s) {
+        try { localStorage.setItem(INVEST_SETTINGS_KEY, JSON.stringify(s)); } catch (e) {}
+      }
+
+      function renderInvestTrendSvg(trend, currentKey) {
+        const W = 360, H = 170, padT = 18, padB = 22, padX = 8;
+        const maxV = Math.max(0, ...trend.map(t => t.balance));
+        const minV = Math.min(0, ...trend.map(t => t.balance));
+        const span = (maxV - minV) || 1;
+        const plotH = H - padT - padB;
+        const zeroY = padT + (maxV / span) * plotH;
+        const slot = (W - padX * 2) / trend.length;
+        const bw = slot * 0.62;
+        const bars = trend.map((t, i) => {
+          const x = padX + i * slot + (slot - bw) / 2;
+          const h = Math.max(1, (Math.abs(t.balance) / span) * plotH);
+          const y = t.balance >= 0 ? zeroY - h : zeroY;
+          const cls = t.balance >= 0 ? 'pos' : 'neg';
+          const cur = t.monthKey === currentKey ? ' cur' : '';
+          const label = t.monthKey.slice(5).replace(/^0/, '');
+          const val = t.monthKey === currentKey
+            ? `<text x="${(x + bw / 2).toFixed(1)}" y="${(t.balance >= 0 ? y - 4 : y + h + 11).toFixed(1)}" text-anchor="middle" class="trend-val">${formatCurrency(t.balance, '')}</text>` : '';
+          return `<rect class="trend-bar ${cls}${cur}" x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${bw.toFixed(1)}" height="${h.toFixed(1)}" rx="3"><title>${t.monthKey} 收支結餘 ${formatCurrency(t.balance)}</title></rect>${val}
+            <text x="${(x + bw / 2).toFixed(1)}" y="${H - 6}" text-anchor="middle" class="trend-axis">${label}</text>`;
+        }).join('');
+        return `<svg viewBox="0 0 ${W} ${H}" class="invest-trend-svg" role="img" aria-label="近 12 個月收支結餘走勢">
+          <line x1="${padX}" x2="${W - padX}" y1="${zeroY.toFixed(1)}" y2="${zeroY.toFixed(1)}" class="trend-zero"/>${bars}</svg>`;
+      }
+
+      function renderInvestPage() {
+        const root = document.getElementById('invest-root');
+        if (!root) return;
+        const settings = loadInvestSettings();
+        const plan = calculateInvestmentPlan(appState, settings);
+        const fmt = formatCurrency;
+        const basisNote = plan.avgBasis === 'past'
+          ? `以近 ${settings.avgMonths} 個月中有紀錄的 ${plan.avgMonthsUsed} 個月計算`
+          : plan.avgBasis === 'current' ? '過去月份無紀錄,暫以本月支出計算' : '尚無支出紀錄,預備金目標暫為 0';
+
+        const hero = plan.canInvest
+          ? `<div class="invest-hero-label">本月建議投入</div>
+             <div class="invest-hero-amount">${fmt(plan.recommended)}</div>
+             <div class="invest-hero-sub">本月已投入 ${fmt(plan.alreadyInvested)}(已計入支出);此為「還能再投入」的金額</div>`
+          : `<div class="invest-hero-label">本月建議暫停投入</div>
+             <div class="invest-hero-amount pause">NT$ 0</div>
+             <ul class="invest-reasons">${(plan.reasons.length ? plan.reasons : ['資料不足,無法試算。']).map(r => `<li>${r}</li>`).join('')}</ul>`;
+
+        const row = (label, val, cls = '') => `<div class="invest-row ${cls}"><span>${label}</span><strong>${val}</strong></div>`;
+        const cardRows = plan.cards.map(c => row(
+          `${c.name}(${c.monthlyDue ? '每月固定應繳' : '整筆待繳'})`, `− ${fmt(c.reserve)}`)).join('');
+
+        const details = `
+          <details class="invest-details">
+            <summary>計算明細</summary>
+            <div class="invest-detail-body">
+              <div class="invest-detail-title">① 收支結餘(流量)</div>
+              ${row('本月收入', fmt(plan.income))}
+              ${row('本月已發生支出(含刷卡)', `− ${fmt(plan.expense)}`)}
+              ${row('收支結餘', fmt(plan.cashFlow), 'sum')}
+              <div class="invest-detail-title">② 可動用現金(存量)</div>
+              ${row('活存餘額', fmt(plan.liquid))}
+              ${cardRows}
+              ${row(`生活緩衝(${settings.bufferMonths} 個月必要支出)`, `− ${fmt(plan.buffer)}`)}
+              ${row('可動用現金', fmt(plan.usableCash), 'sum')}
+              <div class="invest-detail-title">③ 緊急預備金</div>
+              ${row('平均月生活支出(不含投資)', fmt(plan.avgExpense))}
+              ${row(`目標(× ${plan.reserveMonths} 個月)`, fmt(plan.reserveTarget))}
+              ${row('預備金專戶餘額', fmt(plan.emergencyBalance))}
+              ${row('尚缺', fmt(plan.reserveShortfall))}
+              ${row(plan.reserveCapped ? '本月補足(受每月上限限制)' : '本月補足', `− ${fmt(plan.reserveFill)}`, 'sum')}
+              <div class="invest-detail-note">${basisNote}。</div>
+              <div class="invest-detail-title">④ 結果</div>
+              ${row(`取較小者(${plan.bindingLimit === 'cashFlow' ? '收支結餘' : '可動用現金'})`, fmt(plan.limit))}
+              ${row('減預備金補足', `− ${fmt(plan.reserveFill)}`)}
+              ${row('本月建議投入', fmt(Math.max(0, plan.rawRecommended)), 'sum')}
+            </div>
+          </details>`;
+
+        const allocOk = Math.abs(plan.allocationTotal - 100) < 1e-6;
+        const allocCards = plan.allocation.map(x => `
+          <div class="invest-alloc-item">
+            <div class="invest-alloc-symbol">${x.symbol}</div>
+            <div class="invest-alloc-pct">${x.percent}%</div>
+            <div class="invest-alloc-amt">${plan.canInvest && allocOk ? fmt(x.amount) : '—'}</div>
+          </div>`).join('');
+
+        const cardInputs = appState.accounts.filter(a => a.type === 'credit').map(c => `
+          <label class="invest-field">
+            <span>${c.name}<small>目前待繳 ${fmt(c.balance)}</small></span>
+            <input type="number" inputmode="numeric" min="0" data-invest-card="${c.id}" value="${Number(c.monthlyDue) > 0 ? Number(c.monthlyDue) : ''}" placeholder="留空=整筆待繳">
+          </label>`).join('');
+
+        const s = settings;
+        root.innerHTML = `
+          <section class="invest-hero glass-panel ${plan.canInvest ? '' : 'is-pause'}">${hero}${details}</section>
+
+          <section class="glass-panel invest-section">
+            <h3 class="invest-h">📈 近 12 個月收支結餘走勢</h3>
+            ${renderInvestTrendSvg(plan.trend, plan.monthKey)}
+            <div class="invest-legend"><span class="lg pos"></span>結餘為正<span class="lg neg"></span>結餘為負(收入 − 支出,不含預備金補足)</div>
+          </section>
+
+          <section class="glass-panel invest-section">
+            <h3 class="invest-h">🧮 建議分配</h3>
+            <div class="invest-alloc-grid">${allocCards}</div>
+            ${allocOk ? '' : '<p class="invest-warn">配置比例加總不是 100%,請於下方設定修正。</p>'}
+          </section>
+
+          <section class="glass-panel invest-section">
+            <h3 class="invest-h">⚙️ 試算設定</h3>
+            <div class="invest-form-grid">
+              <label class="invest-field"><span>平均支出看近幾個月 (N)</span><input type="number" id="inv-n" min="1" max="12" value="${s.avgMonths}"></label>
+              <label class="invest-field"><span>預備金目標月數 (M)</span><input type="number" id="inv-m" min="0" max="24" step="0.5" value="${s.reserveMonths}"></label>
+              <label class="invest-field"><span>生活緩衝(月必要支出)<small>活存永遠留著不投資</small></span><input type="number" id="inv-buffer" min="0" max="12" step="0.5" value="${s.bufferMonths}"></label>
+              <label class="invest-field"><span>每月補足預備金上限<small>留空 = 一次全補</small></span><input type="number" id="inv-cap" min="0" value="${s.monthlyFillCap || ''}" placeholder="不設上限"></label>
+            </div>
+            <div class="invest-form-grid three">
+              ${s.allocation.map((x, i) => `<label class="invest-field"><span>${x.symbol} (%)</span><input type="number" min="0" max="100" data-invest-alloc="${i}" value="${x.percent}"></label>`).join('')}
+            </div>
+            <h4 class="invest-h2">💳 信用卡每月固定應繳(選填)</h4>
+            <p class="invest-hint">卡片待繳含分期與未到期款項。填入「每月實際要繳的金額」,試算就以此保留現金;留空則保守地以整筆待繳計。</p>
+            <div class="invest-form-grid">${cardInputs}</div>
+            <button type="button" class="btn btn-primary invest-save" id="btn-invest-save">儲存設定並重新試算</button>
+          </section>
+
+          <p class="invest-disclaimer">此為依個人記帳資料試算,非投資建議。</p>`;
+      }
+
+      function saveInvestFromForm() {
+        const g = id => document.getElementById(id);
+        const n = Math.floor(Number(g('inv-n').value));
+        const m = Number(g('inv-m').value);
+        const buf = Number(g('inv-buffer').value);
+        const capRaw = g('inv-cap').value.trim();
+        const cap = capRaw === '' ? null : Number(capRaw);
+        const pcts = Array.from(document.querySelectorAll('[data-invest-alloc]')).map(i => Number(i.value));
+        if (!(n >= 1 && n <= 12)) return showToast('N 請輸入 1~12', 'warning');
+        if (!(m >= 0 && m <= 24)) return showToast('M 請輸入 0~24', 'warning');
+        if (!(buf >= 0 && buf <= 12)) return showToast('生活緩衝請輸入 0~12', 'warning');
+        if (cap !== null && !(cap > 0)) return showToast('補足上限需大於 0,或留空', 'warning');
+        if (pcts.some(p => !(p >= 0 && p <= 100))) return showToast('比例需介於 0~100', 'warning');
+        const total = pcts.reduce((a, b) => a + b, 0);
+        if (Math.abs(total - 100) > 1e-6) return showToast(`配置比例加總為 ${total}%,必須剛好 100%`, 'warning');
+
+        const base = loadInvestSettings();
+        saveInvestSettings({
+          avgMonths: n, reserveMonths: m, bufferMonths: buf, monthlyFillCap: cap,
+          allocation: base.allocation.map((d, i) => ({ symbol: d.symbol, percent: pcts[i] }))
+        });
+        // 信用卡每月固定應繳:選填欄位,留空就移除(回到整筆待繳)
+        document.querySelectorAll('[data-invest-card]').forEach(input => {
+          const acc = appState.accounts.find(a => a.id === input.dataset.investCard);
+          if (!acc) return;
+          const v = Number(input.value);
+          if (input.value.trim() !== '' && v > 0) acc.monthlyDue = v; else delete acc.monthlyDue;
+        });
+        saveAppData(appState);
+        renderInvestPage();
+        showToast('已儲存設定並重新試算', 'success');
+      }
+
       // --- Tab Bar 切換 ---
       function switchPage(pageId) {
         document.querySelectorAll('.tab-btn').forEach(b => {
@@ -1458,6 +1644,7 @@
         const target = document.getElementById(`page-${pageId}`);
         if (target) target.classList.add('active');
         if (pageId === 'debt') renderDebtPage();
+        if (pageId === 'invest') renderInvestPage();
       }
 
       // --- 開啟新增債務 Modal ---
@@ -2159,6 +2346,7 @@
             appState = loadAppData();
             renderDashboard();
             renderDebtPage();
+            if (document.getElementById('page-invest')?.classList.contains('active')) renderInvestPage();
             showToast('🔄 帳務資料已重新整理並同步！', 'success');
           });
         }
@@ -2169,6 +2357,13 @@
         document.querySelectorAll('.tab-btn').forEach(btn => {
           btn.addEventListener('click', () => switchPage(btn.dataset.page));
         });
+
+        const investRoot = document.getElementById('invest-root');
+        if (investRoot) {
+          investRoot.addEventListener('click', e => {
+            if (e.target.closest('#btn-invest-save')) saveInvestFromForm();
+          });
+        }
 
         // =========================================================================
         // 債務管理：新增債務 Modal

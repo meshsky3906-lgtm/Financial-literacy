@@ -166,3 +166,95 @@ test('第 3 點:當月無收入時退而以總支出為分母', () => {
   assert.equal(r.ratioBasis, 'expense');
   assert.equal(r.need.percent, 100);
 });
+
+// ===== 每月投入建議 =====
+const NOW = new Date(2026, 9, 10, 12, 0); // 2026-10-10
+function investState(over = {}) {
+  const tx = [];
+  ['2026-07', '2026-08', '2026-09'].forEach((m, i) => {
+    tx.push({ id: 'n' + i, type: 'expense', amount: 20000, tag: 'need', date: m + '-05' });
+    tx.push({ id: 'w' + i, type: 'expense', amount: 7000, tag: 'want', date: m + '-06' });
+    tx.push({ id: 'v' + i, type: 'expense', amount: 3000, tag: 'invest', date: m + '-07' });
+  });
+  tx.push({ id: 'in', type: 'income', amount: 80000, date: '2026-10-01' });
+  tx.push({ id: 'ex', type: 'expense', amount: 30000, tag: 'need', date: '2026-10-02' });
+  return {
+    accounts: [
+      { id: 'main', type: 'liquid', balance: over.liquid ?? 200000 },
+      { id: 'c1', type: 'credit', balance: 20000, monthlyDue: over.monthlyDue },
+      { id: 'em', type: 'emergency', balance: over.emergency ?? 200000 }
+    ],
+    transactions: tx
+  };
+}
+
+test('投入建議:預備金已達標 → 取收支結餘,依 60/15/25 拆分且總和相符', () => {
+  const r = C.calculateInvestmentPlan(investState(), null, NOW);
+  assert.equal(r.avgExpense, 27000);        // 排除 invest 標籤
+  assert.equal(r.reserveTarget, 162000);
+  assert.equal(r.reserveShortfall, 0);
+  assert.equal(r.cashFlow, 50000);
+  assert.equal(r.buffer, 20000);            // 1 個月平均必要支出
+  assert.equal(r.usableCash, 160000);       // 200000 − 20000(整筆待繳) − 20000
+  assert.equal(r.recommended, 50000);
+  assert.deepEqual(r.allocation.map(x => x.amount), [30000, 7500, 12500]);
+  assert.equal(r.allocation.reduce((a, x) => a + x.amount, 0), 50000);
+});
+
+test('投入建議:預備金不足 → 優先補足,剩餘不夠就暫停並說明原因', () => {
+  const r = C.calculateInvestmentPlan(investState({ emergency: 100000 }), null, NOW);
+  assert.equal(r.reserveShortfall, 62000);
+  assert.equal(r.canInvest, false);
+  assert.equal(r.recommended, 0);
+  assert.ok(r.reasons.some(x => x.includes('預備金')));
+});
+
+test('投入建議:每月補足上限 → 補一部分、其餘可投入', () => {
+  const r = C.calculateInvestmentPlan(investState({ emergency: 100000 }), { monthlyFillCap: 10000 }, NOW);
+  assert.equal(r.reserveFill, 10000);
+  assert.equal(r.reserveCapped, true);
+  assert.equal(r.recommended, 40000);
+});
+
+test('投入建議:卡片填「每月固定應繳」→ 現金保留改用該數字', () => {
+  const r = C.calculateInvestmentPlan(investState({ monthlyDue: 5000 }), null, NOW);
+  assert.equal(r.cardReserve, 5000);
+  assert.equal(r.usableCash, 175000);
+});
+
+test('投入建議:活存不足 → 以可動用現金為限並暫停', () => {
+  const r = C.calculateInvestmentPlan(investState({ liquid: 30000 }), null, NOW);
+  assert.equal(r.usableCash, -10000);
+  assert.equal(r.bindingLimit, 'usableCash');
+  assert.equal(r.canInvest, false);
+  assert.ok(r.reasons.some(x => x.includes('可動用現金')));
+});
+
+test('投入建議:收入不足以支應支出 → 暫停', () => {
+  const s = investState();
+  s.transactions = s.transactions.filter(t => t.id !== 'in');
+  const r = C.calculateInvestmentPlan(s, null, NOW);
+  assert.equal(r.canInvest, false);
+  assert.ok(r.reasons.some(x => x.includes('收支結餘')));
+});
+
+test('投入建議:資料不足 N 個月 / 完全沒資料不會出錯', () => {
+  const s = investState();
+  s.transactions = s.transactions.filter(t => !t.date.startsWith('2026-07') && !t.date.startsWith('2026-08'));
+  const r = C.calculateInvestmentPlan(s, null, NOW);
+  assert.equal(r.avgMonthsUsed, 1);
+  const empty = C.calculateInvestmentPlan({ accounts: [], transactions: [] }, null, NOW);
+  assert.equal(empty.avgBasis, 'none');
+  assert.equal(empty.canInvest, false);
+  assert.equal(empty.trend.length, 12);
+});
+
+test('投入建議:走勢為近 12 個月、含本月;比例加總非 100% 不拆分;唯讀不改資料', () => {
+  const s = investState();
+  const before = JSON.stringify(s);
+  const r = C.calculateInvestmentPlan(s, { allocation: [{ symbol: 'A', percent: 50 }] }, NOW);
+  assert.equal(r.trend[11].monthKey, '2026-10');
+  assert.equal(r.trend[0].monthKey, '2025-11');
+  assert.equal(r.allocation[0].amount, 0);
+  assert.equal(JSON.stringify(s), before);
+});

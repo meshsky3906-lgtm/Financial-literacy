@@ -24,7 +24,7 @@
   <!-- CSS 核心樣式 -->
   <link rel="stylesheet" href="css/main.css?v=c1">
   <link rel="stylesheet" href="css/components.css?v=c1">
-  <link rel="stylesheet" href="css/features.css?v=1">
+  <link rel="stylesheet" href="css/features.css?v=2">
 </head>
 <body>
 
@@ -310,6 +310,11 @@
 
     </div><!-- end #page-debt -->
 
+    <!-- ===== 每月投入建議頁 (內容由 js/app.js 的 renderInvestPage 產生) ===== -->
+    <div id="page-invest" class="page-view">
+      <div id="invest-root"></div>
+    </div><!-- end #page-invest -->
+
     <!-- ===== 底部 Tab Bar 分頁導航 ===== -->
     <nav class="tab-bar" id="main-tab-bar" role="tablist" aria-label="主導航">
       <button class="tab-btn active" id="tab-btn-dashboard" data-page="dashboard" role="tab" aria-selected="true">
@@ -319,6 +324,10 @@
       <button class="tab-btn" id="tab-btn-debt" data-page="debt" role="tab" aria-selected="false">
         <span class="tab-icon">💳</span>
         <span>債務管理</span>
+      </button>
+      <button class="tab-btn" id="tab-btn-invest" data-page="invest" role="tab" aria-selected="false">
+        <span class="tab-icon">🎯</span>
+        <span>投入建議</span>
       </button>
     </nav>
 
@@ -862,7 +871,7 @@
 
   <!-- 內嵌全相容自包含核心腳本（保證雙擊 file:/// 或本機伺服器均 100% 正常秒開運行） -->
   <!-- 核心計算(純函式,可自動化測試)與應用程式主檔;以一般 script 載入,雙擊 file:/// 開啟也能運作 -->
-  <script src="js/core.js?v=1"></script>
-  <script src="js/app.js?v=1"></script>
+  <script src="js/core.js?v=2"></script>
+  <script src="js/app.js?v=2"></script>
 </body>
 </html>

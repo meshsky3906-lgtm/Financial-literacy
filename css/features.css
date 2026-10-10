@@ -70,3 +70,58 @@
   color: var(--text-secondary);
   margin: -8px 0 16px 0;
 }
+
+/* ---- 每月投入建議頁 ---- */
+.invest-hero { padding: 22px 18px 14px; margin-bottom: 14px; text-align: center; border-top: 4px solid var(--color-income); }
+.invest-hero.is-pause { border-top-color: var(--color-warning); }
+.invest-hero-label { font-size: 0.85rem; font-weight: 700; color: var(--text-secondary); }
+.invest-hero-amount { font-size: 2.4rem; font-weight: 800; color: var(--brand-strong); font-variant-numeric: tabular-nums; margin: 4px 0; }
+.invest-hero-amount.pause { color: var(--color-warning); }
+.invest-hero-sub { font-size: 0.74rem; color: var(--text-muted); line-height: 1.5; }
+.invest-reasons { list-style: none; margin: 8px 0 0; padding: 0; font-size: 0.8rem; color: var(--text-secondary); text-align: left; }
+.invest-reasons li { padding: 6px 10px; margin-top: 6px; border-radius: var(--radius-sm); background: rgba(217, 119, 6, 0.10); }
+
+.invest-details { margin-top: 14px; text-align: left; border-top: 1px solid var(--surface-border); padding-top: 8px; }
+.invest-details summary { cursor: pointer; font-size: 0.85rem; font-weight: 700; color: var(--brand); padding: 8px 0; text-align: center; list-style: none; }
+.invest-details summary::-webkit-details-marker { display: none; }
+.invest-detail-title { margin: 12px 0 4px; font-size: 0.78rem; font-weight: 800; color: var(--text-primary); }
+.invest-row { display: flex; justify-content: space-between; gap: 10px; padding: 5px 0; font-size: 0.8rem; color: var(--text-secondary); border-bottom: 1px dashed var(--surface-border); }
+.invest-row strong { color: var(--text-primary); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.invest-row.sum { border-bottom: 1px solid var(--surface-border-bright); }
+.invest-row.sum strong { color: var(--brand-strong); }
+.invest-detail-note { font-size: 0.72rem; color: var(--text-muted); margin-top: 4px; }
+
+.invest-section { padding: 16px; margin-bottom: 14px; }
+.invest-h { font-size: 0.95rem; font-weight: 800; margin: 0 0 10px; color: var(--text-primary); }
+.invest-h2 { font-size: 0.88rem; font-weight: 800; margin: 18px 0 4px; color: var(--text-primary); }
+.invest-hint { font-size: 0.74rem; color: var(--text-muted); margin: 0 0 10px; line-height: 1.5; }
+.invest-warn { font-size: 0.78rem; color: var(--color-danger); margin: 10px 0 0; }
+
+.invest-trend-svg { width: 100%; height: auto; display: block; }
+.trend-bar.pos { fill: var(--color-income); opacity: 0.75; }
+.trend-bar.neg { fill: var(--color-want); opacity: 0.75; }
+.trend-bar.cur { opacity: 1; }
+.trend-zero { stroke: var(--surface-border-bright); stroke-width: 1; }
+.trend-axis { font-size: 9px; fill: var(--text-muted); }
+.trend-val { font-size: 9px; font-weight: 700; fill: var(--text-primary); }
+.invest-legend { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; font-size: 0.7rem; color: var(--text-muted); margin-top: 6px; }
+.invest-legend .lg { width: 10px; height: 10px; border-radius: 2px; display: inline-block; }
+.invest-legend .lg.pos { background: var(--color-income); }
+.invest-legend .lg.neg { background: var(--color-want); margin-left: 8px; }
+
+.invest-alloc-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.invest-alloc-item { text-align: center; padding: 12px 6px; border-radius: var(--radius-md); background: var(--surface-sunken); }
+.invest-alloc-symbol { font-weight: 800; font-size: 0.9rem; color: var(--text-primary); }
+.invest-alloc-pct { font-size: 0.72rem; color: var(--text-muted); margin: 2px 0 6px; }
+.invest-alloc-amt { font-size: 0.95rem; font-weight: 800; color: var(--brand-strong); font-variant-numeric: tabular-nums; }
+
+.invest-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+.invest-form-grid.three { grid-template-columns: repeat(3, 1fr); }
+.invest-field { display: flex; flex-direction: column; gap: 4px; font-size: 0.76rem; font-weight: 600; color: var(--text-secondary); }
+.invest-field small { display: block; font-weight: 400; color: var(--text-muted); font-size: 0.68rem; }
+.invest-field input { width: 100%; box-sizing: border-box; padding: 10px; font-size: 1rem; border: 1px solid var(--surface-border); border-radius: var(--radius-sm); background: var(--surface-sunken); color: var(--text-primary); font-family: inherit; }
+.invest-field input:focus { outline: none; border-color: var(--surface-border-focus); }
+.invest-save { width: 100%; min-height: 46px; margin-top: 6px; }
+.invest-disclaimer { text-align: center; font-size: 0.72rem; color: var(--text-muted); margin: 6px 0 90px; }
+
+@media (max-width: 380px) { .invest-form-grid { grid-template-columns: 1fr; } }
