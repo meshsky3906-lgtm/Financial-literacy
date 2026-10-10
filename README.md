@@ -53,18 +53,20 @@
 - **檔案組織**：
   ```
   Financial-literacy/
-  ├── index.html              # 主頁面結構與自包含相容腳本
+  ├── index.html              # 主頁面結構(以一般 <script> 載入 js/core.js、js/app.js)
   ├── manifest.json           # PWA Web App 桌面清單配置
-  ├── icons/                  # 現代風專屬 App Icon PNG 圖示庫 (512/192/180)
+  ├── icons/                  # App Icon PNG 圖示庫 (512/192/180)
   ├── css/
-  │   ├── main.css            # 核心設計系統、Tokens 與自適應排版
-  │   └── components.css      # 信用卡卡片、財務報表、iOS 底部抽屜、輸入框元件
+  │   ├── main.css            # C 風格設計 Tokens 與基礎排版
+  │   ├── components.css      # 元件樣式
+  │   ├── features.css        # 備份提醒等功能樣式
+  │   └── themes/g/           # 原 G 風格留存
   ├── js/
-  │   ├── app.js              # 應用程式入口與狀態管理
-  │   ├── financeLogic.js     # 財商配置、月季年報表演算法、雙卡 30% 風控
-  │   ├── storage.js          # 本機持久化與備份匯出入
-  │   ├── categories.js       # 預設雙軌收支分類庫與財商標籤
-  │   └── uiRenderer.js       # 介面動態渲染與報表圖表視覺
+  │   ├── core.js             # 純計算(50/30/20、雙卡風控、報表、債務還款/刪除);可用 Node 測試
+  │   └── app.js              # 畫面渲染、事件、狀態與 localStorage、備份提醒
+  ├── tests/core.test.js      # 自動化測試(npm test)
+  ├── package.json            # 僅提供 npm test(無外部相依)
+  ├── .github/workflows/test.yml  # push 時自動跑測試
   └── README.md               # 專案手冊與財商理念
   ```
 

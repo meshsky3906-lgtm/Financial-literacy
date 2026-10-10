@@ -1,0 +1,72 @@
+/* ==========================================================================
+   功能性元件樣式(與風格無關)
+   只使用設計變數,因此不論套用 G 風格或 C 風格都能正常顯示。
+   ========================================================================== */
+
+/* ---- 備份提醒條 ---- */
+.backup-reminder {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 12px 14px;
+  margin-bottom: 14px;
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(217, 119, 6, 0.40);
+  background: rgba(245, 158, 11, 0.12);
+}
+
+.backup-reminder[hidden] {
+  display: none;
+}
+
+.backup-reminder-icon {
+  font-size: 1.4rem;
+  flex-shrink: 0;
+}
+
+.backup-reminder-text {
+  flex: 1;
+  min-width: 180px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+.backup-reminder-text strong {
+  font-size: 0.9rem;
+  color: var(--text-primary);
+}
+
+.backup-reminder-actions {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+}
+
+.backup-reminder-actions .btn {
+  flex: 1;
+  min-height: 40px;
+  font-size: 0.85rem;
+}
+
+@media (min-width: 640px) {
+  .backup-reminder-actions {
+    width: auto;
+  }
+  .backup-reminder-actions .btn {
+    flex: none;
+    padding: 8px 16px;
+  }
+}
+
+/* ---- 備份彈窗:上次備份資訊 ---- */
+.backup-last-info {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin: -8px 0 16px 0;
+}

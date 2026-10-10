@@ -1,0 +1,5 @@
+{
+  "name": "financial-literacy",
+  "private": true,
+  "scripts": { "test": "TZ=Asia/Taipei node --test tests/*.test.js" }
+}
