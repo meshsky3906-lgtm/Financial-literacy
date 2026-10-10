@@ -402,6 +402,158 @@
     return tx;
   }
 
+  // ===== 每月投入建議(唯讀:只讀取帳務資料,不修改任何帳戶或交易) =====
+  const DEFAULT_INVEST_SETTINGS = {
+    avgMonths: 3,          // N:計算平均支出的月數
+    reserveMonths: 6,      // M:預備金目標涵蓋月數
+    bufferMonths: 1,       // 生活緩衝:活存永遠留著的必要支出月數
+    monthlyFillCap: null,  // 每月最多補足預備金(null = 一次全補)
+    allocation: [
+      { symbol: 'VOO', percent: 60 },
+      { symbol: 'VXUS', percent: 15 },
+      { symbol: '006208', percent: 25 }
+    ]
+  };
+
+  function monthKeyOffset(now, offset) {
+    const d = new Date(now.getFullYear(), now.getMonth() + offset, 1);
+    return getCurrentMonthKey(d);
+  }
+
+  function sumMonth(transactions, monthKey) {
+    let income = 0, expense = 0, need = 0, invest = 0, expenseExInvest = 0;
+    (transactions || []).forEach(tx => {
+      if (!tx || !tx.date || !tx.date.startsWith(monthKey)) return;
+      const amt = Number(tx.amount || 0);
+      if (tx.type === 'income') income += amt;
+      else if (tx.type === 'expense') {
+        expense += amt;
+        if (tx.tag === 'need') need += amt;
+        if (tx.tag === 'invest') invest += amt;
+        else expenseExInvest += amt;
+      }
+    });
+    return { monthKey, income, expense, need, invest, expenseExInvest, hasExpense: expense > 0, balance: income - expense };
+  }
+
+  /**
+   * 算出「本月建議投入金額」。
+   *   收支結餘   = 本月收入 − 本月已發生支出(刷卡當下已計入,不含內部轉帳)
+   *   可動用現金 = 活存 − 各卡現金保留 − 生活緩衝
+   *               (卡片現金保留:有填「每月固定應繳」就用它,否則保守地用整筆待繳)
+   *   預備金補足 = max(0, 近 N 個月平均生活支出 × M − 預備金餘額),可設每月上限
+   *   建議投入   = min(收支結餘, 可動用現金) − 預備金補足
+   * 平均支出排除 invest 標籤(投資不是生活開銷)。
+   */
+  function calculateInvestmentPlan(state, settings, now) {
+    const st = state || {};
+    const cfg = Object.assign({}, DEFAULT_INVEST_SETTINGS, settings || {});
+    const at = now ? new Date(now) : new Date();
+    const accounts = st.accounts || [];
+    const txs = st.transactions || [];
+    const monthKey = getCurrentMonthKey(at);
+    const cur = sumMonth(txs, monthKey);
+
+    // --- 近 N 個月(不含本月)平均生活支出與必要支出;只計有資料的月份 ---
+    const n = Math.max(1, Math.floor(Number(cfg.avgMonths) || 3));
+    const m = Math.max(0, Number(cfg.reserveMonths) || 0);
+    const past = [];
+    for (let i = 1; i <= n; i++) past.push(sumMonth(txs, monthKeyOffset(at, -i)));
+    let basis = past.filter(x => x.hasExpense);
+    let avgBasis = 'past';
+    if (basis.length === 0 && cur.hasExpense) { basis = [cur]; avgBasis = 'current'; }
+    if (basis.length === 0) avgBasis = 'none';
+    const avgExpense = basis.length ? basis.reduce((a, x) => a + x.expenseExInvest, 0) / basis.length : 0;
+    const avgNeed = basis.length ? basis.reduce((a, x) => a + x.need, 0) / basis.length : 0;
+
+    // --- 預備金 ---
+    const emergencyBalance = accounts.filter(a => a.type === 'emergency').reduce((a, x) => a + Number(x.balance || 0), 0);
+    const reserveTarget = avgExpense * m;
+    const reserveShortfall = Math.max(0, reserveTarget - emergencyBalance);
+    const capOn = cfg.monthlyFillCap !== null && cfg.monthlyFillCap !== undefined && cfg.monthlyFillCap !== '' && Number(cfg.monthlyFillCap) > 0;
+    const reserveFill = capOn ? Math.min(reserveShortfall, Number(cfg.monthlyFillCap)) : reserveShortfall;
+
+    // --- 可動用現金 ---
+    const liquid = accounts.filter(a => a.type === 'liquid' || a.type === 'bank' || a.type === 'cash')
+      .reduce((a, x) => a + Number(x.balance || 0), 0);
+    const cards = accounts.filter(a => a.type === 'credit').map(c => {
+      const balance = Math.max(0, Number(c.balance || 0));
+      const monthlyDue = Number(c.monthlyDue);
+      const useDue = monthlyDue > 0;
+      return { id: c.id, name: c.name, balance, monthlyDue: useDue ? monthlyDue : null, reserve: useDue ? monthlyDue : balance };
+    });
+    const cardReserve = cards.reduce((a, c) => a + c.reserve, 0);
+    const buffer = avgNeed * Math.max(0, Number(cfg.bufferMonths) || 0);
+    const usableCash = liquid - cardReserve - buffer;
+
+    // --- 結果 ---
+    const cashFlow = cur.balance;
+    const limit = Math.min(cashFlow, usableCash);
+    const recommended = limit - reserveFill;
+    const canInvest = recommended > 0;
+
+    const reasons = [];
+    if (!canInvest) {
+      if (cashFlow <= 0) reasons.push('本月收支結餘不足:收入尚未大於已發生支出。');
+      if (usableCash <= 0) reasons.push('可動用現金不足:活存扣掉信用卡現金保留與生活緩衝後已無餘額。');
+      if (cashFlow > 0 && usableCash > 0 && reserveFill > 0 && limit - reserveFill <= 0) {
+        reasons.push('緊急預備金尚未達標,本月可用額度全數優先補足預備金。');
+      }
+    }
+
+    // --- 配置拆分(合計修正到與總額相同) ---
+    const allocTotal = (cfg.allocation || []).reduce((a, x) => a + Number(x.percent || 0), 0);
+    let allocation = (cfg.allocation || []).map(x => ({ symbol: x.symbol, percent: Number(x.percent || 0), amount: 0 }));
+    if (canInvest && Math.abs(allocTotal - 100) < 1e-6) {
+      const total = Math.floor(recommended);
+      allocation.forEach(x => { x.amount = Math.floor(total * x.percent / 100); });
+      const diff = total - allocation.reduce((a, x) => a + x.amount, 0);
+      if (allocation.length && diff !== 0) {
+        const big = allocation.reduce((b, x) => (x.percent > b.percent ? x : b), allocation[0]);
+        big.amount += diff;
+      }
+    }
+
+    // --- 近 12 個月收支結餘走勢(含本月) ---
+    const trend = [];
+    for (let i = 11; i >= 0; i--) {
+      const r = sumMonth(txs, monthKeyOffset(at, -i));
+      trend.push({ monthKey: r.monthKey, income: r.income, expense: r.expense, balance: r.balance });
+    }
+
+    return {
+      monthKey,
+      income: cur.income,
+      expense: cur.expense,
+      alreadyInvested: cur.invest,
+      cashFlow,
+      liquid,
+      cards,
+      cardReserve,
+      buffer,
+      usableCash,
+      avgExpense,
+      avgNeed,
+      avgMonthsUsed: basis.length,
+      avgBasis,
+      reserveMonths: m,
+      reserveTarget,
+      emergencyBalance,
+      reserveShortfall,
+      reserveFill,
+      reserveCapped: capOn && reserveShortfall > reserveFill,
+      limit,
+      bindingLimit: cashFlow <= usableCash ? 'cashFlow' : 'usableCash',
+      recommended: canInvest ? Math.floor(recommended) : 0,
+      rawRecommended: recommended,
+      canInvest,
+      reasons,
+      allocation,
+      allocationTotal: allocTotal,
+      trend
+    };
+  }
+
   const api = {
     getLocalDateString,
     getLocalMonthString,
@@ -414,7 +566,9 @@
     calculateEmergencyFundHealth,
     DEBT_CATEGORIES,
     applyDebtPayment,
-    deleteTransactionFromState
+    deleteTransactionFromState,
+    DEFAULT_INVEST_SETTINGS,
+    calculateInvestmentPlan
   };
 
   if (typeof module !== 'undefined' && module.exports) module.exports = api;

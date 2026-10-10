@@ -62,8 +62,8 @@
   │   ├── features.css        # 備份提醒等功能樣式
   │   └── themes/g/           # 原 G 風格留存
   ├── js/
-  │   ├── core.js             # 純計算(50/30/20、雙卡風控、報表、債務還款/刪除);可用 Node 測試
-  │   └── app.js              # 畫面渲染、事件、狀態與 localStorage、備份提醒
+  │   ├── core.js             # 純計算(50/30/20、雙卡風控、報表、債務還款/刪除、每月投入建議);可用 Node 測試
+  │   └── app.js              # 畫面渲染、事件、狀態與 localStorage、備份提醒、每月投入建議頁
   ├── tests/core.test.js      # 自動化測試(npm test)
   ├── package.json            # 僅提供 npm test(無外部相依)
   ├── .github/workflows/test.yml  # push 時自動跑測試
