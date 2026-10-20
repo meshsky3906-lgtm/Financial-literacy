@@ -1,5 +1,5 @@
 /* ==========================================================================
-   FinFlow 智富記帳 - 元件樣式庫 (R 風格:Pastel Ledger · Mobile & iOS Optimized;C 風格留存於 css/themes/c/)
+   FinFlow 智富記帳 - 元件樣式庫 (C 風格:Calm Paper · Mobile & iOS Optimized)
    ========================================================================== */
 
 /* --------------------------------------------------------------------------
@@ -240,7 +240,7 @@
 
 .stat-card.card-income { --card-accent: #10B981; }
 .stat-card.card-expense { --card-accent: #F43F5E; }
-.stat-card.card-savings-rate { --card-accent: #2A8798; }
+.stat-card.card-savings-rate { --card-accent: #8B5CF6; }
 
 .stat-header {
   display: flex;
@@ -467,9 +467,9 @@
 }
 
 .cycle-tag.statement {
-  background: rgba(29, 95, 214, 0.12);
-  border-color: rgba(29, 95, 214, 0.3);
-  color: #1D5FD6;
+  background: rgba(99, 102, 241, 0.12);
+  border-color: rgba(99, 102, 241, 0.3);
+  color: #A5B4FC;
 }
 
 .cycle-tag.due {
@@ -698,8 +698,8 @@
 }
 
 .diagnostic-item.caution {
-  background: rgba(29, 95, 214, 0.12);
-  border: 1px solid rgba(29, 95, 214, 0.3);
+  background: rgba(99, 102, 241, 0.12);
+  border: 1px solid rgba(99, 102, 241, 0.3);
   color: #3730A3;
 }
 
@@ -714,8 +714,8 @@
    -------------------------------------------------------------------------- */
 .emergency-shield-card {
   padding: 14px;
-  background: linear-gradient(135deg, rgba(29, 95, 214, 0.15), rgba(255, 255, 255, 0.96));
-  border: 1px solid rgba(29, 95, 214, 0.3);
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(255, 255, 255, 0.96));
+  border: 1px solid rgba(99, 102, 241, 0.3);
   border-radius: var(--radius-lg);
   display: flex;
   flex-direction: column;
@@ -742,12 +742,12 @@
   width: 46px;
   height: 46px;
   border-radius: var(--radius-md);
-  background: rgba(29, 95, 214, 0.2);
+  background: rgba(99, 102, 241, 0.2);
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 24px;
-  border: 1px solid rgba(29, 95, 214, 0.4);
+  border: 1px solid rgba(99, 102, 241, 0.4);
   flex-shrink: 0;
 }
 
@@ -836,9 +836,9 @@
 }
 
 .filter-btn.active {
-  background: rgba(29, 95, 214, 0.25);
+  background: rgba(99, 102, 241, 0.25);
   color: var(--text-primary);
-  border-color: rgba(29, 95, 214, 0.6);
+  border-color: rgba(99, 102, 241, 0.6);
 }
 
 .transaction-list {
@@ -863,7 +863,7 @@
 
 .transaction-row:hover {
   background: rgba(28, 36, 48, 0.05);
-  border-color: rgba(29, 95, 214, 0.35);
+  border-color: rgba(99, 102, 241, 0.35);
   transform: translateY(-1.5px);
   box-shadow: 0 6px 18px rgba(28, 36, 48, 0.08);
 }
@@ -1059,7 +1059,7 @@
 
 .type-toggle-btn.active.expense { background: #F43F5E; color: #FFFFFF; }
 .type-toggle-btn.active.income { background: #10B981; color: #FFFFFF; }
-.type-toggle-btn.active.transfer { background: #1D5FD6; color: #FFFFFF; }
+.type-toggle-btn.active.transfer { background: #6366F1; color: #FFFFFF; }
 
 /* 大金額輸入框（Flexbox 佈局，徹底解決數字與 $ 黏連問題） */
 .amount-input-box {
@@ -1075,7 +1075,7 @@
 
 .amount-input-box:focus-within {
   border-color: var(--surface-border-focus);
-  box-shadow: 0 0 0 3px rgba(29, 95, 214, 0.25);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25);
   background: var(--surface-sunken);
 }
 
@@ -1118,7 +1118,7 @@
   justify-content: space-between;
   font-size: 0.82rem;
   color: #4338CA;
-  background: rgba(29, 95, 214, 0.1);
+  background: rgba(99, 102, 241, 0.1);
   padding: 6px 12px;
   border-radius: var(--radius-sm);
   margin-bottom: 16px;
@@ -1152,8 +1152,8 @@
 }
 
 .category-tile.active {
-  background: rgba(29, 95, 214, 0.25);
-  border-color: #1D5FD6;
+  background: rgba(99, 102, 241, 0.25);
+  border-color: #6366F1;
 }
 
 .category-tile .tile-icon { font-size: 1.25rem; }
@@ -1175,8 +1175,8 @@
 
 .scene-chip-btn {
   padding: 6px 12px;
-  background: rgba(29, 95, 214, 0.15);
-  border: 1px solid rgba(29, 95, 214, 0.35);
+  background: rgba(99, 102, 241, 0.15);
+  border: 1px solid rgba(99, 102, 241, 0.35);
   color: #3730A3;
   border-radius: var(--radius-full);
   font-size: 0.76rem;
@@ -1187,8 +1187,8 @@
 }
 
 .scene-chip-btn:hover, .scene-chip-btn:active {
-  background: rgba(29, 95, 214, 0.3);
-  border-color: #1D5FD6;
+  background: rgba(99, 102, 241, 0.3);
+  border-color: #6366F1;
   color: var(--text-primary);
 }
 
@@ -1252,8 +1252,8 @@
 }
 
 .account-option.active {
-  border-color: #1D5FD6;
-  background: rgba(29, 95, 214, 0.15);
+  border-color: #6366F1;
+  background: rgba(99, 102, 241, 0.15);
 }
 
 .account-option.active.esun {
@@ -1287,8 +1287,8 @@
 }
 
 .tag-select-btn.active.need {
-  background: rgba(29, 95, 214, 0.25);
-  border-color: #1D5FD6;
+  background: rgba(99, 102, 241, 0.25);
+  border-color: #6366F1;
   color: #4338CA;
 }
 
@@ -1299,16 +1299,16 @@
 }
 
 .tag-select-btn.active.invest {
-  background: rgba(42, 135, 152, 0.25);
-  border-color: #2A8798;
+  background: rgba(139, 92, 246, 0.25);
+  border-color: #8B5CF6;
   color: #6D28D9;
 }
 
 /* 每日智慧小卡片 */
 .wisdom-card {
   padding: 12px 14px;
-  background: linear-gradient(135deg, rgba(42, 135, 152, 0.12), rgba(255, 255, 255, 0.96));
-  border: 1px solid rgba(42, 135, 152, 0.3);
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.12), rgba(255, 255, 255, 0.96));
+  border: 1px solid rgba(139, 92, 246, 0.3);
   border-radius: var(--radius-md);
   margin-bottom: 16px;
   display: flex;
@@ -1415,9 +1415,9 @@
 }
 
 .report-tab-btn.active {
-  background: #1D5FD6;
+  background: #6366F1;
   color: #FFFFFF;
-  box-shadow: 0 2px 8px rgba(29, 95, 214, 0.4);
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.4);
 }
 
 .report-picker-select {
@@ -1753,7 +1753,7 @@
 }
 
 .debt-stat-card.card-debt-ratio {
-  --card-accent: linear-gradient(90deg, #1D5FD6, #2A8798);
+  --card-accent: linear-gradient(90deg, #6366F1, #8B5CF6);
   background: linear-gradient(145deg, rgba(99,102,241,0.1), rgba(255, 255, 255, 0.96));
   border-color: rgba(99,102,241,0.25);
 }
@@ -2364,9 +2364,9 @@
   font-size: 0.72rem;
   padding: 3px 10px;
   border-radius: 20px;
-  background: rgba(29, 95, 214, 0.15);
+  background: rgba(99, 102, 241, 0.15);
   color: #4338CA;
-  border: 1px solid rgba(29, 95, 214, 0.3);
+  border: 1px solid rgba(99, 102, 241, 0.3);
   font-weight: 600;
 }
 
@@ -2386,7 +2386,7 @@
 
 .month-accordion-card.open {
   background: rgba(28, 36, 48, 0.05);
-  border-color: rgba(29, 95, 214, 0.45);
+  border-color: rgba(99, 102, 241, 0.45);
   box-shadow: 0 8px 24px rgba(28, 36, 48, 0.08);
 }
 
@@ -2449,9 +2449,9 @@
 }
 
 .month-accordion-card.open .month-toggle-btn {
-  background: rgba(29, 95, 214, 0.3);
+  background: rgba(99, 102, 241, 0.3);
   color: var(--text-primary);
-  border-color: rgba(29, 95, 214, 0.6);
+  border-color: rgba(99, 102, 241, 0.6);
 }
 
 .month-stats-row {
@@ -2538,7 +2538,7 @@
 }
 
 .month-filter-chip.active {
-  background: #1D5FD6;
+  background: #6366F1;
   border-color: #818CF8;
   color: #FFFFFF;
 }
@@ -2700,7 +2700,7 @@ select option {
 [style*="color: #EF4444" i], [style*="color:#EF4444" i], [style*="color: rgb(239, 68, 68)"],
 [style*="#F87171" i]                                                                         { color: #B91C1C !important; }
 [style*="color: #F59E0B" i], [style*="color:#F59E0B" i], [style*="color: rgb(245, 158, 11)"] { color: #B45309 !important; }
-[style*="color: #1D5FD6" i], [style*="color: rgb(99, 102, 241)"]                             { color: #4F46E5 !important; }
+[style*="color: #6366F1" i], [style*="color: rgb(99, 102, 241)"]                             { color: #4F46E5 !important; }
 [style*="color: #94A3B8" i], [style*="color: rgb(148, 163, 184)"]                            { color: #64748B !important; }
 [style*="#DDD6FE" i] { color: #6D28D9 !important; }
 [style*="#7DD3FC" i] { color: #0369A1 !important; }
@@ -2781,219 +2781,3 @@ select option {
 .upcoming-item {
   background: rgba(255, 255, 255, 0.75);
 }
-
-/* ==========================================================================
-   R 風格覆寫層 (Pastel Ledger 粉彩帳本)
-   --------------------------------------------------------------------------
-   改編自 taste-skill 的 pastel-consumer:冷灰底、白色大圓角卡片、同色系淡色標籤、
-   無陰影、無漸層;鈷藍只用在主要動作與主要數據上。
-   本層放在檔案最後,覆寫上方 C 風格的設定;C 風格原檔留存於 css/themes/c/。
-   不更動 index.html 與 js/ 的結構,財務邏輯完全不受影響。
-   ========================================================================== */
-
-/* ---- 1. 卡片:白底、細邊、20px 大圓角、無陰影 ---- */
-.glass-panel,
-.quick-stats-row,
-.ratio-box,
-.debt-stat-card,
-.invest-section,
-.invest-hero {
-  background: #FFFFFF;
-  border: 1px solid var(--surface-border);
-  border-radius: 20px;
-  box-shadow: none !important;
-}
-
-.glass-panel:hover { border-color: var(--surface-border); }
-
-/* ---- 2. Hero:白色卡片,數字作為主角(不使用漸層大色塊) ---- */
-.hero-balance-card {
-  background: #FFFFFF;
-  border: 1px solid var(--surface-border);
-  box-shadow: none;
-}
-.hero-balance-card::before { display: none; }
-.hero-label { color: var(--text-secondary); }
-.hero-amount { color: var(--text-primary); font-weight: 600; letter-spacing: -0.5px; }
-.hero-subtext { color: var(--text-muted); }
-.hero-ring-pct-text { color: var(--text-primary); }
-.hero-ring-sub { color: var(--text-muted); }
-.hero-ring-svg circle:first-of-type { stroke: #E6EBF0; }
-#goldGradient stop:nth-child(1),
-#goldGradient stop:nth-child(2) { stop-color: #1D5FD6; }
-
-/* ---- 3. 每日金句、提示卡:淡藍底,不用漸層 ---- */
-.wisdom-card,
-.wisdom-card[style*="gradient"] {
-  background: #EAF4FD !important;
-  border: 1px solid #D3E6F8 !important;
-}
-.wisdom-author { color: var(--brand-strong); }
-
-/* ---- 4. 信用卡:以帳戶自己的顏色做淡色卡面、深色同色系文字 ---- */
-.credit-card-item {
-  box-shadow: none;
-  color: var(--text-primary);
-  --text-primary: #1B1D1F;
-  --text-secondary: #44484C;
-  --text-muted: #5C6064;
-  --color-income: #2F7A45;
-  --color-want: #B45309;
-}
-.card-esun-theme  { background: #DDF5E8; border: 1px solid #BFE8D1; --card-ink: #064E3B; }
-.card-fubon-theme { background: #DCF1FF; border: 1px solid #BFE0F7; --card-ink: #0A3A80; }
-.credit-card-item .bank-name-text { color: var(--card-ink); }
-
-.credit-card-item [style*="color: #FFF" i],
-.credit-card-item [style*="color:#FFF" i]  { color: var(--text-primary) !important; }
-.credit-card-item [style*="#A5B4FC" i]     { color: #3730A3 !important; }
-.credit-card-item [style*="#FDA4AF" i]     { color: #9F1239 !important; }
-.credit-card-item [style*="#6EE7B7" i]     { color: #047857 !important; }
-.credit-card-item [style*="#FCD34D" i]     { color: #92400E !important; }
-.credit-card-item [style*="color: #10B981" i], .credit-card-item [style*="color:#10B981" i] { color: #047857 !important; }
-.credit-card-item [style*="color: #EF4444" i], .credit-card-item [style*="color:#EF4444" i] { color: #B91C1C !important; }
-.credit-card-item [style*="color: #F59E0B" i], .credit-card-item [style*="color:#F59E0B" i] { color: #B45309 !important; }
-.credit-card-item [style*="background: rgba"][style*="border"] { background: rgba(255, 255, 255, 0.65) !important; }
-
-.credit-card-item .badge-safe    { background: #FFFFFF; color: #166534; border-color: #BFE8D1; }
-.credit-card-item .badge-warning { background: #FFFBEB; color: #92400E; border-color: #F5D9A8; }
-.credit-card-item .badge-danger  { background: #FFEDEA; color: #831C1E; border-color: #F5C2BD; }
-
-.bank-chip { background: #FFFFFF; border: 1px solid rgba(0, 0, 0, 0.18); }
-.bank-chip::after { border-color: rgba(0, 0, 0, 0.12); }
-
-/* ---- 5. 50/30/20 標籤:淡色底 + 同色系深字 ---- */
-.badge-need   { background: #DCF1FF; color: #0A3A80; border-color: #BFE0F7; }
-.badge-want   { background: #FFEBD2; color: #7A3A05; border-color: #F5D4AC; }
-.badge-invest { background: #D9F2EF; color: #0B4F5C; border-color: #B7E3DE; }
-
-.progress-track { background: #ECEFF2; }
-
-/* 內嵌的舊色票進度條 → R 資料色(必要=藍、慾望=琥珀、投資=青) */
-[style*="background: #6366F1" i], [style*="background:#6366F1" i], [style*="background: rgb(99, 102, 241)"]  { background: #1D5FD6 !important; }
-[style*="background: #F43F5E" i], [style*="background:#F43F5E" i], [style*="background: rgb(244, 63, 94)"]   { background: #B45309 !important; }
-[style*="background: #8B5CF6" i], [style*="background:#8B5CF6" i], [style*="background: rgb(139, 92, 246)"]  { background: #2A8798 !important; }
-
-/* 內嵌文字色:把靛/紫系換成 R 的藍/青 */
-[style*="color: #6366F1" i], [style*="color: rgb(99, 102, 241)"] { color: #1D5FD6 !important; }
-[style*="#A5B4FC" i] { color: #1D5FD6 !important; }
-[style*="#DDD6FE" i] { color: #0A3A80 !important; }
-[style*="color: #F43F5E" i], [style*="color:#F43F5E" i], [style*="color: rgb(244, 63, 94)"] { color: #B45309 !important; }
-.text-need   { color: var(--color-need) !important; }
-.text-want   { color: var(--color-want) !important; }
-.text-invest { color: var(--color-invest) !important; }
-
-/* ---- 6. 按鈕:主要動作鈷藍、次要淡灰;控制項 10px 圓角 ---- */
-.btn { border-radius: 10px; }
-.btn-primary { background: #1D5FD6; border-color: #1D5FD6; color: #FFFFFF; box-shadow: none; }
-.btn-primary:hover, .btn-primary:active { background: #174FB3; border-color: #174FB3; box-shadow: none; }
-.btn-secondary { background: #FFFFFF; border: 1px solid var(--control, #D6D9DD); color: var(--text-primary); }
-
-.filter-btn.active,
-.month-filter-chip.active,
-.report-tab-btn.active { background: #1D5FD6; border-color: #1D5FD6; color: #FFFFFF; box-shadow: none; }
-.category-tile.active,
-.account-option.active { background: #DCF1FF; border-color: #1D5FD6; }
-.debt-cat-btn.active { background: #DCF1FF; border-color: #1D5FD6; color: #0A3A80; }
-.amount-input-box:focus-within { box-shadow: 0 0 0 3px rgba(29, 95, 214, 0.18); }
-
-/* ---- 7. 底部導覽:白底細邊、無毛玻璃,作用中以鈷藍文字標示 ---- */
-.tab-bar {
-  background: #FFFFFF;
-  box-shadow: none;
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
-}
-.tab-btn.active { color: #1D5FD6; }
-.tab-btn::before { background: #1D5FD6; }
-.tab-btn.active .tab-icon { transform: none; }
-
-/* ---- 8. 交易列與月份卡 ---- */
-.transaction-row:hover { box-shadow: none; border-color: var(--surface-border-bright); }
-.month-accordion-body { background: #F6F8FA; }
-.month-accordion-body .transaction-row { background: #FFFFFF; }
-.upcoming-item { background: #FFFFFF; }
-
-/* ---- 9. 彈窗:白底、保留唯一的浮層陰影 ---- */
-.modal-card { background: #FFFFFF; border-radius: 20px; }
-
-/* ---- 10. 備份提醒與投入建議頁:改用 R 的資料色 ---- */
-.invest-hero { border-top: 1px solid var(--surface-border); }
-.invest-hero-amount { color: var(--text-primary); font-weight: 600; }
-.invest-hero-amount.pause { color: var(--color-warning); }
-.invest-row.sum strong { color: var(--brand-strong); }
-.invest-alloc-item { background: #F2F4F6; border-radius: 14px; }
-.invest-alloc-amt { color: var(--brand-strong); }
-.trend-bar.pos { fill: #1D5FD6; opacity: 0.7; }
-.trend-bar.neg { fill: #B45309; opacity: 0.8; }
-.trend-bar.cur { opacity: 1; }
-.invest-legend .lg.pos { background: #1D5FD6; }
-.invest-legend .lg.neg { background: #B45309; }
-
-/* ---- 11. 信用卡卡面細節(淡色卡面上的深色文字) ---- */
-.credit-card-item .bank-sub-text,
-.credit-card-item .credit-card-number,
-.credit-card-item .gauge-header,
-.credit-card-item .gauge-footer-labels,
-.credit-card-item .debt-amount-wrap .label { color: var(--text-secondary); }
-.credit-card-item .credit-card-number { letter-spacing: 3px; }
-.credit-card-item .debt-amount-wrap .amount { color: var(--text-primary); font-weight: 600; }
-
-.cycle-tag,
-.cycle-tag.statement,
-.cycle-tag.due {
-  background: rgba(255, 255, 255, 0.7);
-  border: 1px solid rgba(27, 29, 31, 0.10);
-  color: var(--text-primary);
-}
-
-.gauge-bar-track {
-  background: rgba(255, 255, 255, 0.85);
-  border: 1px solid rgba(27, 29, 31, 0.10);
-}
-.gauge-bar-fill { background: #2F7A45; }
-.gauge-bar-fill.warning { background: #B45309; }
-.gauge-bar-fill.danger  { background: #C41C29; }
-.safe-limit-marker { background: var(--text-primary); }
-
-.btn-pay-bill {
-  background: #FFFFFF;
-  border: 1px solid rgba(27, 29, 31, 0.18);
-  color: var(--text-primary);
-  border-radius: 10px;
-}
-.card-footer-info { border-top-color: rgba(27, 29, 31, 0.10); }
-
-/* ---- 12. 債務頁總覽:平面淡色方塊(深色同色系文字),不用漸層與頂邊色條 ---- */
-.debt-stat-card::before { display: none; }
-.debt-stat-card.card-total-debt   { background: #F2F4F6; border-color: #E6E6E6; }
-.debt-stat-card.card-monthly-pay  { background: #FFEBD2; border-color: #F5D4AC; }
-.debt-stat-card.card-debt-ratio   { background: #DCF1FF; border-color: #BFE0F7; }
-.debt-stat-card.card-paid-count   { background: #DDF5E8; border-color: #BFE8D1; }
-
-/* 年度標籤:支出不使用紅色(一般支出屬於日常,以灰階呈現) */
-.year-group-badge[style*="244, 63, 94"] {
-  background: #F2F4F6 !important;
-  color: var(--text-secondary) !important;
-  border-color: #E6E6E6 !important;
-}
-
-/* ---- 13. 收支顏色:收入綠色、一般支出用墨色(不使用紅色標示日常支出) ---- */
-.qs-value.text-negative { color: var(--text-primary); }
-.qs-bar-fill.qs-expense { background: #8A8F95; }
-.qs-bar-fill.qs-income  { background: #2F7A45; }
-.qs-bar-fill.qs-savings { background: #1D5FD6; }
-.months-count { color: #1D5FD6; }
-
-/* ---- 14. 信用卡區塊維持單欄(內容區最寬 680px,兩欄會讓卡面過窄) ---- */
-@media (min-width: 768px) {
-  .credit-cards-grid { grid-template-columns: 1fr; }
-}
-
-/* 去除殘留的光暈 */
-.credit-card-item .badge-danger,
-.credit-card-item .badge-warning,
-.credit-card-item .badge-safe,
-.gauge-bar-fill,
-.gauge-bar-fill.warning,
-.gauge-bar-fill.danger { box-shadow: none; }
