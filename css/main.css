@@ -1,7 +1,8 @@
 /* ==========================================================================
-   FinFlow 智富記帳 — C 風格:Calm Paper(紙本淨色)設計系統
+   FinFlow 智富記帳 — R 風格:Pastel Ledger(粉彩帳本)設計系統
    --------------------------------------------------------------------------
-   設計理念:暖調紙本底色 × 深青綠品牌色,平面卡片 + 細邊框 + 柔和陰影。
+   設計理念:冷灰底 × 鈷藍強調色,白色大圓角平面卡片、同色系淡色標籤、不使用陰影與漸層。
+   (R 風格由 taste-skill「pastel-consumer」風格改編;C 風格留存於 css/themes/c/)
    數字使用等寬字距(tabular-nums),讓金額欄位對齊、一眼可讀。
    原 G 風格(Amber Luxe 琥珀金深色)已留存於 css/themes/g/,還原方式見其 README。
    ========================================================================== */
@@ -10,31 +11,30 @@
 
 :root {
   /* ---- 底色與表面 ---- */
-  --bg-main: #F4F1EA;
-  --bg-gradient: radial-gradient(ellipse at 50% -8%, rgba(15, 118, 110, 0.08) 0%, transparent 55%),
-                 linear-gradient(180deg, #F7F4EE 0%, #F2EEE6 100%);
+  --bg-main: #F3F5F7;
+  --bg-gradient: linear-gradient(180deg, #F3F5F7 0%, #F3F5F7 100%);
 
   /* 沿用舊變數名稱(components.css 與程式引用),值改為平面淺色表面 */
   --surface-glass: #FFFFFF;
   --surface-glass-hover: #FBFAF6;
   --surface-glass-card: #FFFFFF;
   --surface-glass-modal: #FFFFFF;
-  --surface-border: rgba(28, 36, 48, 0.10);
-  --surface-border-bright: rgba(15, 118, 110, 0.35);
-  --surface-border-focus: #0F766E;
-  --surface-sunken: rgba(28, 36, 48, 0.045);   /* 輸入框、凹槽底色 */
+  --surface-border: #E6E6E6;
+  --surface-border-bright: rgba(29, 95, 214, 0.35);
+  --surface-border-focus: #1D5FD6;
+  --surface-sunken: #F2F4F6;   /* 輸入框、凹槽底色 */
 
   /* ---- 文字 ---- */
-  --text-primary: #1C2430;
-  --text-secondary: #4B5563;
-  --text-muted: #6B7280;
+  --text-primary: #1B1D1F;
+  --text-secondary: #44484C;
+  --text-muted: #5C6064;
   --text-inverse: #FFFFFF;
 
   /* ---- 品牌色:深青綠(取代 G 風格的琥珀金) ---- */
-  --brand: #0F766E;
-  --brand-strong: #115E59;
-  --brand-soft: rgba(15, 118, 110, 0.10);
-  --brand-glow: rgba(15, 118, 110, 0.22);
+  --brand: #1D5FD6;
+  --brand-strong: #0A3A80;
+  --brand-soft: #DCF1FF;
+  --brand-glow: rgba(29, 95, 214, 0.18);
 
   /* 舊名稱相容:程式與元件仍以 gold 命名引用,在 C 風格中對應品牌青綠 */
   --color-gold: var(--brand);
@@ -42,21 +42,21 @@
   --color-gold-glow: var(--brand-glow);
 
   /* ---- 財商語義色(文字可讀性已針對淺底調整) ---- */
-  --color-income: #047857;        /* 收入 */
+  --color-income: #2F7A45;        /* 收入 */
   --color-income-glow: rgba(4, 120, 87, 0.25);
 
-  --color-need: #4F46E5;          /* 50% 必要需求 */
-  --color-need-glow: rgba(79, 70, 229, 0.22);
+  --color-need: #1D5FD6;          /* 50% 必要需求 */
+  --color-need-glow: rgba(29, 95, 214, 0.18);
 
-  --color-want: #E11D48;          /* 30% 彈性慾望 */
-  --color-want-glow: rgba(225, 29, 72, 0.22);
+  --color-want: #B45309;          /* 30% 彈性慾望 */
+  --color-want-glow: rgba(180, 83, 9, 0.18);
 
-  --color-invest: #7C3AED;        /* 20% 投資儲蓄 */
-  --color-invest-glow: rgba(124, 58, 237, 0.22);
+  --color-invest: #2A8798;        /* 20% 投資儲蓄 */
+  --color-invest-glow: rgba(42, 135, 152, 0.18);
 
-  --color-warning: #D97706;       /* 警戒(琥珀僅保留給警示語義) */
-  --color-danger: #DC2626;        /* 超過 30% 風控線 */
-  --color-safe: #059669;          /* 安全 */
+  --color-warning: #B45309;       /* 警戒(琥珀僅保留給警示語義) */
+  --color-danger: #C41C29;        /* 超過 30% 風控線 */
+  --color-safe: #2F7A45;          /* 安全 */
 
   /* 銀行品牌色 */
   --bank-esun: #059669;
@@ -65,13 +65,13 @@
   /* ---- 排版、圓角、陰影 ---- */
   --font-family-base: 'Manrope', 'Noto Sans TC', system-ui, -apple-system, 'PingFang TC', 'Microsoft JhengHei', sans-serif;
   --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 16px;
+  --radius-md: 10px;
+  --radius-lg: 20px;
   --radius-xl: 20px;
   --radius-full: 9999px;
 
-  --shadow-sm: 0 1px 2px rgba(28, 36, 48, 0.06), 0 1px 1px rgba(28, 36, 48, 0.04);
-  --shadow-md: 0 4px 16px rgba(28, 36, 48, 0.07), 0 1px 3px rgba(28, 36, 48, 0.05);
+  --shadow-sm: none;
+  --shadow-md: none;
   --shadow-lg: 0 20px 52px rgba(28, 36, 48, 0.20);
   --shadow-glow-gold: 0 0 0 3px var(--brand-glow);
 
