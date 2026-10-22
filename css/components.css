@@ -1,5 +1,5 @@
 /* ==========================================================================
-   FinFlow 智富記帳 - 元件樣式庫 (C 風格:Calm Paper · Mobile & iOS Optimized)
+   FinFlow 智富記帳 - 元件樣式庫 (U2便當盒風格 · Mobile & iOS Optimized)
    ========================================================================== */
 
 /* --------------------------------------------------------------------------
@@ -17,8 +17,8 @@
   overflow: hidden;
   border: none;
   border-radius: var(--radius-xl) !important;
-  background: linear-gradient(135deg, #0F766E 0%, #115E59 100%);
-  box-shadow: 0 10px 28px rgba(15, 118, 110, 0.30), 0 2px 6px rgba(15, 118, 110, 0.20);
+  background: linear-gradient(135deg, #0A84FF 0%, #0071E3 100%);
+  box-shadow: 0 10px 28px rgba(0, 113, 227, 0.28), 0 2px 6px rgba(0, 113, 227, 0.18);
 }
 
 .hero-balance-card:hover {
@@ -168,7 +168,7 @@
 
 .qs-bar-fill.qs-income { background: linear-gradient(90deg, #10B981, #34D399); width: 100%; }
 .qs-bar-fill.qs-expense { background: linear-gradient(90deg, #F43F5E, #FB7185); width: 100%; }
-.qs-bar-fill.qs-savings { background: linear-gradient(90deg, #0F766E, #2DD4BF); }
+.qs-bar-fill.qs-savings { background: linear-gradient(90deg, #0071E3, #5AC8FA); }
 
 .qs-divider {
   width: 1px;
@@ -957,7 +957,7 @@
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(28, 36, 48, 0.48);
+  background: rgba(0, 0, 0, 0.45);
   display: flex;
   align-items: flex-end; /* 手機版預設底部滑出 */
   justify-content: center;
@@ -2552,7 +2552,7 @@
 
 
 /* ==========================================================================
-   C 風格覆寫層 (Calm Paper)
+   U2便當盒風格 覆寫層
    --------------------------------------------------------------------------
    1) 讓頁面內嵌(inline style)的舊深色配色在淺底上維持可讀,不必改動 index.html 與 js/
    2) 統一「作用中」狀態為品牌深青綠
@@ -2565,7 +2565,7 @@
 }
 
 #goldGradient stop:nth-child(1) { stop-color: #FFFFFF; }
-#goldGradient stop:nth-child(2) { stop-color: #99F6E4; }
+#goldGradient stop:nth-child(2) { stop-color: #CFE8FF; }
 
 /* ---- 2. 內嵌舊配色對應(淺底可讀性) ---- */
 [style*="color: #FFF" i],
@@ -2662,8 +2662,8 @@ select option {
 
 /* ---- 每日金句:改為品牌青綠淡底 ---- */
 .wisdom-card {
-  background: linear-gradient(135deg, rgba(15, 118, 110, 0.08), #FFFFFF);
-  border: 1px solid rgba(15, 118, 110, 0.22);
+  background: linear-gradient(135deg, rgba(0, 113, 227, 0.07), #FFFFFF);
+  border: 1px solid rgba(0, 113, 227, 0.20);
 }
 
 .wisdom-author {
@@ -2781,3 +2781,30 @@ select option {
 .upcoming-item {
   background: rgba(255, 255, 255, 0.75);
 }
+
+/* ==========================================================================
+   U2便當盒風格:方塊化細修(疊在上方 C 風格覆寫層之後)
+   --------------------------------------------------------------------------
+   - 去掉卡片頂端色條與外框,改以柔和陰影區分層次(便當盒方塊感)
+   - 「真實可用現金」方塊改淡藍底,收入/支出/儲蓄率用各自淡色底
+   ========================================================================== */
+.stat-card::before { display: none; }
+
+.stat-card,
+.credit-card-item,
+.wisdom-card,
+.quick-stats-row {
+  border-color: transparent;
+  box-shadow: var(--shadow-md);
+}
+
+.stat-card.card-real-available {
+  background: linear-gradient(145deg, rgba(0, 113, 227, 0.10), #FFFFFF);
+  border-color: transparent;
+}
+.stat-card.card-income        { background: #EAF8EE; }
+.stat-card.card-expense       { background: #FFF1EF; }
+.stat-card.card-savings-rate  { background: #F1EEFB; }
+
+.tab-btn { font-weight: 500; }
+.tab-btn.active { font-weight: 700; }
