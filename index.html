@@ -22,9 +22,9 @@
   <link rel="manifest" href="manifest.json">
   
   <!-- CSS 核心樣式 -->
-  <link rel="stylesheet" href="css/main.css?v=u2">
-  <link rel="stylesheet" href="css/components.css?v=u2">
-  <link rel="stylesheet" href="css/features.css?v=2">
+  <link rel="stylesheet" href="css/main.css?v=u2c">
+  <link rel="stylesheet" href="css/components.css?v=u2c">
+  <link rel="stylesheet" href="css/features.css?v=3">
 </head>
 <body>
 
@@ -639,7 +639,7 @@
           <span id="tx-detail-tag" class="tx-detail-value">50% 必要需求</span>
         </div>
         <div class="tx-detail-item">
-          <span class="tx-detail-label">🆔 交易編號</span>
+          <span class="tx-detail-label">交易編號</span>
           <span id="tx-detail-id" class="tx-detail-value" style="font-family: monospace; font-size: 0.75rem; color: var(--text-muted);">tx_123456</span>
         </div>
       </div>
@@ -840,7 +840,7 @@
         <div style="display: grid; grid-template-columns: 60px 1fr; gap: 10px; margin-bottom: 10px;">
           <div>
             <label class="field-label" style="font-size: 0.75rem;">圖示</label>
-            <input type="text" id="catmgr-input-icon" class="input-large-amount" placeholder="📦" maxlength="4" style="font-size: 1.2rem; text-align: center; padding: 8px 4px; height: 42px; border-radius: 8px; background: rgba(0,0,0,0.2); border: 1px solid var(--surface-border); color: #FFF;">
+            <input type="text" id="catmgr-input-icon" class="input-large-amount" placeholder="圖示" maxlength="4" style="font-size: 1.2rem; text-align: center; padding: 8px 4px; height: 42px; border-radius: 8px; background: rgba(0,0,0,0.2); border: 1px solid var(--surface-border); color: #FFF;">
           </div>
           <div>
             <label class="field-label" style="font-size: 0.75rem;">類別名稱</label>
@@ -851,9 +851,9 @@
         <div id="catmgr-tag-wrap" style="margin-bottom: 12px;">
           <label class="field-label" style="font-size: 0.75rem;">預設財商標籤 (50/30/20 法則)</label>
           <select id="catmgr-input-tag" class="input-large-amount" style="font-size: 0.9rem; font-weight: normal; padding: 8px 12px; height: 42px; border-radius: 8px; background: #1E293B; border: 1px solid var(--surface-border); color: #FFF; width: 100%;">
-            <option value="need">🏠 50% 必要需求 (生活必需/固定開銷)</option>
-            <option value="want">🛍️ 30% 彈性慾望 (提升享受/休閒娛樂)</option>
-            <option value="invest">📈 20% 投資儲蓄 (股票ETF/未來成長)</option>
+            <option value="need">50% 必要需求 (生活必需/固定開銷)</option>
+            <option value="want">30% 彈性慾望 (提升享受/休閒娛樂)</option>
+            <option value="invest">20% 投資儲蓄 (股票ETF/未來成長)</option>
           </select>
         </div>
 
@@ -872,6 +872,7 @@
   <!-- 內嵌全相容自包含核心腳本（保證雙擊 file:/// 或本機伺服器均 100% 正常秒開運行） -->
   <!-- 核心計算(純函式,可自動化測試)與應用程式主檔;以一般 script 載入,雙擊 file:/// 開啟也能運作 -->
   <script src="js/core.js?v=2"></script>
-  <script src="js/app.js?v=2"></script>
+  <script src="js/icons.js?v=1"></script>
+  <script src="js/app.js?v=3"></script>
 </body>
 </html>

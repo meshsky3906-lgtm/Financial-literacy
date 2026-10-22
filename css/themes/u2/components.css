@@ -99,7 +99,7 @@
 }
 
 .hero-ring-pct-text {
-  font-family: 'Manrope', 'Noto Sans TC', sans-serif;
+  font-family: 'Noto Sans TC', sans-serif;
   font-size: 1.1rem;
   font-weight: 800;
   color: #FFFFFF;
@@ -1098,7 +1098,7 @@
   font-size: 1.8rem;
   font-weight: 800;
   color: var(--text-primary);
-  font-family: 'Manrope', 'Noto Sans TC', sans-serif;
+  font-family: 'Noto Sans TC', sans-serif;
   outline: none;
   letter-spacing: 1.5px;
   -webkit-appearance: none;
@@ -1772,7 +1772,7 @@
 }
 
 .debt-stat-value {
-  font-family: 'Manrope', 'Noto Sans TC', sans-serif;
+  font-family: 'Noto Sans TC', sans-serif;
   font-size: 1.3rem;
   font-weight: 800;
   letter-spacing: -0.5px;
@@ -1874,7 +1874,7 @@
 }
 
 .debt-progress-pct {
-  font-family: 'Manrope', 'Noto Sans TC', sans-serif;
+  font-family: 'Noto Sans TC', sans-serif;
   font-size: 1.1rem;
   font-weight: 800;
   color: #047857;
@@ -2016,7 +2016,7 @@
 }
 
 .debt-remaining-amount {
-  font-family: 'Manrope', 'Noto Sans TC', sans-serif;
+  font-family: 'Noto Sans TC', sans-serif;
   font-size: 1.1rem;
   font-weight: 800;
   color: #BE123C;
@@ -2324,7 +2324,7 @@
 .debt-history-amount {
   color: #047857;
   font-weight: 600;
-  font-family: 'Manrope', 'Noto Sans TC', sans-serif;
+  font-family: 'Noto Sans TC', sans-serif;
 }
 
 /* --------------------------------------------------------------------------
@@ -2478,7 +2478,7 @@
 .month-stat-val {
   font-size: 0.88rem;
   font-weight: 700;
-  font-family: 'Manrope', 'Noto Sans TC', sans-serif;
+  font-family: 'Noto Sans TC', sans-serif;
   white-space: nowrap;
 }
 
@@ -2808,3 +2808,11 @@ select option {
 
 .tab-btn { font-weight: 500; }
 .tab-btn.active { font-weight: 700; }
+
+/* 債務頁統計方塊:同樣改為無色條、淡色平底、無邊框 */
+.debt-stat-card::before { display: none; }
+.debt-stat-card { border-color: transparent !important; box-shadow: var(--shadow-md); }
+.debt-stat-card.card-total-debt  { background: #FFF1EF; }
+.debt-stat-card.card-monthly-pay { background: #FFF7E5; }
+.debt-stat-card.card-debt-ratio  { background: #EEF4FF; }
+.debt-stat-card.card-paid-count  { background: #EAF8EE; }
