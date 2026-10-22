@@ -2,7 +2,8 @@
 
 | 代號 | 名稱 | 外觀 | 檔案位置 | 現況 |
 |---|---|---|---|---|
-| **C** | Calm Paper 紙本淨色 | 暖米色底、深青綠品牌色、平面白卡 | `css/main.css`、`css/components.css`(同 `css/themes/c/`) | **目前使用中** |
+| **U2便當盒** | Bento Box Grid | 淺灰底、Apple 藍、大圓角方塊、無邊框柔影 | `css/main.css`、`css/components.css`、`css/features.css`(同 `css/themes/u2/`) | **目前使用中**(分支 `style/u2-bento`,合併後生效) |
+| **C** | Calm Paper 紙本淨色 | 暖米色底、深青綠品牌色、平面白卡 | `css/themes/c/` | 留存 |
 | **G** | Amber Luxe 琥珀金 | 深海藍黑底、琥珀金、玻璃擬物 | `css/themes/g/` | 留存 |
 | **R** | Pastel Ledger 粉彩帳本 | 冷灰底、鈷藍、淡色標籤 | 只留在 Git 分支 `style/r-pastel`(已試用,不採用) | 已退役 |
 
@@ -11,7 +12,10 @@
 再把 `index.html` 內 CSS 連結後的 `?v=` 改成新值(避免手機快取),
 並依該風格把 `<meta name="theme-color">` 與 `manifest.json` 的 `theme_color`、`background_color` 改為:
 
+- U2便當盒:`#F5F5F7`
 - C:`#F4F1EA`
 - G:`#0B0F17`(另將 `apple-mobile-web-app-status-bar-style` 改為 `black-translucent`)
 
 G 風格的完整還原說明見 `css/themes/g/README.md`。財務邏輯與資料(localStorage)完全不受外觀影響。
+
+往後風格直接用中文名稱稱呼(例如「U2便當盒風格」)。

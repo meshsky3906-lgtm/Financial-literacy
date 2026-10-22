@@ -1,0 +1,2810 @@
+/* ==========================================================================
+   FinFlow 智富記帳 - 元件樣式庫 (U2便當盒風格 · Mobile & iOS Optimized)
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   0. Hero 主卡片 + 三欄快覽條
+      C 風格:整個畫面唯一的深青綠實心大卡,作為「真實可用現金」視覺焦點
+   -------------------------------------------------------------------------- */
+
+.hero-balance-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 22px 20px;
+  margin-bottom: 14px;
+  position: relative;
+  overflow: hidden;
+  border: none;
+  border-radius: var(--radius-xl) !important;
+  background: linear-gradient(135deg, #0A84FF 0%, #0071E3 100%);
+  box-shadow: 0 10px 28px rgba(0, 113, 227, 0.28), 0 2px 6px rgba(0, 113, 227, 0.18);
+}
+
+.hero-balance-card:hover {
+  border-color: transparent;
+}
+
+/* 右上角柔光,增加層次但不花俏 */
+.hero-balance-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 100% 0%, rgba(255, 255, 255, 0.16), transparent 55%);
+  pointer-events: none;
+}
+
+.hero-left {
+  flex: 1;
+  position: relative;
+}
+
+.hero-label {
+  font-size: 0.82rem;
+  color: rgba(255, 255, 255, 0.82);
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.hero-amount {
+  font-size: 2rem;
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -1px;
+  word-break: break-all;
+  color: #FFFFFF;
+  position: relative;
+}
+
+@media (min-width: 768px) {
+  .hero-amount {
+    font-size: 2.6rem;
+  }
+}
+
+.hero-subtext {
+  font-size: 0.72rem;
+  color: rgba(255, 255, 255, 0.72);
+  margin-top: 6px;
+  position: relative;
+}
+
+/* SVG 環形儲蓄率圖表 */
+.hero-ring-wrap {
+  width: 80px;
+  height: 80px;
+  position: relative;
+  flex-shrink: 0;
+}
+
+@media (min-width: 768px) {
+  .hero-ring-wrap {
+    width: 96px;
+    height: 96px;
+  }
+}
+
+.hero-ring-svg {
+  width: 100%;
+  height: 100%;
+}
+
+.hero-ring-label {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.hero-ring-pct-text {
+  font-family: 'Manrope', 'Noto Sans TC', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #FFFFFF;
+}
+
+.hero-ring-sub {
+  font-size: 0.6rem;
+  color: rgba(255, 255, 255, 0.72);
+  margin-top: -2px;
+}
+
+/* 三欄快覽條 */
+.quick-stats-row {
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+  background: var(--surface-glass);
+  border: 1px solid var(--surface-border);
+  border-radius: var(--radius-lg);
+  padding: 14px 8px;
+  margin-bottom: 16px;
+}
+
+.quick-stat-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 0 6px;
+}
+
+.qs-label {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.qs-value {
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+@media (min-width: 768px) {
+  .qs-value {
+    font-size: 1.2rem;
+  }
+}
+
+.qs-bar {
+  width: 80%;
+  height: 3px;
+  background: rgba(28, 36, 48, 0.06);
+  border-radius: 2px;
+  margin-top: 4px;
+  overflow: hidden;
+}
+
+.qs-bar-fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 0.6s ease;
+  width: 0%;
+}
+
+.qs-bar-fill.qs-income { background: linear-gradient(90deg, #10B981, #34D399); width: 100%; }
+.qs-bar-fill.qs-expense { background: linear-gradient(90deg, #F43F5E, #FB7185); width: 100%; }
+.qs-bar-fill.qs-savings { background: linear-gradient(90deg, #0071E3, #5AC8FA); }
+
+.qs-divider {
+  width: 1px;
+  background: rgba(28, 36, 48, 0.08);
+  align-self: stretch;
+}
+
+/* --------------------------------------------------------------------------
+   1. 頂部總覽英雄卡片 (Overview Hero Banner) — 保留向後兼容
+   -------------------------------------------------------------------------- */
+
+.overview-section {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+@media (min-width: 768px) {
+  .overview-section {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+}
+
+.stat-card {
+  padding: 14px 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius-md);
+  min-height: 110px;
+}
+
+@media (min-width: 768px) {
+  .stat-card {
+    padding: 20px;
+    border-radius: var(--radius-lg);
+    min-height: 130px;
+  }
+}
+
+.stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--card-accent, rgba(28, 36, 48, 0.1));
+}
+
+.stat-card.card-real-available {
+  --card-accent: linear-gradient(90deg, #10B981, #059669);
+  background: linear-gradient(145deg, rgba(16, 185, 129, 0.12), rgba(255, 255, 255, 0.96));
+  border-color: rgba(16, 185, 129, 0.3);
+  /* 手機版讓真實可用餘額橫跨整行，更加突出 */
+  grid-column: span 2;
+}
+
+@media (min-width: 768px) {
+  .stat-card.card-real-available {
+    grid-column: span 1;
+  }
+}
+
+.stat-card.card-income { --card-accent: #10B981; }
+.stat-card.card-expense { --card-accent: #F43F5E; }
+.stat-card.card-savings-rate { --card-accent: #8B5CF6; }
+
+.stat-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.stat-title {
+  font-size: 0.76rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+}
+
+@media (min-width: 768px) {
+  .stat-title {
+    font-size: 0.85rem;
+    gap: 6px;
+  }
+}
+
+.stat-icon {
+  font-size: 1rem;
+}
+
+@media (min-width: 768px) {
+  .stat-icon {
+    font-size: 1.2rem;
+  }
+}
+
+.stat-value {
+  font-size: 1.35rem;
+  font-weight: 800;
+  line-height: 1.2;
+  word-break: break-all;
+}
+
+@media (min-width: 768px) {
+  .stat-value {
+    font-size: 1.75rem;
+  }
+}
+
+.stat-subtext {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  margin-top: 4px;
+  line-height: 1.3;
+}
+
+@media (min-width: 768px) {
+  .stat-subtext {
+    font-size: 0.78rem;
+    margin-top: 8px;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   2. 雙信用卡 30% 信用風控監控專區 (Dual Credit Cards Guard)
+   -------------------------------------------------------------------------- */
+.credit-guard-section {
+  margin-bottom: 16px;
+}
+
+@media (min-width: 768px) {
+  .credit-guard-section {
+    margin-bottom: 24px;
+  }
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.section-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+@media (min-width: 768px) {
+  .section-title {
+    font-size: 1.15rem;
+    gap: 8px;
+  }
+}
+
+.credit-cards-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+
+@media (min-width: 768px) {
+  .credit-cards-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+}
+
+.credit-card-item {
+  padding: 16px 14px;
+  position: relative;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  transition: transform var(--transition-normal);
+}
+
+@media (min-width: 768px) {
+  .credit-card-item {
+    padding: 22px;
+    border-radius: var(--radius-xl);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  }
+}
+
+.card-esun-theme {
+  background: linear-gradient(135deg, rgba(6, 78, 59, 0.85) 0%, rgba(15, 23, 42, 0.95) 100%),
+              radial-gradient(circle at 90% 10%, rgba(16, 185, 129, 0.25) 0%, transparent 60%);
+  border: 1px solid rgba(16, 185, 129, 0.35);
+}
+
+.card-fubon-theme {
+  background: linear-gradient(135deg, rgba(7, 89, 133, 0.85) 0%, rgba(15, 23, 42, 0.95) 100%),
+              radial-gradient(circle at 90% 10%, rgba(56, 189, 248, 0.25) 0%, transparent 60%);
+  border: 1px solid rgba(56, 189, 248, 0.35);
+}
+
+.card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+  gap: 8px;
+}
+
+.bank-identity {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.bank-chip {
+  width: 28px;
+  height: 20px;
+  background: linear-gradient(135deg, #FCD34D, #D97706);
+  border-radius: 3px;
+  border: 1px solid #B45309;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.bank-chip::after {
+  content: '';
+  position: absolute;
+  inset: 2px;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  border-radius: 1px;
+}
+
+.bank-name-text {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #FFFFFF;
+  line-height: 1.2;
+}
+
+.bank-sub-text {
+  font-size: 0.7rem;
+  color: var(--text-secondary);
+}
+
+@media (min-width: 768px) {
+  .bank-name-text { font-size: 1.05rem; }
+  .bank-sub-text { font-size: 0.75rem; }
+  .bank-chip { width: 32px; height: 24px; }
+}
+
+.credit-card-number {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 0.78rem;
+  letter-spacing: 2px;
+  color: rgba(255, 255, 255, 0.5);
+  margin-bottom: 6px;
+}
+
+/* 帳單週期標籤 (結帳日與繳款日) */
+.credit-cycle-badge-wrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.cycle-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: var(--radius-full);
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #E2E8F0;
+  letter-spacing: 0.2px;
+}
+
+.cycle-tag.statement {
+  background: rgba(99, 102, 241, 0.12);
+  border-color: rgba(99, 102, 241, 0.3);
+  color: #A5B4FC;
+}
+
+.cycle-tag.due {
+  background: rgba(245, 158, 11, 0.12);
+  border-color: rgba(245, 158, 11, 0.3);
+  color: #FCD34D;
+}
+
+/* 30% 信用使用率進度槽（徹底解決字體重疊問題） */
+.utilization-gauge-wrap {
+  margin: 8px 0 12px 0;
+}
+
+.gauge-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.78rem;
+  margin-bottom: 6px;
+  line-height: 1.3;
+}
+
+@media (min-width: 768px) {
+  .gauge-header {
+    font-size: 0.82rem;
+  }
+}
+
+.gauge-bar-track {
+  height: 10px;
+  background: rgba(0, 0, 0, 0.45);
+  border-radius: var(--radius-full);
+  position: relative;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.gauge-bar-fill {
+  height: 100%;
+  border-radius: var(--radius-full);
+  transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  background: var(--color-safe);
+}
+
+.gauge-bar-fill.warning { background: var(--color-warning); }
+.gauge-bar-fill.danger {
+  background: var(--color-danger);
+  box-shadow: 0 0 10px rgba(239, 68, 68, 0.8);
+}
+
+/* 30% 安全紅線刻度標記（純立體刻度，無懸浮重疊文字） */
+.safe-limit-marker {
+  position: absolute;
+  left: 30%;
+  top: -3px;
+  bottom: -3px;
+  width: 2px;
+  background: #F59E0B;
+  box-shadow: 0 0 6px #F59E0B;
+  z-index: 2;
+}
+
+/* 刻度下方乾淨簡潔的輔助說明 */
+.gauge-footer-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+.card-footer-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 8px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.debt-amount-wrap .label {
+  font-size: 0.72rem;
+  color: var(--text-secondary);
+}
+
+.debt-amount-wrap .amount {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #FFFFFF;
+}
+
+@media (min-width: 768px) {
+  .debt-amount-wrap .amount { font-size: 1.25rem; }
+}
+
+.btn-pay-bill {
+  padding: 8px 16px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #FFFFFF;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  min-height: 36px;
+  touch-action: manipulation;
+}
+
+.btn-pay-bill:active {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+/* --------------------------------------------------------------------------
+   3. 50/30/20 資產配置面板 (Financial Health Panel)
+   -------------------------------------------------------------------------- */
+.health-dashboard-panel {
+  padding: 16px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+@media (min-width: 768px) {
+  .health-dashboard-panel {
+    padding: 24px;
+    gap: 20px;
+  }
+}
+
+.ratio-cards-container {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+
+@media (min-width: 768px) {
+  .ratio-cards-container {
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px;
+  }
+}
+
+.ratio-box {
+  background: rgba(28, 36, 48, 0.03);
+  border: 1px solid var(--surface-border);
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+  transition: all var(--transition-fast);
+}
+
+.ratio-box-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.ratio-tag-title {
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.ratio-box-amount {
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+@media (min-width: 768px) {
+  .ratio-box-amount {
+    font-size: 1.25rem;
+  }
+}
+
+.progress-track {
+  height: 6px;
+  background: rgba(28, 36, 48, 0.08);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 6px;
+}
+
+.progress-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.5s ease;
+}
+
+.ratio-box-sub {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+/* 財商診斷提醒條 */
+.diagnostics-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.diagnostic-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: var(--radius-md);
+  font-size: 0.8rem;
+  line-height: 1.4;
+}
+
+@media (min-width: 768px) {
+  .diagnostic-item {
+    padding: 12px 16px;
+    font-size: 0.85rem;
+    gap: 12px;
+  }
+}
+
+.diagnostic-item.warning {
+  background: rgba(245, 158, 11, 0.12);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  color: #92400E;
+}
+
+.diagnostic-item.caution {
+  background: rgba(99, 102, 241, 0.12);
+  border: 1px solid rgba(99, 102, 241, 0.3);
+  color: #3730A3;
+}
+
+.diagnostic-item.success {
+  background: rgba(16, 185, 129, 0.12);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  color: #065F46;
+}
+
+/* --------------------------------------------------------------------------
+   4. 緊急預備金防護盾 (Emergency Shield Card)
+   -------------------------------------------------------------------------- */
+.emergency-shield-card {
+  padding: 14px;
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(255, 255, 255, 0.96));
+  border: 1px solid rgba(99, 102, 241, 0.3);
+  border-radius: var(--radius-lg);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+@media (min-width: 640px) {
+  .emergency-shield-card {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px;
+    gap: 20px;
+  }
+}
+
+.shield-info-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.shield-big-icon {
+  width: 46px;
+  height: 46px;
+  border-radius: var(--radius-md);
+  background: rgba(99, 102, 241, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  border: 1px solid rgba(99, 102, 241, 0.4);
+  flex-shrink: 0;
+}
+
+.shield-title-wrap h4 {
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin-bottom: 2px;
+}
+
+.shield-title-wrap p {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+.shield-status-right {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid rgba(28, 36, 48, 0.08);
+  padding-top: 8px;
+}
+
+@media (min-width: 640px) {
+  .shield-status-right {
+    display: block;
+    text-align: right;
+    border-top: none;
+    padding-top: 0;
+  }
+}
+
+.months-count {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: #4338CA;
+}
+
+/* --------------------------------------------------------------------------
+   5. 交易明細清單與篩選 (Transaction Ledger)
+   -------------------------------------------------------------------------- */
+.ledger-section {
+  padding: 16px 14px;
+}
+
+@media (min-width: 768px) {
+  .ledger-section {
+    padding: 24px;
+  }
+}
+
+.ledger-toolbar {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+@media (min-width: 768px) {
+  .ledger-toolbar {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+}
+
+.filter-tags-scroll {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  padding-bottom: 6px;
+  -webkit-overflow-scrolling: touch;
+}
+
+.filter-btn {
+  padding: 6px 12px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  border-radius: var(--radius-full);
+  background: rgba(28, 36, 48, 0.05);
+  color: var(--text-secondary);
+  border: 1px solid var(--surface-border);
+  cursor: pointer;
+  white-space: nowrap;
+  touch-action: manipulation;
+}
+
+.filter-btn.active {
+  background: rgba(99, 102, 241, 0.25);
+  color: var(--text-primary);
+  border-color: rgba(99, 102, 241, 0.6);
+}
+
+.transaction-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.transaction-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  background: rgba(28, 36, 48, 0.02);
+  border: 1px solid var(--surface-border);
+  border-radius: var(--radius-md);
+  gap: 8px;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
+
+.transaction-row:hover {
+  background: rgba(28, 36, 48, 0.05);
+  border-color: rgba(99, 102, 241, 0.35);
+  transform: translateY(-1.5px);
+  box-shadow: 0 6px 18px rgba(28, 36, 48, 0.08);
+}
+
+.transaction-row:active {
+  transform: translateY(0);
+  background: rgba(28, 36, 48, 0.07);
+}
+
+.tx-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  flex: 1;
+}
+
+.tx-icon-wrap {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-md);
+  background: rgba(28, 36, 48, 0.06);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.tx-meta {
+  min-width: 0;
+}
+
+.tx-meta h5 {
+  font-size: 0.88rem;
+  font-weight: 600;
+  margin-bottom: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tx-meta-sub {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.tx-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.tx-amount {
+  font-size: 0.95rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+@media (min-width: 768px) {
+  .tx-amount { font-size: 1.05rem; }
+}
+
+.btn-tx-delete {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 4px;
+  font-size: 0.9rem;
+  border-radius: 4px;
+  min-width: 28px;
+  min-height: 28px;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 30px 16px;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+/* --------------------------------------------------------------------------
+   7. 記帳彈窗 / iOS 底部抽屜 (Entry Modal & Bottom Sheet)
+   -------------------------------------------------------------------------- */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: flex-end; /* 手機版預設底部滑出 */
+  justify-content: center;
+  z-index: 1000;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity var(--transition-normal);
+  padding: 0;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+@media (min-width: 640px) {
+  .modal-overlay {
+    align-items: center;
+    padding: 16px;
+  }
+}
+
+.modal-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.modal-card {
+  background: var(--surface-glass-modal);
+  border: 1px solid var(--surface-border-bright);
+  border-radius: 24px 24px 0 0;
+  width: 100%;
+  max-width: 540px;
+  max-height: 88vh;
+  overflow-y: auto;
+  padding: 20px 16px calc(24px + env(safe-area-inset-bottom, 0px)) 16px;
+  box-shadow: var(--shadow-lg);
+  transform: translateY(100%);
+  transition: transform var(--transition-bounce);
+  -webkit-overflow-scrolling: touch;
+}
+
+@media (min-width: 640px) {
+  .modal-card {
+    border-radius: var(--radius-xl);
+    padding: 24px;
+    transform: translateY(20px) scale(0.98);
+  }
+  .modal-overlay.active .modal-card {
+    transform: translateY(0) scale(1);
+  }
+}
+
+.modal-overlay.active .modal-card {
+  transform: translateY(0);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.modal-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+.btn-close-modal {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-size: 1.6rem;
+  cursor: pointer;
+  padding: 4px;
+  line-height: 1;
+}
+
+/* 類型切換 (支出 / 收入 / 轉帳) */
+.type-toggle-group {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  background: rgba(28, 36, 48, 0.05);
+  padding: 4px;
+  border-radius: var(--radius-md);
+  margin-bottom: 16px;
+}
+
+.type-toggle-btn {
+  padding: 8px 4px;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 0.82rem;
+  font-weight: 600;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  text-align: center;
+  min-height: 38px;
+}
+
+.type-toggle-btn.active.expense { background: #F43F5E; color: #FFFFFF; }
+.type-toggle-btn.active.income { background: #10B981; color: #FFFFFF; }
+.type-toggle-btn.active.transfer { background: #6366F1; color: #FFFFFF; }
+
+/* 大金額輸入框（Flexbox 佈局，徹底解決數字與 $ 黏連問題） */
+.amount-input-box {
+  display: flex;
+  align-items: center;
+  background: var(--surface-sunken);
+  border: 1px solid var(--surface-border);
+  border-radius: var(--radius-md);
+  padding: 10px 16px;
+  margin-bottom: 8px;
+  transition: all var(--transition-fast);
+}
+
+.amount-input-box:focus-within {
+  border-color: var(--surface-border-focus);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25);
+  background: var(--surface-sunken);
+}
+
+.currency-symbol {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: #64748B;
+  margin-right: 14px;
+  user-select: none;
+  flex-shrink: 0;
+  letter-spacing: 0.5px;
+}
+
+.input-large-amount {
+  flex: 1;
+  width: 100%;
+  border: none;
+  background: transparent;
+  padding: 0;
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  font-family: 'Manrope', 'Noto Sans TC', sans-serif;
+  outline: none;
+  letter-spacing: 1.5px;
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+@media (min-width: 768px) {
+  .input-large-amount {
+    font-size: 2.2rem;
+  }
+}
+
+/* 動態金額千分位即時大字預覽條 */
+.amount-preview-hint {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.82rem;
+  color: #4338CA;
+  background: rgba(99, 102, 241, 0.1);
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  margin-bottom: 16px;
+  min-height: 32px;
+}
+
+/* 分類選擇網格 (手機版 4 列彈性) */
+.category-grid-select {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-bottom: 16px;
+  max-height: 160px;
+  overflow-y: auto;
+  padding: 2px;
+  -webkit-overflow-scrolling: touch;
+}
+
+.category-tile {
+  background: rgba(28, 36, 48, 0.04);
+  border: 1px solid var(--surface-border);
+  border-radius: var(--radius-md);
+  padding: 8px 2px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  cursor: pointer;
+  min-height: 56px;
+  justify-content: center;
+}
+
+.category-tile.active {
+  background: rgba(99, 102, 241, 0.25);
+  border-color: #6366F1;
+}
+
+.category-tile .tile-icon { font-size: 1.25rem; }
+.category-tile .tile-name {
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  text-align: center;
+}
+
+/* 轉帳專用雙帳戶與快捷情境卡片 */
+.transfer-scene-chips {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 6px;
+  margin-bottom: 14px;
+}
+
+.scene-chip-btn {
+  padding: 6px 12px;
+  background: rgba(99, 102, 241, 0.15);
+  border: 1px solid rgba(99, 102, 241, 0.35);
+  color: #3730A3;
+  border-radius: var(--radius-full);
+  font-size: 0.76rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all var(--transition-fast);
+}
+
+.scene-chip-btn:hover, .scene-chip-btn:active {
+  background: rgba(99, 102, 241, 0.3);
+  border-color: #6366F1;
+  color: var(--text-primary);
+}
+
+.transfer-accounts-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.transfer-box {
+  background: rgba(28, 36, 48, 0.03);
+  border: 1px solid var(--surface-border);
+  border-radius: var(--radius-md);
+  padding: 10px 12px;
+}
+
+.transfer-select {
+  width: 100%;
+  padding: 8px 10px;
+  background: var(--surface-sunken);
+  border: 1px solid var(--surface-border);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  font-size: 0.85rem;
+  outline: none;
+  margin-top: 4px;
+}
+
+/* 支付帳戶選擇器 */
+.form-field-group {
+  margin-bottom: 14px;
+}
+
+.field-label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.account-cards-select {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.account-option {
+  padding: 10px;
+  background: rgba(28, 36, 48, 0.04);
+  border: 1px solid var(--surface-border);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 48px;
+}
+
+.account-option.active {
+  border-color: #6366F1;
+  background: rgba(99, 102, 241, 0.15);
+}
+
+.account-option.active.esun {
+  border-color: #10B981;
+  background: rgba(16, 185, 129, 0.15);
+}
+
+.account-option.active.fubon {
+  border-color: #0284C7;
+  background: rgba(2, 132, 199, 0.15);
+}
+
+/* 財商標籤選擇器 */
+.finance-tags-select {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 6px;
+}
+
+.tag-select-btn {
+  padding: 8px 4px;
+  border-radius: var(--radius-md);
+  font-size: 0.72rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid var(--surface-border);
+  background: rgba(28, 36, 48, 0.03);
+  color: var(--text-secondary);
+  text-align: center;
+  min-height: 36px;
+}
+
+.tag-select-btn.active.need {
+  background: rgba(99, 102, 241, 0.25);
+  border-color: #6366F1;
+  color: #4338CA;
+}
+
+.tag-select-btn.active.want {
+  background: rgba(244, 63, 94, 0.25);
+  border-color: #F43F5E;
+  color: #BE123C;
+}
+
+.tag-select-btn.active.invest {
+  background: rgba(139, 92, 246, 0.25);
+  border-color: #8B5CF6;
+  color: #6D28D9;
+}
+
+/* 每日智慧小卡片 */
+.wisdom-card {
+  padding: 12px 14px;
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.12), rgba(255, 255, 255, 0.96));
+  border: 1px solid rgba(139, 92, 246, 0.3);
+  border-radius: var(--radius-md);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+@media (min-width: 768px) {
+  .wisdom-card {
+    padding: 16px 20px;
+    border-radius: var(--radius-lg);
+    margin-bottom: 24px;
+    gap: 16px;
+  }
+}
+
+.wisdom-icon { font-size: 20px; flex-shrink: 0; }
+.wisdom-quote {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  font-style: italic;
+  line-height: 1.35;
+}
+
+@media (min-width: 768px) {
+  .wisdom-quote { font-size: 0.9rem; }
+}
+
+.wisdom-author {
+  font-size: 0.7rem;
+  color: #6D28D9;
+  margin-top: 2px;
+}
+
+/* Toast 提示條 */
+.toast-container {
+  position: fixed;
+  top: calc(16px + env(safe-area-inset-top, 0px));
+  right: 16px;
+  left: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 2000;
+  pointer-events: none;
+}
+
+@media (min-width: 640px) {
+  .toast-container {
+    left: auto;
+    width: 360px;
+  }
+}
+
+.toast {
+  padding: 10px 16px;
+  border-radius: var(--radius-md);
+  font-size: 0.82rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: var(--shadow-lg);
+  background: #1E293B;
+  color: #FFFFFF;
+  border: 1px solid var(--surface-border-bright);
+}
+
+.toast.success { border-color: #10B981; }
+.toast.warning { border-color: #F59E0B; }
+.toast.error { border-color: #EF4444; }
+
+/* ==========================================================================
+   8. 財務報表分析中心專用樣式 (Financial Reports Center)
+   ========================================================================== */
+.report-period-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  background: rgba(28, 36, 48, 0.04);
+  padding: 6px;
+  border-radius: var(--radius-md);
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.report-period-tabs {
+  display: flex;
+  gap: 4px;
+}
+
+.report-tab-btn {
+  padding: 6px 14px;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.report-tab-btn.active {
+  background: #6366F1;
+  color: #FFFFFF;
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.4);
+}
+
+.report-picker-select {
+  padding: 6px 12px;
+  background: var(--surface-sunken);
+  border: 1px solid var(--surface-border);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  font-size: 0.85rem;
+  font-weight: 600;
+  outline: none;
+}
+
+.report-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+@media (min-width: 640px) {
+  .report-summary-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+  }
+}
+
+.report-stat-box {
+  background: rgba(28, 36, 48, 0.03);
+  border: 1px solid var(--surface-border);
+  border-radius: var(--radius-md);
+  padding: 12px;
+  text-align: center;
+}
+
+.report-stat-label {
+  font-size: 0.72rem;
+  color: var(--text-secondary);
+  margin-bottom: 4px;
+}
+
+.report-stat-val {
+  font-size: 1.15rem;
+  font-weight: 800;
+}
+
+/* 報表前 5 大開銷分類排行榜 */
+.ranking-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.ranking-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background: rgba(28, 36, 48, 0.02);
+  border: 1px solid var(--surface-border);
+  border-radius: var(--radius-sm);
+}
+
+.ranking-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.rank-badge {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  font-size: 0.7rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.rank-badge.top-1 { background: #F59E0B; color: #000; }
+.rank-badge.top-2 { background: #94A3B8; color: #000; }
+.rank-badge.top-3 { background: #B45309; color: #FFF; }
+
+/* =========================================================================
+   交易詳情彈窗專屬樣式 (Transaction Details Modal)
+   ========================================================================= */
+.tx-detail-hero {
+  text-align: center;
+  padding: 20px 16px;
+  background: linear-gradient(180deg, rgba(28, 36, 48, 0.04) 0%, rgba(28, 36, 48, 0.01) 100%);
+  border: 1px solid var(--surface-border);
+  border-radius: var(--radius-lg);
+  margin-bottom: 20px;
+}
+
+.tx-detail-hero-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 18px;
+  background: rgba(28, 36, 48, 0.08);
+  font-size: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 12px;
+  box-shadow: 0 8px 24px rgba(28, 36, 48, 0.08);
+}
+
+.tx-detail-hero-amount {
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  margin-bottom: 8px;
+}
+
+.tx-detail-hero-category {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 10px;
+}
+
+.tx-detail-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.tx-detail-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  background: rgba(28, 36, 48, 0.02);
+  border: 1px solid var(--surface-border);
+  border-radius: var(--radius-md);
+  font-size: 0.88rem;
+}
+
+.tx-detail-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.tx-detail-value {
+  color: var(--text-primary);
+  font-weight: 600;
+  text-align: right;
+  max-width: 60%;
+  word-break: break-word;
+}
+
+.tx-detail-note-box {
+  padding: 12px 14px;
+  background: rgba(28, 36, 48, 0.02);
+  border: 1px solid var(--surface-border);
+  border-radius: var(--radius-md);
+  margin-bottom: 20px;
+}
+
+.tx-detail-note-label {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+
+.tx-detail-note-content {
+  font-size: 0.9rem;
+  color: var(--text-primary);
+  line-height: 1.5;
+  white-space: pre-wrap;
+}
+
+.tx-detail-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+
+/* ==========================================================================
+   Tab Bar 底部分頁導航列 (Page Navigation)
+   ========================================================================== */
+.tab-bar {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 680px;
+  background: rgba(255, 255, 255, 0.94);
+  border-top: 1px solid var(--surface-border);
+  box-shadow: 0 -4px 18px rgba(28, 36, 48, 0.06);
+  display: flex;
+  align-items: stretch;
+  z-index: 900;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+.tab-btn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 10px 6px 12px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  color: var(--text-muted);
+  font-family: inherit;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  transition: all var(--transition-fast);
+  position: relative;
+}
+
+.tab-btn .tab-icon {
+  font-size: 1.45rem;
+  line-height: 1;
+  transition: transform var(--transition-bounce);
+}
+
+.tab-btn.active {
+  color: var(--color-need);
+}
+
+.tab-btn.active .tab-icon {
+  transform: translateY(-2px) scale(1.08);
+}
+
+.tab-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 20%;
+  right: 20%;
+  height: 2px;
+  background: var(--color-need);
+  border-radius: 0 0 4px 4px;
+  transform: scaleX(0);
+  transition: transform var(--transition-normal);
+}
+
+.tab-btn.active::before {
+  transform: scaleX(1);
+}
+
+/* Tab 頁面容器：預設隱藏，active 時顯示 */
+.page-view {
+  display: none;
+  animation: pageFadeIn 0.28s ease forwards;
+}
+
+.page-view.active {
+  display: block;
+}
+
+@keyframes pageFadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* 因底部 Tab Bar 固定，主內容需加底部 padding */
+.app-container {
+  padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px)) !important;
+}
+
+
+/* ==========================================================================
+   債務管理頁面樣式 (Debt Management Page)
+   ========================================================================== */
+
+/* 債務總覽 4 卡片 */
+.debt-overview-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+@media (min-width: 768px) {
+  .debt-overview-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+  }
+}
+
+.debt-stat-card {
+  background: var(--surface-glass);
+  border: 1px solid var(--surface-border);
+  border-radius: var(--radius-md);
+  padding: 14px 12px;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 100px;
+  transition: all var(--transition-normal);
+}
+
+.debt-stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--card-accent, rgba(28, 36, 48,0.1));
+}
+
+.debt-stat-card.card-total-debt {
+  --card-accent: linear-gradient(90deg, #EF4444, #F43F5E);
+  background: linear-gradient(145deg, rgba(239,68,68,0.1), rgba(255, 255, 255, 0.96));
+  border-color: rgba(239,68,68,0.25);
+}
+
+.debt-stat-card.card-monthly-pay {
+  --card-accent: linear-gradient(90deg, #F59E0B, #D97706);
+  background: linear-gradient(145deg, rgba(245,158,11,0.1), rgba(255, 255, 255, 0.96));
+  border-color: rgba(245,158,11,0.25);
+}
+
+.debt-stat-card.card-debt-ratio {
+  --card-accent: linear-gradient(90deg, #6366F1, #8B5CF6);
+  background: linear-gradient(145deg, rgba(99,102,241,0.1), rgba(255, 255, 255, 0.96));
+  border-color: rgba(99,102,241,0.25);
+}
+
+.debt-stat-card.card-paid-count {
+  --card-accent: linear-gradient(90deg, #10B981, #059669);
+  background: linear-gradient(145deg, rgba(16,185,129,0.1), rgba(255, 255, 255, 0.96));
+  border-color: rgba(16,185,129,0.25);
+}
+
+.debt-stat-label {
+  font-size: 0.72rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+
+.debt-stat-value {
+  font-family: 'Manrope', 'Noto Sans TC', sans-serif;
+  font-size: 1.3rem;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  line-height: 1.1;
+  word-break: break-all;
+}
+
+.debt-stat-sub {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  margin-top: 5px;
+  line-height: 1.3;
+}
+
+/* 到期還款提示橫幅 */
+.upcoming-banner {
+  background: linear-gradient(135deg, rgba(245,158,11,0.12), rgba(239,68,68,0.08));
+  border: 1px solid rgba(245,158,11,0.3);
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+  margin-bottom: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.upcoming-banner-title {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #92400E;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.upcoming-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 10px;
+  background: rgba(28, 36, 48,0.04);
+  border-radius: var(--radius-sm);
+  font-size: 0.78rem;
+}
+
+.upcoming-item-name {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.upcoming-item-days {
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+}
+
+.upcoming-item-days.urgent {
+  background: rgba(239,68,68,0.2);
+  color: #B91C1C;
+  border: 1px solid rgba(239,68,68,0.4);
+}
+
+.upcoming-item-days.soon {
+  background: rgba(245,158,11,0.2);
+  color: #B45309;
+  border: 1px solid rgba(245,158,11,0.4);
+}
+
+.upcoming-item-days.ok {
+  background: rgba(16,185,129,0.15);
+  color: #047857;
+  border: 1px solid rgba(16,185,129,0.35);
+}
+
+/* 整體還清進度條 */
+.debt-progress-section {
+  background: var(--surface-glass);
+  border: 1px solid var(--surface-border);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  margin-bottom: 16px;
+}
+
+.debt-progress-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.debt-progress-title {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+}
+
+.debt-progress-pct {
+  font-family: 'Manrope', 'Noto Sans TC', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #047857;
+}
+
+.debt-progress-track {
+  height: 8px;
+  background: rgba(28, 36, 48,0.07);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.debt-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #10B981, #059669);
+  border-radius: var(--radius-full);
+  transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 0 8px rgba(16,185,129,0.4);
+}
+
+/* 債務清單 */
+.debt-list-section {
+  background: var(--surface-glass);
+  border: 1px solid var(--surface-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+
+.debt-list-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--surface-border);
+}
+
+.debt-list-title {
+  font-size: 1rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.debt-empty-state {
+  text-align: center;
+  padding: 48px 24px;
+  color: var(--text-muted);
+}
+
+.debt-empty-icon {
+  font-size: 3rem;
+  margin-bottom: 12px;
+  opacity: 0.5;
+}
+
+.debt-empty-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+}
+
+.debt-empty-sub {
+  font-size: 0.82rem;
+  line-height: 1.5;
+}
+
+/* 單筆債務卡片 */
+.debt-card {
+  padding: 14px 16px;
+  border-bottom: 1px solid rgba(28, 36, 48,0.05);
+  transition: background var(--transition-fast);
+  position: relative;
+}
+
+.debt-card:last-child {
+  border-bottom: none;
+}
+
+.debt-card:hover {
+  background: rgba(28, 36, 48,0.03);
+}
+
+.debt-card-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  gap: 8px;
+}
+
+.debt-card-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  min-width: 0;
+}
+
+.debt-cat-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+.debt-card-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.debt-card-name {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.debt-card-meta {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.debt-card-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.debt-remaining-amount {
+  font-family: 'Manrope', 'Noto Sans TC', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #BE123C;
+  letter-spacing: -0.5px;
+}
+
+.debt-card-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+/* 單筆債務進度條 */
+.debt-card-progress-wrap {
+  margin-bottom: 10px;
+}
+
+.debt-card-progress-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+
+.debt-card-progress-track {
+  height: 5px;
+  background: rgba(28, 36, 48,0.08);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.debt-card-progress-fill {
+  height: 100%;
+  border-radius: var(--radius-full);
+  transition: width 0.6s ease;
+}
+
+/* 債務底部 KPI 列 */
+.debt-card-kpi-row {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.debt-kpi-item {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.debt-kpi-label {
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.debt-kpi-value {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+}
+
+/* 已還清債務區塊 */
+.debt-paid-section {
+  margin-top: 12px;
+}
+
+.debt-paid-toggle {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 16px;
+  background: rgba(16,185,129,0.06);
+  border: 1px solid rgba(16,185,129,0.2);
+  border-radius: var(--radius-md);
+  color: #047857;
+  font-size: 0.82rem;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background var(--transition-fast);
+}
+
+.debt-paid-toggle:hover {
+  background: rgba(16,185,129,0.1);
+}
+
+.debt-paid-list {
+  display: none;
+  margin-top: 8px;
+  border: 1px solid rgba(16,185,129,0.15);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.debt-paid-list.open {
+  display: block;
+}
+
+.debt-paid-item {
+  padding: 10px 16px;
+  border-bottom: 1px solid rgba(28, 36, 48,0.04);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  opacity: 0.6;
+}
+
+.debt-paid-item:last-child {
+  border-bottom: none;
+}
+
+/* 月還款壓力警示 */
+.debt-pressure-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: var(--radius-md);
+  margin-bottom: 16px;
+  font-size: 0.8rem;
+}
+
+.debt-pressure-bar.safe {
+  background: rgba(16,185,129,0.08);
+  border: 1px solid rgba(16,185,129,0.2);
+  color: #047857;
+}
+
+.debt-pressure-bar.warning {
+  background: rgba(245,158,11,0.08);
+  border: 1px solid rgba(245,158,11,0.25);
+  color: #92400E;
+}
+
+.debt-pressure-bar.danger {
+  background: rgba(239,68,68,0.08);
+  border: 1px solid rgba(239,68,68,0.25);
+  color: #B91C1C;
+  animation: pulse-danger 2.5s infinite;
+}
+
+/* 新增債務 Modal 專屬欄位 */
+.debt-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.debt-form-grid.full {
+  grid-template-columns: 1fr;
+}
+
+.debt-category-select-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  margin-bottom: 16px;
+}
+
+.debt-cat-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  padding: 8px 4px;
+  border-radius: var(--radius-sm);
+  background: rgba(28, 36, 48,0.04);
+  border: 1px solid var(--surface-border);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  font-family: inherit;
+  color: var(--text-muted);
+}
+
+.debt-cat-btn:hover {
+  background: rgba(28, 36, 48,0.08);
+  border-color: var(--surface-border-bright);
+  color: var(--text-primary);
+}
+
+.debt-cat-btn.active {
+  background: rgba(99,102,241,0.15);
+  border-color: rgba(99,102,241,0.5);
+  color: #4338CA;
+}
+
+.debt-cat-btn .dcat-icon {
+  font-size: 1.15rem;
+}
+
+.debt-cat-btn .dcat-name {
+  font-size: 0.62rem;
+  font-weight: 600;
+  text-align: center;
+  line-height: 1.2;
+}
+
+/* 按鈕 - 刪除 */
+.btn-outline-danger {
+  background: transparent;
+  border: 1px solid rgba(239,68,68,0.4);
+  color: #B91C1C;
+  font-size: 0.78rem;
+  padding: 5px 10px;
+}
+
+.btn-outline-danger:hover {
+  background: rgba(239,68,68,0.12);
+  border-color: #EF4444;
+}
+
+/* 按鈕 - 還款 */
+.btn-pay-debt {
+  background: linear-gradient(135deg, rgba(16,185,129,0.2), rgba(5,150,105,0.15));
+  border: 1px solid rgba(16,185,129,0.4);
+  color: #047857;
+  font-size: 0.78rem;
+  padding: 5px 10px;
+  border-radius: var(--radius-md);
+  font-family: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.btn-pay-debt:hover {
+  background: linear-gradient(135deg, rgba(16,185,129,0.3), rgba(5,150,105,0.25));
+  border-color: #10B981;
+}
+
+/* 連動說明小提示 */
+.debt-sync-hint {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 10px 12px;
+  background: rgba(99,102,241,0.07);
+  border: 1px solid rgba(99,102,241,0.2);
+  border-radius: var(--radius-sm);
+  font-size: 0.75rem;
+  color: #4338CA;
+  margin-bottom: 16px;
+  line-height: 1.5;
+}
+
+/* 還款歷史區塊 */
+.debt-history-toggle {
+  width: 100%;
+  text-align: center;
+  padding: 8px 0;
+  margin-top: 10px;
+  background: rgba(28, 36, 48, 0.03);
+  border: 1px solid rgba(28, 36, 48, 0.1);
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.debt-history-toggle:hover {
+  background: rgba(28, 36, 48, 0.08);
+  color: var(--text-primary);
+}
+
+.debt-history-list {
+  display: none;
+  margin-top: 8px;
+  max-height: 150px;
+  overflow-y: auto;
+  border-top: 1px dashed rgba(28, 36, 48, 0.1);
+  padding-top: 8px;
+}
+
+.debt-history-list.open {
+  display: block;
+}
+
+.debt-history-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 8px;
+  border-bottom: 1px solid rgba(28, 36, 48, 0.03);
+  font-size: 0.72rem;
+}
+
+.debt-history-item:last-child {
+  border-bottom: none;
+}
+
+.debt-history-time {
+  color: var(--text-muted);
+}
+
+.debt-history-amount {
+  color: #047857;
+  font-weight: 600;
+  font-family: 'Manrope', 'Noto Sans TC', sans-serif;
+}
+
+/* --------------------------------------------------------------------------
+   14. 年月份收支流水帳區隔分組與原地手風琴展開 (Year/Month In-Place Accordion Ledger)
+   -------------------------------------------------------------------------- */
+.year-group-section {
+  margin-bottom: 22px;
+}
+
+.year-group-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  background: rgba(28, 36, 48, 0.04);
+  border: 1px solid rgba(28, 36, 48, 0.08);
+  border-radius: var(--radius-md);
+  margin-bottom: 10px;
+}
+
+.year-group-title {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.year-group-badges {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.year-group-badge {
+  font-size: 0.72rem;
+  padding: 3px 10px;
+  border-radius: 20px;
+  background: rgba(99, 102, 241, 0.15);
+  color: #4338CA;
+  border: 1px solid rgba(99, 102, 241, 0.3);
+  font-weight: 600;
+}
+
+.month-cards-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.month-accordion-card {
+  background: rgba(28, 36, 48, 0.03);
+  border: 1px solid var(--surface-border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.month-accordion-card.open {
+  background: rgba(28, 36, 48, 0.05);
+  border-color: rgba(99, 102, 241, 0.45);
+  box-shadow: 0 8px 24px rgba(28, 36, 48, 0.08);
+}
+
+.month-accordion-header {
+  padding: 14px 16px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  user-select: none;
+  transition: background 0.15s ease;
+}
+
+.month-accordion-header:hover {
+  background: rgba(28, 36, 48, 0.04);
+}
+
+.month-card-header-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.month-card-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.month-badge-pill {
+  font-size: 0.98rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.month-tx-count-pill {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  background: rgba(28, 36, 48, 0.06);
+  padding: 2px 8px;
+  border-radius: 12px;
+  border: 1px solid rgba(28, 36, 48, 0.05);
+}
+
+.month-toggle-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.78rem;
+  color: #4338CA;
+  font-weight: 600;
+  background: rgba(165, 180, 252, 0.12);
+  padding: 4px 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(165, 180, 252, 0.25);
+  transition: all 0.2s ease;
+}
+
+.month-accordion-card.open .month-toggle-btn {
+  background: rgba(99, 102, 241, 0.3);
+  color: var(--text-primary);
+  border-color: rgba(99, 102, 241, 0.6);
+}
+
+.month-stats-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px;
+  background: var(--surface-sunken);
+  border-radius: var(--radius-sm);
+  padding: 8px 12px;
+  border: 1px solid rgba(28, 36, 48, 0.03);
+}
+
+.month-stat-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.month-stat-label {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  margin-bottom: 2px;
+}
+
+.month-stat-val {
+  font-size: 0.88rem;
+  font-weight: 700;
+  font-family: 'Manrope', 'Noto Sans TC', sans-serif;
+  white-space: nowrap;
+}
+
+.month-ratio-mini-bar {
+  display: flex;
+  height: 4px;
+  border-radius: 2px;
+  overflow: hidden;
+  background: rgba(28, 36, 48, 0.06);
+}
+
+.month-ratio-mini-seg {
+  height: 100%;
+}
+
+/* 手風琴展開內容區塊 */
+.month-accordion-body {
+  display: none;
+  padding: 0 16px 16px 16px;
+  border-top: 1px solid rgba(28, 36, 48, 0.06);
+  background: var(--surface-sunken);
+}
+
+.month-accordion-card.open .month-accordion-body {
+  display: block;
+}
+
+.month-inline-filter-bar {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  padding: 12px 0 8px 0;
+  margin-bottom: 8px;
+  scrollbar-width: none;
+}
+
+.month-inline-filter-bar::-webkit-scrollbar {
+  display: none;
+}
+
+.month-filter-chip {
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  background: rgba(28, 36, 48, 0.06);
+  border: 1px solid rgba(28, 36, 48, 0.1);
+  color: var(--text-secondary);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+}
+
+.month-filter-chip:hover {
+  background: rgba(28, 36, 48, 0.1);
+  color: var(--text-primary);
+}
+
+.month-filter-chip.active {
+  background: #6366F1;
+  border-color: #818CF8;
+  color: #FFFFFF;
+}
+
+.month-tx-rows-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+
+
+/* ==========================================================================
+   U2便當盒風格 覆寫層
+   --------------------------------------------------------------------------
+   1) 讓頁面內嵌(inline style)的舊深色配色在淺底上維持可讀,不必改動 index.html 與 js/
+   2) 統一「作用中」狀態為品牌深青綠
+   3) 實體信用卡卡面維持深色,作為淺色畫面中的視覺錨點
+   ========================================================================== */
+
+/* ---- 1. Hero 環形圖:白色進度環(SVG 內的金色漸層以 CSS 覆寫) ---- */
+.hero-ring-svg circle:first-of-type {
+  stroke: rgba(255, 255, 255, 0.22);
+}
+
+#goldGradient stop:nth-child(1) { stop-color: #FFFFFF; }
+#goldGradient stop:nth-child(2) { stop-color: #CFE8FF; }
+
+/* ---- 2. 內嵌舊配色對應(淺底可讀性) ---- */
+[style*="color: #FFF" i],
+[style*="color:#FFF" i] {
+  color: var(--text-primary) !important;
+}
+
+[style*="#A5B4FC" i] { color: #4338CA !important; }
+[style*="#FDA4AF" i] { color: #BE123C !important; }
+[style*="#6EE7B7" i] { color: #047857 !important; }
+[style*="#FCD34D" i] { color: #92400E !important; }
+
+[style*="rgba(0,0,0,0.2)"],
+[style*="rgba(0,0,0,0.15)"] {
+  background: var(--surface-sunken) !important;
+}
+
+[style*="#1E293B" i] {
+  background: #FFFFFF !important;
+  color: var(--text-primary) !important;
+}
+
+/* 信用卡深色卡面內的內嵌文字:還原為淺色 */
+.credit-card-item [style*="color: #FFF" i],
+.credit-card-item [style*="color:#FFF" i] { color: #FFFFFF !important; }
+.credit-card-item [style*="#A5B4FC" i] { color: #A5B4FC !important; }
+.credit-card-item [style*="#FDA4AF" i] { color: #FDA4AF !important; }
+.credit-card-item [style*="#6EE7B7" i] { color: #6EE7B7 !important; }
+.credit-card-item [style*="#FCD34D" i] { color: #FCD34D !important; }
+
+/* ---- 表單控制項 ---- */
+::placeholder {
+  color: var(--text-muted);
+  opacity: 0.75;
+}
+
+select option {
+  background: #FFFFFF;
+  color: var(--text-primary);
+}
+
+/* ---- 3. 「作用中」狀態統一為品牌深青綠 ---- */
+.filter-btn {
+  font-weight: 600;
+}
+
+.filter-btn.active {
+  background: var(--brand);
+  color: #FFFFFF;
+  border-color: var(--brand);
+}
+
+.report-tab-btn.active {
+  background: var(--brand);
+  box-shadow: 0 2px 8px var(--brand-glow);
+}
+
+.month-filter-chip.active {
+  background: var(--brand);
+  border-color: var(--brand);
+  color: #FFFFFF;
+}
+
+.tab-btn.active {
+  color: var(--brand);
+}
+
+.tab-btn::before {
+  background: var(--brand);
+}
+
+.category-tile.active,
+.account-option.active {
+  background: var(--brand-soft);
+  border-color: var(--brand);
+}
+
+.debt-cat-btn.active {
+  background: var(--brand-soft);
+  border-color: var(--brand);
+  color: var(--brand-strong);
+}
+
+.amount-input-box:focus-within {
+  box-shadow: 0 0 0 3px var(--brand-glow);
+  background: #FFFFFF;
+}
+
+.tag-select-btn.active.need,
+.tag-select-btn.active.want,
+.tag-select-btn.active.invest {
+  font-weight: 700;
+}
+
+/* ---- 每日金句:改為品牌青綠淡底 ---- */
+.wisdom-card {
+  background: linear-gradient(135deg, rgba(0, 113, 227, 0.07), #FFFFFF);
+  border: 1px solid rgba(0, 113, 227, 0.20);
+}
+
+.wisdom-author {
+  color: var(--brand-strong);
+}
+
+/* ---- 區塊標題與卡片細節 ---- */
+.section-title {
+  letter-spacing: -0.2px;
+}
+
+.quick-stats-row {
+  box-shadow: var(--shadow-sm);
+}
+
+.transaction-row:hover {
+  transform: none;
+  box-shadow: var(--shadow-md);
+}
+
+.btn-tx-delete:hover {
+  color: var(--color-danger);
+  background: rgba(220, 38, 38, 0.08);
+}
+
+/* 底部導航:放大點擊區並加強目前頁籤辨識 */
+.tab-btn {
+  min-height: 56px;
+}
+
+/* ---- 內嵌亮色語義文字 -> 淺底可讀的深色版本(涵蓋 HEX 與瀏覽器正規化後的 rgb 寫法) ---- */
+[style*="color: #10B981" i], [style*="color:#10B981" i], [style*="color: rgb(16, 185, 129)"] { color: #047857 !important; }
+[style*="color: #F43F5E" i], [style*="color:#F43F5E" i], [style*="color: rgb(244, 63, 94)"]  { color: #E11D48 !important; }
+[style*="color: #EF4444" i], [style*="color:#EF4444" i], [style*="color: rgb(239, 68, 68)"],
+[style*="#F87171" i]                                                                         { color: #B91C1C !important; }
+[style*="color: #F59E0B" i], [style*="color:#F59E0B" i], [style*="color: rgb(245, 158, 11)"] { color: #B45309 !important; }
+[style*="color: #6366F1" i], [style*="color: rgb(99, 102, 241)"]                             { color: #4F46E5 !important; }
+[style*="color: #94A3B8" i], [style*="color: rgb(148, 163, 184)"]                            { color: #64748B !important; }
+[style*="#DDD6FE" i] { color: #6D28D9 !important; }
+[style*="#7DD3FC" i] { color: #0369A1 !important; }
+
+/* 信用卡深色卡面內:還原亮色語義文字 */
+.credit-card-item [style*="color: #10B981" i], .credit-card-item [style*="color:#10B981" i] { color: #34D399 !important; }
+.credit-card-item [style*="color: #EF4444" i], .credit-card-item [style*="color:#EF4444" i] { color: #F87171 !important; }
+.credit-card-item [style*="color: #F59E0B" i], .credit-card-item [style*="color:#F59E0B" i] { color: #FBBF24 !important; }
+
+/* ---- 信用卡深色卡面:局部覆寫文字色票,讓卡內所有次要文字維持淺色可讀 ---- */
+.credit-card-item {
+  color: #F1F5F9;
+  --text-primary: #F1F5F9;
+  --text-secondary: #A9B6CC;
+  --text-muted: #8EA0BC;
+  --color-income: #34D399;
+  --color-want: #FB7185;
+}
+
+.credit-card-item .badge-safe {
+  background: rgba(52, 211, 153, 0.14);
+  color: #6EE7B7;
+  border-color: rgba(52, 211, 153, 0.45);
+}
+
+.credit-card-item .badge-warning {
+  background: rgba(251, 191, 36, 0.14);
+  color: #FCD34D;
+  border-color: rgba(251, 191, 36, 0.45);
+}
+
+.credit-card-item .badge-danger {
+  background: rgba(248, 113, 113, 0.16);
+  color: #FCA5A5;
+  border-color: rgba(248, 113, 113, 0.5);
+}
+
+/* ---- 版面細修 ---- */
+
+/* 信用風控標題:手機版讓說明文字換到標題下方,避免擠成兩欄 */
+@media (max-width: 767px) {
+  .credit-guard-section .section-title {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+  }
+}
+
+/* 年度分組標題:空間不足時徽章換行,不再把標題壓成兩行 */
+.year-group-header {
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.year-group-title {
+  white-space: nowrap;
+}
+
+.year-group-badge {
+  white-space: nowrap;
+}
+
+/* 展開後的月份明細:列表底色改為白,避免灰疊灰 */
+.month-accordion-body {
+  background: rgba(28, 36, 48, 0.03);
+}
+
+.month-accordion-body .transaction-row {
+  background: #FFFFFF;
+}
+
+/* 債務頁:內嵌漸層的提示卡改為乾淨的淡靛色底 */
+.wisdom-card[style*="gradient"] {
+  background: linear-gradient(135deg, rgba(79, 70, 229, 0.07), #FFFFFF) !important;
+  border-color: rgba(79, 70, 229, 0.22) !important;
+}
+
+.upcoming-item {
+  background: rgba(255, 255, 255, 0.75);
+}
+
+/* ==========================================================================
+   U2便當盒風格:方塊化細修(疊在上方 C 風格覆寫層之後)
+   --------------------------------------------------------------------------
+   - 去掉卡片頂端色條與外框,改以柔和陰影區分層次(便當盒方塊感)
+   - 「真實可用現金」方塊改淡藍底,收入/支出/儲蓄率用各自淡色底
+   ========================================================================== */
+.stat-card::before { display: none; }
+
+.stat-card,
+.credit-card-item,
+.wisdom-card,
+.quick-stats-row {
+  border-color: transparent;
+  box-shadow: var(--shadow-md);
+}
+
+.stat-card.card-real-available {
+  background: linear-gradient(145deg, rgba(0, 113, 227, 0.10), #FFFFFF);
+  border-color: transparent;
+}
+.stat-card.card-income        { background: #EAF8EE; }
+.stat-card.card-expense       { background: #FFF1EF; }
+.stat-card.card-savings-rate  { background: #F1EEFB; }
+
+.tab-btn { font-weight: 500; }
+.tab-btn.active { font-weight: 700; }
