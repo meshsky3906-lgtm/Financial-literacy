@@ -55,7 +55,7 @@
   Financial-literacy/
   ├── index.html              # 主頁面結構(以一般 <script> 載入 js/core.js、js/app.js)
   ├── manifest.json           # PWA Web App 桌面清單配置
-  ├── icons/                  # App Icon PNG 圖示庫 (512/192/180)
+  ├── icons/                  # App 圖示(U2便當盒風格,原始檔 app-icon.svg;PNG 512/192/180)
   ├── css/
   │   ├── main.css            # C 風格設計 Tokens 與基礎排版
   │   ├── components.css      # 元件樣式
