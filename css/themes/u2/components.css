@@ -2848,3 +2848,29 @@ select option {
   /* 整列本來就可點開明細,手機版省下「查詳情」字樣讓出空間 */
   .tx-right > div > span { display: none !important; }
 }
+
+/* ==========================================================================
+   月份統計改為倒三角:上排「總支出 / 總收入」,下排「淨結餘」橫跨整列,金額不再被截斷
+   ========================================================================== */
+.month-stats-row {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  row-gap: 8px;
+}
+.month-stat-val { overflow: visible; text-overflow: clip; }
+.month-stats-row .month-stat-item:nth-child(3) {
+  grid-column: 1 / -1;
+  flex-direction: row;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--surface-border);
+}
+.month-stats-row .month-stat-item:nth-child(3) .month-stat-label { margin-bottom: 0; }
+.month-stats-row .month-stat-item:nth-child(3) .month-stat-val { font-size: 1rem; }
+
+@media (max-width: 480px) {
+  /* 手機版:明細列的名稱與帳戶允許換行,不再用刪節號截掉 */
+  .tx-meta h5 { white-space: normal; overflow: visible; text-overflow: clip; }
+  .tx-meta-sub > span:nth-child(2) { white-space: normal; overflow: visible; text-overflow: clip; }
+}
