@@ -63,6 +63,7 @@
   │   └── themes/g/           # 原 G 風格留存
   ├── js/
   │   ├── core.js             # 純計算(50/30/20、雙卡風控、報表、債務還款/刪除、每月投入建議);可用 Node 測試
+  │   ├── icons.js            # SVG 圖示層:畫面上已知 emoji 自動換成線條圖示(舊資料相容)
   │   └── app.js              # 畫面渲染、事件、狀態與 localStorage、備份提醒、每月投入建議頁
   ├── tests/core.test.js      # 自動化測試(npm test)
   ├── package.json            # 僅提供 npm test(無外部相依)

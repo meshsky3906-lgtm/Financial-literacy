@@ -398,7 +398,7 @@ body {
 
 /* 數字格式 */
 .money-amount {
-  font-family: 'Manrope', 'Noto Sans TC', sans-serif;
+  font-family: 'Noto Sans TC', sans-serif;
   font-weight: 800;
   letter-spacing: -0.4px;
   font-variant-numeric: tabular-nums;
