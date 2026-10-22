@@ -2816,3 +2816,35 @@ select option {
 .debt-stat-card.card-monthly-pay { background: #FFF7E5; }
 .debt-stat-card.card-debt-ratio  { background: #EEF4FF; }
 .debt-stat-card.card-paid-count  { background: #EAF8EE; }
+
+/* ==========================================================================
+   手機版排版修正:巢狀卡片(年度 → 月份 → 明細)縮減內距,避免文字被擠壓換行
+   ========================================================================== */
+.month-card-header-top { gap: 8px; flex-wrap: wrap; }
+.month-card-title-wrap { gap: 8px; min-width: 0; flex-wrap: wrap; }
+.month-badge-pill,
+.month-tx-count-pill,
+.month-toggle-btn,
+.month-stat-label { white-space: nowrap; }
+.month-stats-row { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.month-stat-val { overflow: hidden; text-overflow: ellipsis; }
+.tx-meta-sub > span { white-space: nowrap; }
+.tx-meta-sub > span:nth-child(2) { max-width: 100%; overflow: hidden; text-overflow: ellipsis; }
+
+@media (max-width: 480px) {
+  .month-accordion-header { padding: 12px 12px; gap: 8px; }
+  .month-accordion-body { padding: 0 8px 12px 8px; }
+  .month-badge-pill { font-size: 0.92rem; }
+  .month-toggle-btn { padding: 3px 10px; }
+  .month-stats-row { gap: 6px; padding: 8px 10px; }
+  .month-stat-label { font-size: 0.64rem; }
+  .month-stat-val { font-size: 0.8rem; }
+
+  .transaction-row { padding: 10px 10px; gap: 6px; }
+  .tx-left { gap: 8px; }
+  .tx-icon-wrap { width: 32px; height: 32px; font-size: 16px; }
+  .tx-right { gap: 4px; }
+  .tx-amount { font-size: 0.9rem; }
+  /* 整列本來就可點開明細,手機版省下「查詳情」字樣讓出空間 */
+  .tx-right > div > span { display: none !important; }
+}
