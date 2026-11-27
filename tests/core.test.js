@@ -316,3 +316,47 @@ test('餘額校正:真實可用現金 = 活存 − 卡片待繳,以校正後餘�
   const r = C.calculateRealAvailableBalance(s.accounts);
   assert.equal(r.realAvailable, 17600 - 25353 - 6336);
 });
+
+// ===== 修改交易金額 =====
+test('updateTransactionAmount:現金支出改大 → 活存減少,比例與報表隨新金額', () => {
+  const st = { accounts: [{ id: 'a', type: 'liquid', balance: 900 }], transactions: [
+    { id: 't1', type: 'expense', amount: 100, accountId: 'a', tag: 'need', date: '2026-11-01' }], debts: [] };
+  const r = C.updateTransactionAmount(st, 't1', 250);
+  assert.equal(r.delta, 150);
+  assert.equal(st.accounts[0].balance, 750);
+  assert.equal(st.transactions[0].amount, 250);
+  assert.equal(st.transactions[0].originalAmount, 100);
+  // 再改一次,originalAmount 仍保留最初金額
+  C.updateTransactionAmount(st, 't1', 80);
+  assert.equal(st.accounts[0].balance, 920);
+  assert.equal(st.transactions[0].originalAmount, 100);
+});
+
+test('updateTransactionAmount:信用卡支出與收入', () => {
+  const st = { accounts: [{ id: 'c', type: 'credit', balance: 500 }, { id: 'a', type: 'liquid', balance: 1000 }], transactions: [
+    { id: 'e', type: 'expense', amount: 300, accountId: 'c', tag: 'want', date: '2026-11-01' },
+    { id: 'i', type: 'income', amount: 1000, accountId: 'a', tag: 'income', date: '2026-11-01' }], debts: [] };
+  C.updateTransactionAmount(st, 'e', 100);   // 待繳 500 → 300
+  assert.equal(st.accounts[0].balance, 300);
+  C.updateTransactionAmount(st, 'i', 1500);  // 活存 +500
+  assert.equal(st.accounts[1].balance, 1500);
+});
+
+test('updateTransactionAmount:不支援項目與不合法輸入回傳 null,且不改動資料', () => {
+  const st = { accounts: [{ id: 'a', type: 'liquid', balance: 1000 }], transactions: [
+    { id: 'tr', type: 'transfer', amount: 100, accountId: 'a', toAccountId: 'a' },
+    { id: 'ad', type: 'adjust', amount: 5, delta: -5, accountId: 'a' },
+    { id: 'db', type: 'expense', amount: 100, accountId: 'a', debtId: 'd1' },
+    { id: 'ok', type: 'expense', amount: 100, accountId: 'a' }], debts: [] };
+  for (const id of ['tr', 'ad', 'db', 'nope']) assert.equal(C.updateTransactionAmount(st, id, 50), null);
+  for (const v of [0, -5, NaN, 'abc', 100]) assert.equal(C.updateTransactionAmount(st, 'ok', v), null);
+  assert.equal(st.accounts[0].balance, 1000);
+});
+
+test('updateTransactionAmount 後刪除,餘額仍正確回退', () => {
+  const st = { accounts: [{ id: 'a', type: 'liquid', balance: 1000 }], transactions: [
+    { id: 'x', type: 'expense', amount: 100, accountId: 'a', tag: 'need' }], debts: [] };
+  C.updateTransactionAmount(st, 'x', 400);   // 1000 → 700
+  C.deleteTransactionFromState(st, 'x');     // 回到 1100(此測試 fixture 起始值未先扣 100)
+  assert.equal(st.accounts[0].balance, 1100);
+});

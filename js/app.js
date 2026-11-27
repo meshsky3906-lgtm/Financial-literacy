@@ -9,7 +9,7 @@
         getLocalDateString, getLocalMonthString, getCurrentMonthKey, formatCurrency,
         calculate503020, generatePeriodReport, calculateCreditCardHealth,
         calculateRealAvailableBalance, calculateEmergencyFundHealth,
-        DEBT_CATEGORIES, applyDebtPayment, applyBalanceAdjustment, deleteTransactionFromState,
+        DEBT_CATEGORIES, applyDebtPayment, applyBalanceAdjustment, updateTransactionAmount, deleteTransactionFromState,
         DEFAULT_INVEST_SETTINGS, calculateInvestmentPlan
       } = window.FinFlowCore;
 
@@ -2117,6 +2117,56 @@
             delBtn.onclick = () => {
               document.getElementById('modal-tx-detail').classList.remove('active');
               handleDeleteTxById(tx.id);
+            };
+          }
+
+          // 修改金額:僅限一般收入 / 支出(轉帳、校正、債務還款不開放)
+          const editBtn = document.getElementById('btn-tx-detail-edit');
+          const editRow = document.getElementById('tx-edit-row');
+          const editInput = document.getElementById('tx-edit-amount');
+          const editHint = document.getElementById('tx-edit-hint');
+          const editable = (tx.type === 'income' || tx.type === 'expense') && !tx.debtId;
+          editRow.hidden = true;
+          editBtn.hidden = !editable;
+          if (editable) {
+            if (tx.originalAmount !== undefined && tx.originalAmount !== null) {
+              editHint.textContent = `已修改過,原始金額 ${formatCurrency(tx.originalAmount)}`;
+            }
+            editBtn.onclick = () => {
+              editRow.hidden = false;
+              editBtn.hidden = true;
+              editInput.value = tx.amount;
+              const acc = appState.accounts.find(a => a.id === tx.accountId);
+              const isCard = acc && acc.type === 'credit';
+              const refresh = () => {
+                const v = Number(editInput.value);
+                if (!Number.isFinite(v) || v <= 0 || v === Number(tx.amount)) {
+                  editHint.textContent = '輸入新的金額;儲存後會同步更新帳戶餘額與報表。';
+                  return;
+                }
+                const d = v - Number(tx.amount);
+                const accTxt = acc ? (isCard ? `【${acc.name}】待繳款` : `【${acc.name}】餘額`) : '帳戶';
+                const change = tx.type === 'expense' ? (isCard ? d : -d) : d;
+                editHint.textContent = `${accTxt}將${change > 0 ? '增加' : '減少'} ${formatCurrency(Math.abs(change))}`;
+              };
+              editInput.oninput = refresh;
+              refresh();
+              editInput.focus();
+            };
+            document.getElementById('btn-tx-edit-cancel').onclick = () => {
+              editRow.hidden = true;
+              editBtn.hidden = false;
+            };
+            document.getElementById('btn-tx-edit-save').onclick = () => {
+              const r = updateTransactionAmount(appState, tx.id, editInput.value);
+              if (!r) {
+                showToast('請輸入大於 0 且與原本不同的金額。', 'error');
+                return;
+              }
+              saveAppData(appState);
+              document.getElementById('modal-tx-detail').classList.remove('active');
+              renderDashboard();
+              showToast(`已將金額由 ${formatCurrency(r.oldAmount)} 改為 ${formatCurrency(r.newAmount)},並同步更新帳戶餘額。`, 'success');
             };
           }
 
