@@ -154,3 +154,11 @@
 .adjust-preview .adj-up { color: var(--color-danger); font-weight: 700; }
 .adjust-preview .adj-down { color: var(--color-income); font-weight: 700; }
 .badge-adjust { background: var(--surface-sunken); color: var(--text-secondary); border: 1px solid var(--surface-border); }
+
+/* ---- 修改交易金額 ---- */
+.tx-edit-row { margin: 0 0 14px; padding: 12px; border: 1px solid var(--surface-border); border-radius: var(--radius-md); background: var(--surface-sunken); }
+.tx-edit-row[hidden], #btn-tx-detail-edit[hidden] { display: none !important; }
+.tx-edit-row label { display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 6px; }
+.tx-edit-row input { width: 100%; padding: 10px; font-size: 1.1rem; border: 1px solid var(--surface-border); border-radius: var(--radius-sm); background: var(--surface-glass); color: var(--text-primary); font-family: inherit; }
+.tx-edit-hint { margin: 8px 0 10px; font-size: 0.85rem; color: var(--text-secondary); min-height: 1.2em; }
+.tx-edited-mark { font-size: 0.75rem; color: var(--text-muted); }

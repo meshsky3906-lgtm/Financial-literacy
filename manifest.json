@@ -4,8 +4,8 @@
   "description": "50/30/20 黃金資產配置與雙信用卡 30% 額度風控記帳系統",
   "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#EFE4CB",
-  "theme_color": "#EFE4CB",
+  "background_color": "#F5F5F5",
+  "theme_color": "#F5F5F5",
   "orientation": "portrait",
   "icons": [
     {

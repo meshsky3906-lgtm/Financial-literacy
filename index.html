@@ -8,7 +8,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="智富記帳">
   <meta name="application-name" content="智富記帳">
-  <meta name="theme-color" content="#EFE4CB">
+  <meta name="theme-color" content="#F5F5F5">
   <title>Financial-literacy 智富記帳 | 隨時極速記帳與 50/30/20 財商風控系統</title>
   <meta name="description" content="融入 50/30/20 黃金資產配置、雙信用卡 30% 信用額度使用率風控與緊急預備金守護之現代隨時記帳 Web App。">
   
@@ -22,9 +22,9 @@
   <link rel="manifest" href="manifest.json">
   
   <!-- CSS 核心樣式 -->
-  <link rel="stylesheet" href="css/main.css?v=ac1c">
-  <link rel="stylesheet" href="css/components.css?v=ac2">
-  <link rel="stylesheet" href="css/features.css?v=5">
+  <link rel="stylesheet" href="css/main.css?v=fl1">
+  <link rel="stylesheet" href="css/components.css?v=fl1">
+  <link rel="stylesheet" href="css/features.css?v=fl2">
 </head>
 <body>
 
@@ -710,8 +710,20 @@
         <div id="tx-detail-impact-text">此筆紀錄正常納入財務統計。</div>
       </div>
 
+      <!-- 修改金額(僅一般收入 / 支出):儲存後同步更新帳戶餘額 -->
+      <div id="tx-edit-row" class="tx-edit-row" hidden>
+        <label for="tx-edit-amount">修改金額(NT$)</label>
+        <input id="tx-edit-amount" type="number" inputmode="decimal" min="1" step="1">
+        <div id="tx-edit-hint" class="tx-edit-hint"></div>
+        <div class="tx-detail-actions">
+          <button type="button" id="btn-tx-edit-save" class="btn btn-primary" style="flex: 1;">儲存金額</button>
+          <button type="button" id="btn-tx-edit-cancel" class="btn btn-secondary" style="flex: 1;">取消</button>
+        </div>
+      </div>
+
       <!-- 操作按鈕 -->
       <div class="tx-detail-actions">
+        <button id="btn-tx-detail-edit" class="btn btn-secondary" style="flex: 1;" hidden>✏️ 修改金額</button>
         <button id="btn-tx-detail-delete" class="btn btn-outline-danger" style="flex: 1;">🗑️ 刪除本筆紀錄</button>
         <button type="button" class="btn btn-secondary" data-close-modal style="flex: 1;">關閉</button>
       </div>
@@ -925,8 +937,8 @@
 
   <!-- 內嵌全相容自包含核心腳本（保證雙擊 file:/// 或本機伺服器均 100% 正常秒開運行） -->
   <!-- 核心計算(純函式,可自動化測試)與應用程式主檔;以一般 script 載入,雙擊 file:/// 開啟也能運作 -->
-  <script src="js/core.js?v=3"></script>
+  <script src="js/core.js?v=4"></script>
   <script src="js/icons.js?v=1"></script>
-  <script src="js/app.js?v=4"></script>
+  <script src="js/app.js?v=5"></script>
 </body>
 </html>

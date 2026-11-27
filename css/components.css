@@ -17,8 +17,8 @@
   overflow: hidden;
   border: none;
   border-radius: var(--radius-xl) !important;
-  background: #4A2C1A;
-  box-shadow: 0 10px 28px rgba(74, 44, 26, 0.30), 0 2px 6px rgba(74, 44, 26, 0.20);
+  background: #0F6CBD;
+  box-shadow: 0 10px 28px rgba(15, 108, 189, 0.30), 0 2px 6px rgba(15, 108, 189, 0.20);
 }
 
 .hero-balance-card:hover {
@@ -99,7 +99,7 @@
 }
 
 .hero-ring-pct-text {
-  font-family: 'Noto Sans TC', sans-serif;
+  font-family: var(--font-family-base);
   font-size: 1.1rem;
   font-weight: 800;
   color: #FFFFFF;
@@ -168,7 +168,7 @@
 
 .qs-bar-fill.qs-income { background: linear-gradient(90deg, #10B981, #34D399); width: 100%; }
 .qs-bar-fill.qs-expense { background: linear-gradient(90deg, #F43F5E, #FB7185); width: 100%; }
-.qs-bar-fill.qs-savings { background: linear-gradient(90deg, #4A2C1A, #B08D57); }
+.qs-bar-fill.qs-savings { background: linear-gradient(90deg, #0F6CBD, #0F6CBD); }
 
 .qs-divider {
   width: 1px;
@@ -240,7 +240,7 @@
 
 .stat-card.card-income { --card-accent: #10B981; }
 .stat-card.card-expense { --card-accent: #F43F5E; }
-.stat-card.card-savings-rate { --card-accent: #6B4E16; }
+.stat-card.card-savings-rate { --card-accent: #5C2E91; }
 
 .stat-header {
   display: flex;
@@ -467,9 +467,9 @@
 }
 
 .cycle-tag.statement {
-  background: rgba(176, 141, 87, 0.12);
-  border-color: rgba(176, 141, 87, 0.3);
-  color: #8B6B3D;
+  background: rgba(15, 108, 189, 0.12);
+  border-color: rgba(15, 108, 189, 0.3);
+  color: #8A8886;
 }
 
 .cycle-tag.due {
@@ -698,8 +698,8 @@
 }
 
 .diagnostic-item.caution {
-  background: rgba(176, 141, 87, 0.12);
-  border: 1px solid rgba(176, 141, 87, 0.3);
+  background: rgba(15, 108, 189, 0.12);
+  border: 1px solid rgba(15, 108, 189, 0.3);
   color: #3730A3;
 }
 
@@ -714,8 +714,8 @@
    -------------------------------------------------------------------------- */
 .emergency-shield-card {
   padding: 14px;
-  background: linear-gradient(135deg, rgba(176, 141, 87, 0.15), rgba(255, 255, 255, 0.96));
-  border: 1px solid rgba(176, 141, 87, 0.3);
+  background: linear-gradient(135deg, rgba(15, 108, 189, 0.15), rgba(255, 255, 255, 0.96));
+  border: 1px solid rgba(15, 108, 189, 0.3);
   border-radius: var(--radius-lg);
   display: flex;
   flex-direction: column;
@@ -742,12 +742,12 @@
   width: 46px;
   height: 46px;
   border-radius: var(--radius-md);
-  background: rgba(176, 141, 87, 0.2);
+  background: rgba(15, 108, 189, 0.2);
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 24px;
-  border: 1px solid rgba(176, 141, 87, 0.4);
+  border: 1px solid rgba(15, 108, 189, 0.4);
   flex-shrink: 0;
 }
 
@@ -782,7 +782,7 @@
 .months-count {
   font-size: 1.3rem;
   font-weight: 800;
-  color: #4A2C1A;
+  color: #0F6CBD;
 }
 
 /* --------------------------------------------------------------------------
@@ -836,9 +836,9 @@
 }
 
 .filter-btn.active {
-  background: rgba(176, 141, 87, 0.25);
+  background: rgba(15, 108, 189, 0.25);
   color: var(--text-primary);
-  border-color: rgba(176, 141, 87, 0.6);
+  border-color: rgba(15, 108, 189, 0.6);
 }
 
 .transaction-list {
@@ -863,7 +863,7 @@
 
 .transaction-row:hover {
   background: rgba(28, 36, 48, 0.05);
-  border-color: rgba(176, 141, 87, 0.35);
+  border-color: rgba(15, 108, 189, 0.35);
   transform: translateY(-1.5px);
   box-shadow: 0 6px 18px rgba(28, 36, 48, 0.08);
 }
@@ -1059,7 +1059,7 @@
 
 .type-toggle-btn.active.expense { background: #F43F5E; color: #FFFFFF; }
 .type-toggle-btn.active.income { background: #10B981; color: #FFFFFF; }
-.type-toggle-btn.active.transfer { background: #4A2C1A; color: #FFFFFF; }
+.type-toggle-btn.active.transfer { background: #0F6CBD; color: #FFFFFF; }
 
 /* 大金額輸入框（Flexbox 佈局，徹底解決數字與 $ 黏連問題） */
 .amount-input-box {
@@ -1075,7 +1075,7 @@
 
 .amount-input-box:focus-within {
   border-color: var(--surface-border-focus);
-  box-shadow: 0 0 0 3px rgba(176, 141, 87, 0.25);
+  box-shadow: 0 0 0 3px rgba(15, 108, 189, 0.25);
   background: var(--surface-sunken);
 }
 
@@ -1098,7 +1098,7 @@
   font-size: 1.8rem;
   font-weight: 800;
   color: var(--text-primary);
-  font-family: 'Noto Sans TC', sans-serif;
+  font-family: var(--font-family-base);
   outline: none;
   letter-spacing: 1.5px;
   -webkit-appearance: none;
@@ -1117,8 +1117,8 @@
   align-items: center;
   justify-content: space-between;
   font-size: 0.82rem;
-  color: #4A2C1A;
-  background: rgba(176, 141, 87, 0.1);
+  color: #0F6CBD;
+  background: rgba(15, 108, 189, 0.1);
   padding: 6px 12px;
   border-radius: var(--radius-sm);
   margin-bottom: 16px;
@@ -1152,8 +1152,8 @@
 }
 
 .category-tile.active {
-  background: rgba(176, 141, 87, 0.25);
-  border-color: #4A2C1A;
+  background: rgba(15, 108, 189, 0.25);
+  border-color: #0F6CBD;
 }
 
 .category-tile .tile-icon { font-size: 1.25rem; }
@@ -1175,8 +1175,8 @@
 
 .scene-chip-btn {
   padding: 6px 12px;
-  background: rgba(176, 141, 87, 0.15);
-  border: 1px solid rgba(176, 141, 87, 0.35);
+  background: rgba(15, 108, 189, 0.15);
+  border: 1px solid rgba(15, 108, 189, 0.35);
   color: #3730A3;
   border-radius: var(--radius-full);
   font-size: 0.76rem;
@@ -1187,8 +1187,8 @@
 }
 
 .scene-chip-btn:hover, .scene-chip-btn:active {
-  background: rgba(176, 141, 87, 0.3);
-  border-color: #4A2C1A;
+  background: rgba(15, 108, 189, 0.3);
+  border-color: #0F6CBD;
   color: var(--text-primary);
 }
 
@@ -1252,8 +1252,8 @@
 }
 
 .account-option.active {
-  border-color: #4A2C1A;
-  background: rgba(176, 141, 87, 0.15);
+  border-color: #0F6CBD;
+  background: rgba(15, 108, 189, 0.15);
 }
 
 .account-option.active.esun {
@@ -1287,28 +1287,28 @@
 }
 
 .tag-select-btn.active.need {
-  background: rgba(176, 141, 87, 0.25);
-  border-color: #4A2C1A;
-  color: #4A2C1A;
+  background: rgba(15, 108, 189, 0.25);
+  border-color: #0F6CBD;
+  color: #0F6CBD;
 }
 
 .tag-select-btn.active.want {
   background: rgba(244, 63, 94, 0.25);
   border-color: #F43F5E;
-  color: #BE123C;
+  color: #C50F1F;
 }
 
 .tag-select-btn.active.invest {
-  background: rgba(107, 78, 22, 0.25);
-  border-color: #6B4E16;
-  color: #6B4E16;
+  background: rgba(92, 46, 145, 0.25);
+  border-color: #5C2E91;
+  color: #5C2E91;
 }
 
 /* 每日智慧小卡片 */
 .wisdom-card {
   padding: 12px 14px;
-  background: linear-gradient(135deg, rgba(107, 78, 22, 0.12), rgba(255, 255, 255, 0.96));
-  border: 1px solid rgba(107, 78, 22, 0.3);
+  background: linear-gradient(135deg, rgba(92, 46, 145, 0.12), rgba(255, 255, 255, 0.96));
+  border: 1px solid rgba(92, 46, 145, 0.3);
   border-radius: var(--radius-md);
   margin-bottom: 16px;
   display: flex;
@@ -1340,7 +1340,7 @@
 
 .wisdom-author {
   font-size: 0.7rem;
-  color: #6B4E16;
+  color: #5C2E91;
   margin-top: 2px;
 }
 
@@ -1415,9 +1415,9 @@
 }
 
 .report-tab-btn.active {
-  background: #4A2C1A;
+  background: #0F6CBD;
   color: #FFFFFF;
-  box-shadow: 0 2px 8px rgba(176, 141, 87, 0.4);
+  box-shadow: 0 2px 8px rgba(15, 108, 189, 0.4);
 }
 
 .report-picker-select {
@@ -1753,9 +1753,9 @@
 }
 
 .debt-stat-card.card-debt-ratio {
-  --card-accent: linear-gradient(90deg, #4A2C1A, #B08D57);
-  background: linear-gradient(145deg, rgba(99,102,241,0.1), rgba(255, 255, 255, 0.96));
-  border-color: rgba(99,102,241,0.25);
+  --card-accent: linear-gradient(90deg, #0F6CBD, #0F6CBD);
+  background: linear-gradient(145deg, rgba(15,108,189,0.1), rgba(255, 255, 255, 0.96));
+  border-color: rgba(15,108,189,0.25);
 }
 
 .debt-stat-card.card-paid-count {
@@ -1772,7 +1772,7 @@
 }
 
 .debt-stat-value {
-  font-family: 'Noto Sans TC', sans-serif;
+  font-family: var(--font-family-base);
   font-size: 1.3rem;
   font-weight: 800;
   letter-spacing: -0.5px;
@@ -1874,7 +1874,7 @@
 }
 
 .debt-progress-pct {
-  font-family: 'Noto Sans TC', sans-serif;
+  font-family: var(--font-family-base);
   font-size: 1.1rem;
   font-weight: 800;
   color: #047857;
@@ -2016,10 +2016,10 @@
 }
 
 .debt-remaining-amount {
-  font-family: 'Noto Sans TC', sans-serif;
+  font-family: var(--font-family-base);
   font-size: 1.1rem;
   font-weight: 800;
-  color: #BE123C;
+  color: #C50F1F;
   letter-spacing: -0.5px;
 }
 
@@ -2204,9 +2204,9 @@
 }
 
 .debt-cat-btn.active {
-  background: rgba(99,102,241,0.15);
-  border-color: rgba(99,102,241,0.5);
-  color: #4A2C1A;
+  background: rgba(15,108,189,0.15);
+  border-color: rgba(15,108,189,0.5);
+  color: #0F6CBD;
 }
 
 .debt-cat-btn .dcat-icon {
@@ -2262,11 +2262,11 @@
   align-items: flex-start;
   gap: 8px;
   padding: 10px 12px;
-  background: rgba(99,102,241,0.07);
-  border: 1px solid rgba(99,102,241,0.2);
+  background: rgba(15,108,189,0.07);
+  border: 1px solid rgba(15,108,189,0.2);
   border-radius: var(--radius-sm);
   font-size: 0.75rem;
-  color: #4A2C1A;
+  color: #0F6CBD;
   margin-bottom: 16px;
   line-height: 1.5;
 }
@@ -2324,7 +2324,7 @@
 .debt-history-amount {
   color: #047857;
   font-weight: 600;
-  font-family: 'Noto Sans TC', sans-serif;
+  font-family: var(--font-family-base);
 }
 
 /* --------------------------------------------------------------------------
@@ -2364,9 +2364,9 @@
   font-size: 0.72rem;
   padding: 3px 10px;
   border-radius: 20px;
-  background: rgba(176, 141, 87, 0.15);
-  color: #4A2C1A;
-  border: 1px solid rgba(176, 141, 87, 0.3);
+  background: rgba(15, 108, 189, 0.15);
+  color: #0F6CBD;
+  border: 1px solid rgba(15, 108, 189, 0.3);
   font-weight: 600;
 }
 
@@ -2386,7 +2386,7 @@
 
 .month-accordion-card.open {
   background: rgba(28, 36, 48, 0.05);
-  border-color: rgba(176, 141, 87, 0.45);
+  border-color: rgba(15, 108, 189, 0.45);
   box-shadow: 0 8px 24px rgba(28, 36, 48, 0.08);
 }
 
@@ -2439,19 +2439,19 @@
   align-items: center;
   gap: 6px;
   font-size: 0.78rem;
-  color: #4A2C1A;
+  color: #0F6CBD;
   font-weight: 600;
-  background: rgba(176, 141, 87, 0.12);
+  background: rgba(15, 108, 189, 0.12);
   padding: 4px 12px;
   border-radius: 8px;
-  border: 1px solid rgba(176, 141, 87, 0.25);
+  border: 1px solid rgba(15, 108, 189, 0.25);
   transition: all 0.2s ease;
 }
 
 .month-accordion-card.open .month-toggle-btn {
-  background: rgba(176, 141, 87, 0.3);
+  background: rgba(15, 108, 189, 0.3);
   color: var(--text-primary);
-  border-color: rgba(176, 141, 87, 0.6);
+  border-color: rgba(15, 108, 189, 0.6);
 }
 
 .month-stats-row {
@@ -2478,7 +2478,7 @@
 .month-stat-val {
   font-size: 0.88rem;
   font-weight: 700;
-  font-family: 'Noto Sans TC', sans-serif;
+  font-family: var(--font-family-base);
   white-space: nowrap;
 }
 
@@ -2538,7 +2538,7 @@
 }
 
 .month-filter-chip.active {
-  background: #4A2C1A;
+  background: #0F6CBD;
   border-color: #818CF8;
   color: #FFFFFF;
 }
@@ -2573,8 +2573,8 @@
   color: var(--text-primary) !important;
 }
 
-[style*="#8B6B3D" i] { color: #4A2C1A !important; }
-[style*="#FDA4AF" i] { color: #BE123C !important; }
+[style*="#8A8886" i] { color: #0F6CBD !important; }
+[style*="#FDA4AF" i] { color: #C50F1F !important; }
 [style*="#6EE7B7" i] { color: #047857 !important; }
 [style*="#FCD34D" i] { color: #92400E !important; }
 
@@ -2591,7 +2591,7 @@
 /* 信用卡深色卡面內的內嵌文字:還原為淺色 */
 .credit-card-item [style*="color: #FFF" i],
 .credit-card-item [style*="color:#FFF" i] { color: #FFFFFF !important; }
-.credit-card-item [style*="#8B6B3D" i] { color: #8B6B3D !important; }
+.credit-card-item [style*="#8A8886" i] { color: #8A8886 !important; }
 .credit-card-item [style*="#FDA4AF" i] { color: #FDA4AF !important; }
 .credit-card-item [style*="#6EE7B7" i] { color: #6EE7B7 !important; }
 .credit-card-item [style*="#FCD34D" i] { color: #FCD34D !important; }
@@ -2700,9 +2700,9 @@ select option {
 [style*="color: #EF4444" i], [style*="color:#EF4444" i], [style*="color: rgb(239, 68, 68)"],
 [style*="#F87171" i]                                                                         { color: #B91C1C !important; }
 [style*="color: #F59E0B" i], [style*="color:#F59E0B" i], [style*="color: rgb(245, 158, 11)"] { color: #B45309 !important; }
-[style*="color: #4A2C1A" i], [style*="color: rgb(99, 102, 241)"]                             { color: #2F4A7A !important; }
+[style*="color: #0F6CBD" i], [style*="color: rgb(99, 102, 241)"]                             { color: #0F6CBD !important; }
 [style*="color: #94A3B8" i], [style*="color: rgb(148, 163, 184)"]                            { color: #64748B !important; }
-[style*="#DDD6FE" i] { color: #6B4E16 !important; }
+[style*="#DDD6FE" i] { color: #5C2E91 !important; }
 [style*="#7DD3FC" i] { color: #0369A1 !important; }
 
 /* 信用卡深色卡面內:還原亮色語義文字 */
@@ -2799,12 +2799,12 @@ select option {
 }
 
 .stat-card.card-real-available {
-  background: #4A2C1A;
+  background: #0F6CBD;
   border-color: transparent;
 }
-.stat-card.card-income        { background: #EEE6CC; }
-.stat-card.card-expense       { background: #F3DEDA; }
-.stat-card.card-savings-rate  { background: #EADFC2; }
+.stat-card.card-income        { background: #F1FAF1; }
+.stat-card.card-expense       { background: #FDF3F4; }
+.stat-card.card-savings-rate  { background: #EBF3FC; }
 
 .tab-btn { font-weight: 500; }
 .tab-btn.active { font-weight: 700; }
@@ -2812,10 +2812,10 @@ select option {
 /* 債務頁統計方塊:同樣改為無色條、淡色平底、無邊框 */
 .debt-stat-card::before { display: none; }
 .debt-stat-card { border-color: transparent !important; box-shadow: var(--shadow-md); }
-.debt-stat-card.card-total-debt  { background: #F3DEDA; }
-.debt-stat-card.card-monthly-pay { background: #F1E3C0; }
+.debt-stat-card.card-total-debt  { background: #FDF3F4; }
+.debt-stat-card.card-monthly-pay { background: #FFF9F5; }
 .debt-stat-card.card-debt-ratio  { background: #E6E2D0; }
-.debt-stat-card.card-paid-count  { background: #EEE6CC; }
+.debt-stat-card.card-paid-count  { background: #F1FAF1; }
 
 /* ==========================================================================
    手機版排版修正:巢狀卡片(年度 → 月份 → 明細)縮減內距,避免文字被擠壓換行
@@ -2876,60 +2876,59 @@ select option {
 }
 
 /* ==========================================================================
-   學院風風格(Academia)覆寫層:羊皮紙、桃花心木、黃銅雙線框
+   Fluent 2 風格覆寫層:白卡、4px 圓角、細邊框、Fluent 藍
    --------------------------------------------------------------------------
-   - 卡片:小圓角、黃銅細線框,取代 U2 的無邊框柔影
-   - 主卡(真實可用現金):深木色底 + 黃銅內框
-   - 金額與數字:一律使用等寬、齊頭數字(lining + tabular),避免襯線字數字高低不齊
-   - 導覽列:深木色底 + 黃銅上緣
+   - 卡片:白底 + 細灰邊 + 淡陰影
+   - 主卡(真實可用現金):Fluent 藍底白字
+   - 金額與數字:等寬數字(tabular-nums),欄位對齊
+   - 導覽列:白底 + 細上緣,啟用項目為 Fluent 藍
    ========================================================================== */
 body, button, input, select, textarea { font-family: var(--font-family-base); }
 .money-amount, .tx-amount, .month-stat-val, .hero-amount, [class*="amount"] {
-  font-family: 'Noto Serif TC', Georgia, serif;
-  font-variant-numeric: lining-nums tabular-nums;
+  font-variant-numeric: tabular-nums;
 }
 
 .stat-card, .credit-card-item, .wisdom-card, .quick-stats-row,
 .debt-stat-card, .month-accordion-card, .transaction-row {
-  border: 1px solid rgba(139, 107, 61, 0.55) !important;
+  border: 1px solid var(--surface-border) !important;
   box-shadow: var(--shadow-sm);
 }
-.stat-card.card-income        { background: #EEE6CC; }
-.stat-card.card-expense       { background: #F3DEDA; }
-.stat-card.card-savings-rate  { background: #EADFC2; }
-.transaction-row { background: #FBF5E6; }
+.stat-card.card-income        { background: #F1FAF1; }
+.stat-card.card-expense       { background: #FDF3F4; }
+.stat-card.card-savings-rate  { background: #EBF3FC; }
+.debt-stat-card.card-total-debt   { background: #FDF3F4; }
+.debt-stat-card.card-monthly-pay  { background: #FFF9F5; }
+.debt-stat-card.card-paid-count   { background: #F1FAF1; }
+.transaction-row { background: #FFFFFF; }
 
-/* 主卡:深木色 + 黃銅內框 */
+/* 主卡:Fluent 藍 */
 .hero-balance-card, .stat-card.card-real-available {
-  background: #4A2C1A !important;
-  color: #F1E7D0;
-  border: 2px solid #B08D57 !important;
-  box-shadow: inset 0 0 0 3px #4A2C1A, inset 0 0 0 4px #B08D57, 0 6px 16px rgba(74, 44, 26, 0.28) !important;
+  background: #0F6CBD !important;
+  color: #FFFFFF;
+  border: 1px solid #115EA3 !important;
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.12), 0 8px 16px rgba(15, 108, 189, 0.28) !important;
 }
 .hero-balance-card *, .stat-card.card-real-available * { color: inherit; }
 
-/* 主要按鈕與啟用中的標籤:深木色 + 黃銅字 */
+/* 主要按鈕與啟用中的標籤:Fluent 藍 */
 .btn-primary, .tab-btn.active .tab-label {
-  background: #4A2C1A; color: #F6E7B8; border: 1px solid #B08D57;
+  background: #0F6CBD; color: #FFFFFF; border: 1px solid #0F6CBD;
 }
 .filter-chip.active, .type-toggle-btn.active, .pill-btn.active {
-  background: #4A2C1A !important; color: #F6E7B8 !important; border-color: #B08D57 !important;
+  background: #0F6CBD !important; color: #FFFFFF !important; border-color: #0F6CBD !important;
 }
 
 /* 底部導覽列 */
 .tab-bar, .bottom-nav, nav.tab-bar {
-  background: #4A2C1A !important;
-  border-top: 2px solid #B08D57 !important;
+  background: #FFFFFF !important;
+  border-top: 1px solid var(--surface-border) !important;
 }
-.tab-btn { color: #D9C28F; }
-.tab-btn.active { color: #F6E7B8; }
-.tab-btn.active::before, .tab-btn.active::after { background: #B08D57 !important; }
+.tab-btn { color: #616161; }
+.tab-btn.active { color: #0F6CBD; }
+.tab-btn.active::before, .tab-btn.active::after { background: #0F6CBD !important; }
 
-/* 區塊標題加上雙線感 */
-.section-title, .panel-title { letter-spacing: 0.08em; }
-
-/* 信用卡像皮革封面:玉山深綠、富邦深藍,黃銅框線 */
-.card-esun-theme  { background: #27452F !important; }
-.card-fubon-theme { background: #26355A !important; }
-.qs-bar-fill.qs-income  { background: #2F5D3A; }
-.qs-bar-fill.qs-expense { background: #8B1E2D; }
+/* 信用卡:玉山綠、富邦藍 */
+.card-esun-theme  { background: #0B6A4B !important; }
+.card-fubon-theme { background: #0C3B5E !important; }
+.qs-bar-fill.qs-income  { background: #107C10; }
+.qs-bar-fill.qs-expense { background: #C50F1F; }

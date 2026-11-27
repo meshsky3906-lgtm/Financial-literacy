@@ -395,6 +395,40 @@
   }
 
   /**
+   * 修改一筆「一般收入 / 一般支出」的金額,並同步更新帳戶餘額(信用卡為待繳款)。
+   * 作法:只套用「新金額 − 舊金額」的差額,等同先沖回舊金額再記入新金額,帳戶餘額與報表保持一致。
+   * 不支援:轉帳、餘額校正(請刪除後重建或重新校正)、債務還款(會牽動債務剩餘金額)。
+   * 成功回傳 { tx, oldAmount, newAmount, delta };不合法回傳 null。
+   */
+  function updateTransactionAmount(state, txId, newAmount) {
+    if (!state || !Array.isArray(state.transactions)) return null;
+    const tx = state.transactions.find(t => t.id === txId);
+    if (!tx) return null;
+    if (tx.type !== 'income' && tx.type !== 'expense') return null;
+    if (tx.debtId) return null;
+    const next = Number(newAmount);
+    if (!Number.isFinite(next) || next <= 0) return null;
+    const old = Number(tx.amount);
+    const delta = next - old;
+    if (delta === 0) return null;
+
+    const acc = (state.accounts || []).find(a => a.id === tx.accountId);
+    if (acc) {
+      const bal = Number(acc.balance || 0);
+      if (tx.type === 'expense') {
+        // 信用卡支出增加 → 待繳款增加;現金帳戶支出增加 → 餘額減少
+        acc.balance = acc.type === 'credit' ? Math.max(0, bal + delta) : bal - delta;
+      } else {
+        acc.balance = bal + delta;
+      }
+    }
+    if (tx.originalAmount === undefined || tx.originalAmount === null) tx.originalAmount = old;
+    tx.amount = next;
+    tx.editedAt = Date.now();
+    return { tx, oldAmount: old, newAmount: next, delta };
+  }
+
+  /**
    * 從 state 刪除一筆交易,並回退關聯帳戶餘額、信用卡待繳款;
    * 若是債務還款,連同債務剩餘金額一併回復。回傳被刪除的交易,找不到則回傳 null。
    */
@@ -620,6 +654,7 @@
     applyDebtPayment,
     applyBalanceAdjustment,
     deleteTransactionFromState,
+    updateTransactionAmount,
     DEFAULT_INVEST_SETTINGS,
     calculateInvestmentPlan
   };
