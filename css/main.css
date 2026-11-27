@@ -1,39 +1,39 @@
 /* ==========================================================================
-   FinFlow 智富記帳 — U2便當盒風格(Bento Box Grid)設計系統
+   FinFlow 智富記帳 — 學院風風格(Academia)設計系統
    --------------------------------------------------------------------------
-   設計理念:淺灰底 × Apple 藍品牌色,大圓角方塊卡片 + 無邊框 + 柔和陰影。
+   設計理念:羊皮紙底 × 桃花心木深棕 × 黃銅色線條,襯線字體、小圓角、雙線框,像一本老帳冊。
    數字使用等寬字距(tabular-nums),讓金額欄位對齊、一眼可讀。
-   原 C 風格(Calm Paper)留存於 css/themes/c/,G 風格留存於 css/themes/g/,還原方式見 css/themes/README.md。
+   U2便當盒風格留存於 css/themes/u2/,C 風格於 css/themes/c/,G 風格於 css/themes/g/,還原方式見 css/themes/README.md。
    ========================================================================== */
 
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700;900&family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;500;600;700;900&family=Noto+Sans+TC:wght@400;500;700&family=Cormorant+Garamond:wght@500;600;700&display=swap');
 
 :root {
   /* ---- 底色與表面 ---- */
-  --bg-main: #F5F5F7;
-  --bg-gradient: #F5F5F7;
+  --bg-main: #EFE4CB;
+  --bg-gradient: radial-gradient(ellipse at 50% 0%, rgba(255,255,255,0.45), transparent 60%), #EFE4CB;
 
   /* 沿用舊變數名稱(components.css 與程式引用),值改為平面淺色表面 */
-  --surface-glass: #FFFFFF;
-  --surface-glass-hover: #FAFAFC;
-  --surface-glass-card: #FFFFFF;
-  --surface-glass-modal: #FFFFFF;
-  --surface-border: rgba(0, 0, 0, 0.06);
-  --surface-border-bright: rgba(0, 113, 227, 0.35);
-  --surface-border-focus: #0071E3;
-  --surface-sunken: rgba(28, 36, 48, 0.045);   /* 輸入框、凹槽底色 */
+  --surface-glass: #F8F0DC;
+  --surface-glass-hover: #FBF5E6;
+  --surface-glass-card: #F8F0DC;
+  --surface-glass-modal: #F8F0DC;
+  --surface-border: rgba(139, 107, 61, 0.45);
+  --surface-border-bright: rgba(176, 141, 87, 0.8);
+  --surface-border-focus: #8B1E2D;
+  --surface-sunken: rgba(139, 107, 61, 0.12);   /* 輸入框、凹槽底色 */
 
   /* ---- 文字 ---- */
-  --text-primary: #1D1D1F;
-  --text-secondary: #424245;
-  --text-muted: #6E6E73;
+  --text-primary: #3A2417;
+  --text-secondary: #5A3F2C;
+  --text-muted: #6B4F3A;
   --text-inverse: #FFFFFF;
 
   /* ---- 品牌色:深青綠(取代 G 風格的琥珀金) ---- */
-  --brand: #0071E3;
-  --brand-strong: #0058B0;
-  --brand-soft: rgba(0, 113, 227, 0.10);
-  --brand-glow: rgba(0, 113, 227, 0.22);
+  --brand: #4A2C1A;
+  --brand-strong: #34200F;
+  --brand-soft: rgba(176, 141, 87, 0.20);
+  --brand-glow: rgba(176, 141, 87, 0.30);
 
   /* 舊名稱相容:程式與元件仍以 gold 命名引用,在 C 風格中對應品牌青綠 */
   --color-gold: var(--brand);
@@ -41,36 +41,36 @@
   --color-gold-glow: var(--brand-glow);
 
   /* ---- 財商語義色(文字可讀性已針對淺底調整) ---- */
-  --color-income: #248A3D;        /* 收入 */
+  --color-income: #2F5D3A;        /* 收入 */
   --color-income-glow: rgba(4, 120, 87, 0.25);
 
-  --color-need: #4F46E5;          /* 50% 必要需求 */
+  --color-need: #2F4A7A;          /* 50% 必要需求 */
   --color-need-glow: rgba(79, 70, 229, 0.22);
 
-  --color-want: #E11D48;          /* 30% 彈性慾望 */
+  --color-want: #8B1E2D;          /* 30% 彈性慾望 */
   --color-want-glow: rgba(225, 29, 72, 0.22);
 
-  --color-invest: #7C3AED;        /* 20% 投資儲蓄 */
+  --color-invest: #6B4E16;        /* 20% 投資儲蓄 */
   --color-invest-glow: rgba(124, 58, 237, 0.22);
 
-  --color-warning: #D97706;       /* 警戒(琥珀僅保留給警示語義) */
-  --color-danger: #C9372C;        /* 超過 30% 風控線 */
-  --color-safe: #059669;          /* 安全 */
+  --color-warning: #9A6A12;       /* 警戒(琥珀僅保留給警示語義) */
+  --color-danger: #8B1E2D;        /* 超過 30% 風控線 */
+  --color-safe: #2F5D3A;          /* 安全 */
 
   /* 銀行品牌色 */
   --bank-esun: #059669;
   --bank-fubon: #0284C7;
 
   /* ---- 排版、圓角、陰影 ---- */
-  --font-family-base: 'Inter', 'Noto Sans TC', system-ui, -apple-system, 'PingFang TC', 'Microsoft JhengHei', sans-serif;
-  --radius-sm: 8px;
-  --radius-md: 16px;
-  --radius-lg: 20px;
-  --radius-xl: 24px;
+  --font-family-base: 'Noto Serif TC', 'Songti TC', 'PMingLiu', Georgia, serif;
+  --radius-sm: 3px;
+  --radius-md: 4px;
+  --radius-lg: 4px;
+  --radius-xl: 6px;
   --radius-full: 9999px;
 
-  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.04);
-  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.05), 0 8px 24px rgba(0, 0, 0, 0.04);
+  --shadow-sm: 0 1px 0 rgba(74, 44, 26, 0.12);
+  --shadow-md: 0 1px 0 rgba(74, 44, 26, 0.10), 0 4px 10px rgba(74, 44, 26, 0.08);
   --shadow-lg: 0 20px 52px rgba(28, 36, 48, 0.20);
   --shadow-glow-gold: 0 0 0 3px var(--brand-glow);
 

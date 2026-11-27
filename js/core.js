@@ -349,6 +349,52 @@
   }
 
   /**
+   * 餘額校正 / 期初餘額(純函式:直接修改傳入的 state)。
+   * 把帳戶餘額改成「實際餘額」,並留下一筆 type 為 'adjust' 的紀錄(差額記在 delta)。
+   * 這種紀錄只改帳戶餘額,不算收入也不算支出,所以 50/30/20、報表、投入建議都不受影響。
+   * 信用卡帳戶的 balance 是「待繳款」,actualBalance 請傳銀行 App 上的未繳總額。
+   * kind: 'correction'(對帳校正,預設)或 'opening'(期初餘額)。
+   * 實際餘額與目前相同(差額為 0)時不新增紀錄,回傳 null。
+   */
+  function applyBalanceAdjustment(state, accountId, actualBalance, opts) {
+    if (!state || !Array.isArray(state.accounts)) return null;
+    const o = opts || {};
+    const acc = state.accounts.find(a => a.id === accountId);
+    if (!acc) return null;
+    const target = Number(actualBalance);
+    if (!Number.isFinite(target)) return null;
+    if (acc.type === 'credit' && target < 0) return null;
+    const before = Number(acc.balance || 0);
+    const delta = Math.round((target - before) * 100) / 100;
+    if (delta === 0) return null;
+
+    const at = o.now ? new Date(o.now) : new Date();
+    const kind = o.kind === 'opening' ? 'opening' : 'correction';
+    acc.balance = target;
+    const tx = {
+      id: `tx_adj_${at.getTime()}_${Math.floor(Math.random() * 1000)}`,
+      type: 'adjust',
+      adjustKind: kind,
+      amount: Math.abs(delta),
+      delta: delta,
+      categoryId: 'adjust',
+      categoryName: kind === 'opening' ? '期初餘額' : '餘額校正',
+      categoryIcon: '🧮',
+      tag: 'adjust',
+      accountId: acc.id,
+      accountName: acc.name,
+      date: o.date || getLocalDateString(at),
+      timestamp: at.toISOString(),
+      note: o.note || '',
+      beforeBalance: before,
+      afterBalance: target
+    };
+    if (!Array.isArray(state.transactions)) state.transactions = [];
+    state.transactions.unshift(tx);
+    return tx;
+  }
+
+  /**
    * 從 state 刪除一筆交易,並回退關聯帳戶餘額、信用卡待繳款;
    * 若是債務還款,連同債務剩餘金額一併回復。回傳被刪除的交易,找不到則回傳 null。
    */
@@ -372,6 +418,12 @@
       if (toAcc) {
         if (toAcc.type === 'credit') toAcc.balance = Number(toAcc.balance || 0) + amount;
         else toAcc.balance = Number(toAcc.balance || 0) - amount;
+      }
+    } else if (tx.type === 'adjust') {
+      // 餘額校正 / 期初餘額:只動過帳戶餘額,刪除時把差額還原(信用卡的 balance 是待繳款,同樣直接反向加減)
+      const targetAcc = accounts.find(a => a.id === tx.accountId);
+      if (targetAcc && tx.delta !== undefined && tx.delta !== null) {
+        targetAcc.balance = Number(targetAcc.balance || 0) - Number(tx.delta);
       }
     } else {
       const targetAcc = accounts.find(a => a.id === tx.accountId);
@@ -566,6 +618,7 @@
     calculateEmergencyFundHealth,
     DEBT_CATEGORIES,
     applyDebtPayment,
+    applyBalanceAdjustment,
     deleteTransactionFromState,
     DEFAULT_INVEST_SETTINGS,
     calculateInvestmentPlan
