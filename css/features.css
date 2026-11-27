@@ -139,3 +139,18 @@
   stroke-linejoin: round;
 }
 .tab-btn .ic { width: 1.5rem; height: 1.5rem; }
+
+/* ---- 餘額校正預覽 ---- */
+.adjust-preview {
+  margin: 4px 0 14px;
+  padding: 10px 12px;
+  border: 1px dashed var(--surface-border);
+  border-radius: var(--radius-md);
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+.adjust-preview strong { color: var(--text-primary); }
+.adjust-preview .adj-up { color: var(--color-danger); font-weight: 700; }
+.adjust-preview .adj-down { color: var(--color-income); font-weight: 700; }
+.badge-adjust { background: var(--surface-sunken); color: var(--text-secondary); border: 1px solid var(--surface-border); }

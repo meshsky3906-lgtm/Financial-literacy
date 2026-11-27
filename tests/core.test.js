@@ -258,3 +258,61 @@ test('投入建議:走勢為近 12 個月、含本月;比例加總非 100% 不�
   assert.equal(r.allocation[0].amount, 0);
   assert.equal(JSON.stringify(s), before);
 });
+
+// ===== 餘額校正 / 期初餘額 =====
+test('餘額校正:活存改成實際餘額,留下 adjust 紀錄,差額記在 delta', () => {
+  const s = mkState();
+  const tx = C.applyBalanceAdjustment(s, 'acc_bank_main', 98074, { now: new Date(2026, 10, 27, 20, 0), note: '對帳' });
+  assert.equal(s.accounts[0].balance, 98074);
+  assert.equal(tx.type, 'adjust');
+  assert.equal(tx.delta, -1926);
+  assert.equal(tx.amount, 1926);
+  assert.equal(tx.date, '2026-11-27');
+  assert.equal(tx.adjustKind, 'correction');
+  assert.equal(s.transactions[0].id, tx.id);
+});
+
+test('餘額校正:信用卡以「待繳款」為準;不可為負;差額為 0 不新增紀錄', () => {
+  const s = mkState();
+  const tx = C.applyBalanceAdjustment(s, 'card_a', 11354, { kind: 'opening' });
+  assert.equal(s.accounts[1].balance, 11354);
+  assert.equal(tx.delta, 1354);
+  assert.equal(tx.categoryName, '期初餘額');
+  assert.equal(C.applyBalanceAdjustment(s, 'card_a', 11354), null);
+  assert.equal(C.applyBalanceAdjustment(s, 'card_a', -5), null);
+  assert.equal(C.applyBalanceAdjustment(s, 'nope', 100), null);
+  assert.equal(C.applyBalanceAdjustment(s, 'card_a', 'abc'), null);
+  assert.equal(s.transactions.length, 1);
+});
+
+test('餘額校正:不算收入也不算支出(50/30/20 與報表不受影響)', () => {
+  const s = mkState();
+  s.transactions.push({ type: 'income', amount: 60000, date: '2026-11-05' });
+  s.transactions.push({ type: 'expense', amount: 20000, tag: 'need', date: '2026-11-06' });
+  const beforeRatio = JSON.stringify(C.calculate503020(s.transactions, '2026-11'));
+  const beforeReport = JSON.stringify(C.generatePeriodReport(s.transactions, '2026-11', '2026-11'));
+  C.applyBalanceAdjustment(s, 'acc_bank_main', 12345, { date: '2026-11-27' });
+  C.applyBalanceAdjustment(s, 'card_a', 4000, { date: '2026-11-27' });
+  assert.equal(JSON.stringify(C.calculate503020(s.transactions, '2026-11')), beforeRatio);
+  assert.equal(JSON.stringify(C.generatePeriodReport(s.transactions, '2026-11', '2026-11')), beforeReport);
+});
+
+test('餘額校正:刪除該筆紀錄會把餘額還原(活存與信用卡)', () => {
+  const s = mkState();
+  const t1 = C.applyBalanceAdjustment(s, 'acc_bank_main', 90000);
+  const t2 = C.applyBalanceAdjustment(s, 'card_b', 8000);
+  C.deleteTransactionFromState(s, t1.id);
+  C.deleteTransactionFromState(s, t2.id);
+  assert.equal(s.accounts[0].balance, 100000);
+  assert.equal(s.accounts[2].balance, 5000);
+  assert.equal(s.transactions.length, 0);
+});
+
+test('餘額校正:真實可用現金 = 活存 − 卡片待繳,以校正後餘額計算', () => {
+  const s = mkState();
+  C.applyBalanceAdjustment(s, 'acc_bank_main', 17600);
+  C.applyBalanceAdjustment(s, 'card_a', 25353);
+  C.applyBalanceAdjustment(s, 'card_b', 6336);
+  const r = C.calculateRealAvailableBalance(s.accounts);
+  assert.equal(r.realAvailable, 17600 - 25353 - 6336);
+});

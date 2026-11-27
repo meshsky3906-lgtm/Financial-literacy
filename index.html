@@ -24,7 +24,7 @@
   <!-- CSS 核心樣式 -->
   <link rel="stylesheet" href="css/main.css?v=ac1c">
   <link rel="stylesheet" href="css/components.css?v=ac2">
-  <link rel="stylesheet" href="css/features.css?v=4">
+  <link rel="stylesheet" href="css/features.css?v=5">
 </head>
 <body>
 
@@ -61,6 +61,9 @@
           </button>
           <button id="btn-open-backup-modal" class="btn btn-secondary" title="資料備份與匯出入">
             💾 資料備份
+          </button>
+          <button id="btn-open-adjust-modal" class="btn btn-secondary" title="依銀行實際餘額對帳校正,差額不計入收支">
+            🧮 餘額校正
           </button>
         </div>
       </div>
@@ -538,6 +541,55 @@
   <!-- =========================================================================
        彈窗 4：資料備份、匯入與重設 Modal
        ========================================================================= -->
+  <!-- 餘額校正 / 期初餘額:只改帳戶餘額,不算收支 -->
+  <div id="modal-adjust" class="modal-overlay">
+    <div class="modal-card" style="max-width: 460px;">
+      <div class="modal-header">
+        <h3 class="modal-title">🧮 餘額校正</h3>
+        <button class="btn-close-modal" data-close-modal>&times;</button>
+      </div>
+
+      <div class="diagnostic-item caution" style="margin-bottom: 16px;">
+        <span>💡</span>
+        <div>對帳用:輸入銀行 App 上的<strong>實際餘額</strong>(信用卡請輸入<strong>未繳總額</strong>),系統會留下一筆校正紀錄。差額<strong>不計入收入或支出</strong>,50/30/20 與報表都不受影響。</div>
+      </div>
+
+      <div class="form-field-group">
+        <label class="field-label">要校正的帳戶</label>
+        <select id="adjust-account" class="input-large-amount" style="font-size: 0.95rem; font-weight: normal; padding: 10px 14px;"></select>
+      </div>
+
+      <div class="form-field-group">
+        <label class="field-label">類型</label>
+        <select id="adjust-kind" class="input-large-amount" style="font-size: 0.95rem; font-weight: normal; padding: 10px 14px;">
+          <option value="correction">餘額校正(對帳發現差額)</option>
+          <option value="opening">期初餘額(剛開始使用或補登起始值)</option>
+        </select>
+      </div>
+
+      <div class="form-field-group">
+        <label class="field-label" id="adjust-actual-label">實際餘額</label>
+        <input type="number" id="adjust-actual" class="input-large-amount" inputmode="decimal" placeholder="輸入銀行 App 上的金額" style="font-size: 1.2rem; font-weight: bold; padding: 10px 14px; width: 100%; box-sizing: border-box;">
+      </div>
+
+      <div id="adjust-preview" class="adjust-preview" aria-live="polite"></div>
+
+      <div class="form-field-group">
+        <label class="field-label">日期</label>
+        <input type="date" id="adjust-date" class="input-large-amount" style="font-size: 0.95rem; font-weight: normal; padding: 10px 14px;">
+      </div>
+
+      <div class="form-field-group">
+        <label class="field-label">備註(選填)</label>
+        <input type="text" id="adjust-note" class="input-large-amount" maxlength="60" placeholder="例如:依 11/27 銀行 App 對帳" style="font-size: 0.95rem; font-weight: normal; padding: 10px 14px;">
+      </div>
+
+      <button id="btn-confirm-adjust" class="btn btn-emerald" style="width: 100%; padding: 14px; font-size: 1.05rem;">
+        確認校正
+      </button>
+    </div>
+  </div>
+
   <div id="modal-backup" class="modal-overlay">
     <div class="modal-card" style="max-width: 480px;">
       <div class="modal-header">
@@ -873,8 +925,8 @@
 
   <!-- 內嵌全相容自包含核心腳本（保證雙擊 file:/// 或本機伺服器均 100% 正常秒開運行） -->
   <!-- 核心計算(純函式,可自動化測試)與應用程式主檔;以一般 script 載入,雙擊 file:/// 開啟也能運作 -->
-  <script src="js/core.js?v=2"></script>
+  <script src="js/core.js?v=3"></script>
   <script src="js/icons.js?v=1"></script>
-  <script src="js/app.js?v=3"></script>
+  <script src="js/app.js?v=4"></script>
 </body>
 </html>

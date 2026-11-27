@@ -9,7 +9,7 @@
         getLocalDateString, getLocalMonthString, getCurrentMonthKey, formatCurrency,
         calculate503020, generatePeriodReport, calculateCreditCardHealth,
         calculateRealAvailableBalance, calculateEmergencyFundHealth,
-        DEBT_CATEGORIES, applyDebtPayment, deleteTransactionFromState,
+        DEBT_CATEGORIES, applyDebtPayment, applyBalanceAdjustment, deleteTransactionFromState,
         DEFAULT_INVEST_SETTINGS, calculateInvestmentPlan
       } = window.FinFlowCore;
 
@@ -483,6 +483,8 @@
             mData.totalIncome += amt;
           } else if (tx.type === 'transfer') {
             mData.transferAmt += amt;
+          } else if (tx.type === 'adjust' || !tx.type) {
+            // 餘額校正 / 期初餘額(以及舊資料缺少 type 的紀錄)只動帳戶餘額,不算支出
           } else {
             mData.totalExpense += amt;
             if (tx.tag === 'need') mData.needAmt += amt;
@@ -565,14 +567,16 @@
               : displayTxs.map(tx => {
                   const isIncome = tx.type === 'income';
                   const isTransfer = tx.type === 'transfer';
+                  const isAdjust = tx.type === 'adjust';
                   let tagBadge = '';
-                  if (isIncome) tagBadge = `<span class="badge badge-income">💰 收入</span>`;
+                  if (isAdjust) tagBadge = `<span class="badge badge-adjust">🧮 ${tx.categoryName === '期初餘額' ? '期初' : '校正'}(不計收支)</span>`;
+                  else if (isIncome) tagBadge = `<span class="badge badge-income">💰 收入</span>`;
                   else if (isTransfer) tagBadge = `<span class="badge badge-need">🔄 沖銷轉帳</span>`;
                   else if (tx.tag === 'need') tagBadge = `<span class="badge badge-need">50% 必要</span>`;
                   else if (tx.tag === 'want') tagBadge = `<span class="badge badge-want">30% 慾望</span>`;
                   else if (tx.tag === 'invest') tagBadge = `<span class="badge badge-invest">20% 投資</span>`;
 
-                  const sign = isIncome ? '+' : (isTransfer ? '' : '-');
+                  const sign = isAdjust ? (Number(tx.delta) >= 0 ? '+' : '-') : (isIncome ? '+' : (isTransfer ? '' : '-'));
                   const amountColorClass = isIncome ? 'text-positive' : (isTransfer ? 'text-primary' : 'text-primary');
 
                   return `
@@ -2016,7 +2020,8 @@
 
           const isIncome = tx.type === 'income';
           const isTransfer = tx.type === 'transfer';
-          const sign = isIncome ? '+' : (isTransfer ? '' : '-');
+          const isAdjust = tx.type === 'adjust';
+          const sign = isAdjust ? (Number(tx.delta) >= 0 ? '+' : '-') : (isIncome ? '+' : (isTransfer ? '' : '-'));
           const amountColorClass = isIncome ? 'text-positive' : (isTransfer ? 'text-primary' : 'text-primary');
 
           // 圖示與大金額
@@ -2029,7 +2034,9 @@
 
           // 標籤徽章
           const elBadge = document.getElementById('tx-detail-type-badge');
-          if (isIncome) {
+          if (isAdjust) {
+            elBadge.innerHTML = `<span class="badge badge-adjust" style="font-size:0.85rem; padding: 4px 10px;">🧮 ${tx.categoryName || '餘額校正'}(不計收支)</span>`;
+          } else if (isIncome) {
             elBadge.innerHTML = `<span class="badge badge-income" style="font-size:0.85rem; padding: 4px 10px;">💰 收入入帳</span>`;
           } else if (isTransfer) {
             elBadge.innerHTML = `<span class="badge badge-need" style="font-size:0.85rem; padding: 4px 10px;">🔄 內部資產調配 / 沖銷</span>`;
@@ -2062,7 +2069,8 @@
           }
 
           let tagDesc = '一般交易紀錄';
-          if (isIncome) tagDesc = '收入總額（建議遵循 50/30/20 進行自動化分流）';
+          if (isAdjust) tagDesc = '餘額校正(只調整帳戶餘額,不計入收入或支出)';
+          else if (isIncome) tagDesc = '收入總額（建議遵循 50/30/20 進行自動化分流）';
           else if (isTransfer) tagDesc = '帳戶間調配沖銷（不重疊列入生活支出）';
           else if (tx.tag === 'need') tagDesc = '50% 必要需求（維持生命基本開支）';
           else if (tx.tag === 'want') tagDesc = '30% 彈性慾望（個人享受與休閒品味）';
@@ -2079,7 +2087,11 @@
           const elImpactBox = document.getElementById('tx-detail-impact');
           const elImpactText = document.getElementById('tx-detail-impact-text');
 
-          if (isTransfer) {
+          if (isAdjust) {
+            elImpactBox.className = 'diagnostic-item info';
+            const b = Number(tx.beforeBalance), a = Number(tx.afterBalance);
+            elImpactText.innerHTML = `<strong>${tx.categoryName || '餘額校正'}</strong>:帳戶餘額${Number.isFinite(b) && Number.isFinite(a) ? `由 ${formatCurrency(b)} 調整為 ${formatCurrency(a)}` : '已調整'}。這筆只改餘額,不影響 50/30/20 與報表;若要還原,刪除本筆即可。`;
+          } else if (isTransfer) {
             elImpactBox.className = 'diagnostic-item info';
             elImpactText.innerHTML = `<strong>資產調配沖銷</strong>：屬於內部資金移轉，已同步更新轉出與轉入帳戶（若轉入信用卡已即時扣抵待繳款並釋出信用額度），不重複計入生活支出。`;
           } else if (tx.accountId === 'card_esun' || tx.accountId === 'card_fubon') {
@@ -2261,6 +2273,85 @@
         if (selectReportPeriod) {
           selectReportPeriod.addEventListener('change', (e) => {
             renderReportsCenter(currentReportType, e.target.value);
+          });
+        }
+
+        // ===== 餘額校正 / 期初餘額 =====
+        const modalAdjust = document.getElementById('modal-adjust');
+        const adjAccount = document.getElementById('adjust-account');
+        const adjKind = document.getElementById('adjust-kind');
+        const adjActual = document.getElementById('adjust-actual');
+        const adjPreview = document.getElementById('adjust-preview');
+        const adjDate = document.getElementById('adjust-date');
+        const adjNote = document.getElementById('adjust-note');
+
+        function refreshAdjustPreview() {
+          if (!adjAccount || !adjPreview) return;
+          const acc = appState.accounts.find(a => a.id === adjAccount.value);
+          if (!acc) { adjPreview.innerHTML = ''; return; }
+          const isCard = acc.type === 'credit';
+          document.getElementById('adjust-actual-label').textContent = isCard ? '實際未繳總額(銀行 App 上的卡費總額)' : '實際餘額(銀行 App 上的金額)';
+          const cur = Number(acc.balance || 0);
+          const raw = adjActual.value.trim();
+          let html = `目前 App 記錄:<strong>${formatCurrency(cur)}</strong>`;
+          if (raw !== '' && Number.isFinite(Number(raw))) {
+            const target = Number(raw);
+            if (isCard && target < 0) {
+              html += `<br>信用卡未繳總額不能是負數。`;
+            } else {
+              const delta = target - cur;
+              if (delta === 0) html += `<br>與實際相同,不需要校正。`;
+              else {
+                // 信用卡:待繳變多是「欠更多」;活存:餘額變少是「少了錢」
+                const cls = (isCard ? delta > 0 : delta < 0) ? 'adj-up' : 'adj-down';
+                html += `<br>校正後:<strong>${formatCurrency(target)}</strong>,差額 <span class="${cls}">${delta > 0 ? '+' : '-'}${formatCurrency(Math.abs(delta))}</span>(不計入收支)`;
+              }
+            }
+          }
+          adjPreview.innerHTML = html;
+        }
+
+        const openAdjustBtn = document.getElementById('btn-open-adjust-modal');
+        if (openAdjustBtn && modalAdjust) {
+          openAdjustBtn.addEventListener('click', () => {
+            adjAccount.innerHTML = appState.accounts.map(a =>
+              `<option value="${a.id}">${a.name}(${a.type === 'credit' ? '待繳' : '餘額'} ${formatCurrency(a.balance)})</option>`
+            ).join('');
+            adjKind.value = 'correction';
+            adjActual.value = '';
+            adjNote.value = '';
+            adjDate.value = getLocalDateString();
+            refreshAdjustPreview();
+            modalAdjust.classList.add('active');
+          });
+          adjAccount.addEventListener('change', refreshAdjustPreview);
+          adjActual.addEventListener('input', refreshAdjustPreview);
+        }
+
+        const confirmAdjustBtn = document.getElementById('btn-confirm-adjust');
+        if (confirmAdjustBtn) {
+          confirmAdjustBtn.addEventListener('click', () => {
+            const raw = adjActual.value.trim();
+            if (raw === '' || !Number.isFinite(Number(raw))) {
+              showToast('請輸入實際金額!', 'error');
+              adjActual.focus();
+              return;
+            }
+            const tx = applyBalanceAdjustment(appState, adjAccount.value, Number(raw), {
+              kind: adjKind.value,
+              date: adjDate.value || getLocalDateString(),
+              note: adjNote.value.trim()
+            });
+            if (!tx) {
+              const acc = appState.accounts.find(a => a.id === adjAccount.value);
+              if (acc && acc.type === 'credit' && Number(raw) < 0) showToast('信用卡未繳總額不能是負數。', 'error');
+              else showToast('金額與目前記錄相同,不需要校正。', 'info');
+              return;
+            }
+            saveAppData(appState);
+            modalAdjust.classList.remove('active');
+            renderDashboard();
+            showToast(`已校正【${tx.accountName}】:${tx.delta > 0 ? '+' : '-'}${formatCurrency(tx.amount)}(不計入收支)`, 'success');
           });
         }
 
