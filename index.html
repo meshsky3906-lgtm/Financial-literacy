@@ -24,7 +24,7 @@
   <!-- CSS 核心樣式 -->
   <link rel="stylesheet" href="css/main.css?v=ac1c">
   <link rel="stylesheet" href="css/components.css?v=ac2">
-  <link rel="stylesheet" href="css/features.css?v=3">
+  <link rel="stylesheet" href="css/features.css?v=4">
 </head>
 <body>
 
@@ -311,6 +311,7 @@
     </div><!-- end #page-debt -->
 
     <!-- ===== 每月投入建議頁 (內容由 js/app.js 的 renderInvestPage 產生) ===== -->
+    <!-- 投入建議頁暫時隱藏:沒有分頁按鈕可進入,恢復方式見底部導覽列註解 -->
     <div id="page-invest" class="page-view">
       <div id="invest-root"></div>
     </div><!-- end #page-invest -->
@@ -325,7 +326,8 @@
         <span class="tab-icon">💳</span>
         <span>債務管理</span>
       </button>
-      <button class="tab-btn" id="tab-btn-invest" data-page="invest" role="tab" aria-selected="false">
+      <!-- 「投入建議」分頁暫時隱藏(程式與資料都保留)。要恢復:刪掉下一行 button 的 style="display:none" 與 hidden -->
+      <button class="tab-btn" id="tab-btn-invest" data-page="invest" role="tab" aria-selected="false" hidden style="display:none">
         <span class="tab-icon">🎯</span>
         <span>投入建議</span>
       </button>
